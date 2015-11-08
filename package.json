@@ -27,7 +27,7 @@
           "id": "gapminder",
           "file": "gapminder",
           "factory": "createCmd",
-          "creates": "setGapMinderAttribute"
+          "creates": "(setGapMinderAttribute|setGapMinderAttributeScale)"
         },
         {
           "type": "app",

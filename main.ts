@@ -27,4 +27,12 @@ databrowser.create(<Element>d3.select('aside.left').append('section').classed('d
   filter: (d) => /.*gapminder.*/.test(d.desc.fqname)
 });
 
+function updateBounds() {
+  var bounds = C.bounds(main);
+  app.setBounds(bounds.x, bounds.y, bounds.w, bounds.h);
+}
+
+$(window).on('resize', updateBounds);
+updateBounds();
+
 elems.jumpToStored();

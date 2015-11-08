@@ -14,7 +14,13 @@
 <div class="gapminder">
   <div class="row">
     <div class="col-sm-3">
-      <div class="axis attr-y">A</div>
+      <div class="axis yaxis">
+        <span class="attr-y"></span>
+        <select class="attr-y-scale">
+          <option value="linear" selected="selected">Linear</option>
+          <option value="log">Log</option>
+        </select>
+      </div>
     </div>
     <div class="col-sm-9">
       <svg class="chart"></svg>
@@ -22,15 +28,25 @@
   </div>
   <div class="row">
     <div class="col-sm-offset-3 col-sm-9">
-      <div class="axis attr-x">B</div>
+      <div class="axis xaxis">
+        <span class="attr-x"></span>
+        <select class="attr-x-scale">
+          <option value="linear" selected="selected">Linear</option>
+          <option value="log">Log</option>
+        </select>
+      </div>
     </div>
   </div>
   <div class="row">
     <div class="col-sm-10 timeline">
       <input type="range" min="1800" max="2015" step="1" value="1800">
     </div>
-    <div class="col-sm-2 attr-size">
-        CC
+    <div class="col-sm-2">
+        <span class="attr-size"></span>
+        <select class="attr-size-scale">
+          <option value="linear" selected="selected">Linear</option>
+          <option value="log">Log</option>
+        </select>
     </div>
   </div>
 </div>
