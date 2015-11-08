@@ -30,6 +30,18 @@
           "creates": "(setGapMinderAttribute|setGapMinderAttributeScale)"
         },
         {
+          "type": "actionCompressor",
+          "id": "gapminder-setGapMinderAttribute",
+          "file": "gapminder",
+          "factory": "compressSetAttribute"
+        },
+        {
+          "type": "actionCompressor",
+          "id": "gapminder-setGapMinderAttributeScale",
+          "file": "gapminder",
+          "factory": "compressSetAttributeScale"
+        },
+        {
           "type": "app",
           "name": "GapMinder"
         }

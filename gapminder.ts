@@ -30,6 +30,44 @@ function setAttributeScaleImpl(inputs, parameter) {
   };
 }
 
+export function compressSetAttribute(path: prov.ActionNode[]) {
+  const lastByAttribute : any = {};
+  path.forEach((p) => {
+    if (p.f_id === 'setGapMinderAttribute') {
+      const para = p.parameter.name;
+      lastByAttribute[para] = p;
+    }
+  });
+  return path.filter((p) => {
+    if (p.f_id !== 'setGapMinderAttribute') {
+      return true;
+    }
+    const para = p.parameter.name;
+    //last one remains
+    return lastByAttribute[para] === p;
+  });
+}
+
+
+export function compressSetAttributeScale(path: prov.ActionNode[]) {
+  const lastByAttribute : any = {};
+  path.forEach((p) => {
+    if (p.f_id === 'setGapMinderAttributeScale') {
+      const para = p.parameter.name;
+      lastByAttribute[para] = p;
+    }
+  });
+  return path.filter((p) => {
+    if (p.f_id !== 'setGapMinderAttributeScale') {
+      return true;
+    }
+    const para = p.parameter.name;
+    //last one remains
+    return lastByAttribute[para] === p;
+  });
+}
+
+
 export function createCmd(id) {
   switch (id) {
     case 'setGapMinderAttribute' :
