@@ -1,0 +1,275 @@
+/**
+ * Created by Samuel Gratzl on 15.12.2014.
+ */
+
+body, html {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+
+  background-color: #fafafa;
+
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.selectioninfo {
+  .no-selection-selected.no-selection-hovered {
+    display: none;
+  }
+}
+
+#toolbar {
+  i {
+    background-size: 100%;
+    margin: 0 0.1em;
+  }
+
+  .btn-group {
+    //display: block;
+  }
+}
+#notes {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+
+  button {
+    font-size: small;
+  }
+}
+
+$select-color: orange;
+$hover-color: #ffc46b;
+
+svg {
+  vector-effect : non-scaling-stroke;
+  shape-rendering: geometricPrecision;
+}
+
+main {
+  display: flex !important;
+  align-items: stretch;
+  flex-flow: column;
+}
+
+#stratomex {
+  flex: 1 1 auto;
+
+  position: relative;
+  background-color: white;
+
+  .column {
+    position: absolute;
+    width: auto;
+    height: auto;
+    background-color: #fafafa;
+    white-space: nowrap;
+
+    &.select-selected {
+      //border: 1px solid $select-color;
+      background: none;
+
+      div.summary, div.group {
+        border-color: $select-color !important;
+      }
+    }
+    &.select-hovered {
+      border: 1px solid $hover-color;
+      background: none;
+    }
+
+    &.ui-state-disabled {
+      opacity: 1;
+    }
+
+    div.toolbar, div.gtoolbar {
+      i {
+        background-size: 100%;
+        margin: 0 1px;
+      }
+      i:hover {
+        font-weight: bold;
+        cursor: pointer;
+      }
+      i.fa-close {
+        color: red;
+      }
+    }
+
+    div.toolbar {
+      position: absolute;
+      height: 16px;
+      top: -16px;
+
+      div {
+        display: inline-block;
+        margin: 0 1px;
+      }
+    }
+
+    div.summary {
+      border: 2px solid gray;
+      border-radius: 5px 5px 2px 2px;
+
+      div.title {
+        padding: 0 1em;
+        overflow: hidden;
+        font-size: small;
+      }
+
+      > .multiform {
+        background-color: white;
+        line-height: 0;
+      }
+    }
+    div.group {
+      margin: 5px 0 5px 0;
+      border-radius: 5px 5px ;
+      border: 2px solid gray;
+      position: relative;
+
+      &.selected {
+        border-color: $select-color;
+        div.title {
+          background-color: $select-color;
+        }
+      }
+
+      div.body {
+        /*disable selection*/
+        pointer-events: none;
+        line-height: 0;
+        background-color: #d1d1d1;
+        text-align: center;
+
+        * {
+          background-color: white;
+        }
+      }
+
+      div.title {
+        background-color: #d1d1d1;
+        padding: 0 1em;
+        overflow: hidden;
+        font-size: small;
+      }
+
+      div.footer {
+        background-color: black;
+        height: 5px;
+
+        div {
+          background-color: gray;
+          height: 100%;
+        }
+      }
+
+      div.gtoolbar {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        div {
+          display: inline-block;
+          margin: 0 1px;
+        }
+      }
+    }
+
+    div.detail {
+      position: absolute;
+    }
+  }
+
+  .selection-clearer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+
+  .link-container {
+    svg {
+      position: absolute;
+
+      path.rel-back {
+        stroke: none;
+        fill: white;
+        opacity: 0;
+      }
+      path.rel-item {
+        pointer-events: none;
+        stroke: black;
+        stroke-width: 1;
+        stroke-opacity: 0.9;
+
+        &.select-selected {
+          stroke: $select-color;
+          pointer-events: none;
+        }
+        &.select-hovered {
+          stroke: $hover-color;
+          pointer-events: none;
+        }
+      }
+      path.rel-group, path.rel-block {
+        stroke: black;
+        stroke-width: 1;
+        stroke-opacity: 0.9;
+        fill: black;
+        opacity: 0.2;
+
+        &.select-selected {
+          fill: $select-color;
+          pointer-events: none;
+        }
+        &.select-hovered {
+          fill: $hover-color;
+          pointer-events: none;
+        }
+      }
+    }
+  }
+}
+
+#databrowser {
+  background-color: #e5e5e5;
+
+  position: relative;
+  width: 100%;
+  height: 30vh;
+  padding: 0;
+
+  > div {
+    height: 100%;
+    max-width: none;
+
+    .row.selected rect.bg {
+      stroke: $select-color;
+      stroke-width: 1;
+    }
+    .row.hover rect.bg {
+      stroke: $hover-color;
+      stroke-width: 1;
+    }
+  }
+
+  div.lu {
+    top: 42px;
+  }
+}
+
+.multiform .select-selected {
+  //html variant
+  border: 1px solid $select-color;
+  background-color: $select-color;
+}
+
+svg .select-selected {
+  //svg variant
+  stroke: $select-color;
+  stroke-width: 1px;
+  fill: $select-color;
+  vector-effect: non-scaling-stroke;
+}

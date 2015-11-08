@@ -1,0 +1,42 @@
+{
+  "name": "gapminder",
+  "version": "0.0.1",
+  "license" : "SEE LICENSE IN LICENSE",
+  "repository": "Caleydo/gapminder",
+  "dependencies": {
+  },
+  "peerDependencies": {
+    "caleydo_core": "*",
+    "caleydo_provenance": "*",
+    "caleydo_vis": "*",
+    "caleydo_d3": "*",
+    "wrapper_bootstrap_fontawesome": "*",
+    "clue_demo": "*"
+  },
+  "caleydo": {
+    "plugins": {
+      "web": [
+        {
+          "type": "view",
+          "id": "gapminder",
+          "file": "gapminder",
+          "location": "gapminder"
+        },
+        {
+          "type": "actionFactory",
+          "id": "gapminder",
+          "file": "gapminder",
+          "factory": "createCmd",
+          "creates": "(addStratomeXNote|changeStratomeXNote|removeStratomeXNote)"
+        },
+        {
+          "type": "app",
+          "name": "GapMinder"
+        }
+      ]
+    }
+  },
+  "publishConfig": {
+    "registry": "http://registry.caleydo.org/"
+  }
+}
