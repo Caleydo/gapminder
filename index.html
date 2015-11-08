@@ -11,10 +11,28 @@
     <script src="/caleydo_web.js"></script>
 </head>
 <body>
-<div id="mainhelper" style="display: none;">
-    <div id="gapminder" data-main="true"></div>
-    <div id="databrowser">
+<div class="gapminder">
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="axis attr-y">A</div>
     </div>
+    <div class="col-sm-9">
+      <svg class="chart"></svg>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-offset-3 col-sm-9">
+      <div class="axis attr-x">B</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-10 timeline">
+      <input type="range" min="1800" max="2015" step="1" value="1800">
+    </div>
+    <div class="col-sm-2 attr-size">
+        CC
+    </div>
+  </div>
 </div>
 </body>
 </html>

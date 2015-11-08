@@ -27,7 +27,7 @@
           "id": "gapminder",
           "file": "gapminder",
           "factory": "createCmd",
-          "creates": "(addStratomeXNote|changeStratomeXNote|removeStratomeXNote)"
+          "creates": "setGapMinderAttribute"
         },
         {
           "type": "app",

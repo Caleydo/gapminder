@@ -1,27 +1,14 @@
-/**
- * Created by Samuel Gratzl on 15.12.2014.
- */
-define(function (require) {
-  'use strict';
-  var $ = require('jquery');
-  var data = require('../caleydo_core/data');
-  var vis = require('../caleydo_core/vis');
-  var C = require('../caleydo_core/main');
-  var template = require('../clue_demo/template');
-  var cmode = require('../caleydo_provenance/mode');
-
-
-  var helper = document.querySelector('#mainhelper');
-  var elems = template.create(document.body, {
-    app: 'GapMinder'
-  });
-  var graph = elems.graph;
-  {
-    while(helper.firstChild) {
-      elems.$main.node().appendChild(helper.firstChild);
-    }
-    helper.remove();
-  }
-
-  elems.jumpToStored();
+define(["require", "exports", '../clue_demo/template', '../caleydo_window/databrowser', './gapminder', 'd3'], function (require, exports, template, databrowser, gapminder, d3) {
+    //create main
+    var main = document.querySelector('div.gapminder');
+    var elems = template.create(document.body, {
+        app: 'GapMinder'
+    });
+    elems.$main.node().appendChild(main);
+    var app = gapminder.create(main, elems.graph);
+    databrowser.create(d3.select('aside.left').append('section').classed('databrowser', true).node(), {
+        filter: function (d) { return /.*gapminder.*/.test(d.desc.fqname); }
+    });
+    elems.jumpToStored();
 });
+//# sourceMappingURL=main.js.map
