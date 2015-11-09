@@ -140,6 +140,9 @@ class GapMinder extends views.AView {
   private xaxis = d3.svg.axis().orient('bottom');
   private yaxis = d3.svg.axis().orient('left');
 
+  private timelineaxis = d3.svg.axis().orient('bottom');
+  private timelinescale = d3.scale.ordinal();
+
   private lasso : any;
 
   constructor(private elem:Element, private provGraph:prov.ProvenanceGraph) {
@@ -224,6 +227,11 @@ class GapMinder extends views.AView {
     // Init the lasso on the svg:g that contains the dots
     $elem.select('g.marks').call(this.lasso);
 
+
+    $elem.select('div.timeline input').on('change', function() {
+      this.value
+    })
+
     this.update();
   }
 
@@ -236,9 +244,9 @@ class GapMinder extends views.AView {
         return d3.scale.linear().domain([0,100]);
       }
       if (a.scale === 'log') {
-        return d3.scale.log().domain([Math.max(1,a.data.valuetype.range[0]),a.data.valuetype.range[1]]);
+        return d3.scale.log().domain([Math.max(1,a.data.valuetype.range[0]),a.data.valuetype.range[1]]).clamp(true);
       }
-      return d3.scale.linear().domain(a.data.valuetype.range);
+      return d3.scale.linear().domain(a.data.valuetype.range).clamp(true);
     }
 
     const x = to_scale(this.attrs.x).range([100,dim[0]-25]);
@@ -262,31 +270,36 @@ class GapMinder extends views.AView {
     const sd = this.attrs.size.data;
 
     const to_ids = (d) => d ? d.rowIds(): null;
-    const to_data = (d, r) => d ? d.slice(0).data(r) : null;
+    const to_data = (d, r, dim) => d ? d.slice(dim < 0 ? 0 : dim).data(r) : null;
 
-    return Promise.all([to_ids(xd), to_ids(yd), to_ids(sd)]).then((ids) => {
-      var r:ranges.Range = null;
-      ids.forEach((id) => {
+    return Promise.all([this.refData.rowIds(), to_ids(xd), to_ids(yd), to_ids(sd)]).then((ids) => {
+      var id_range:ranges.Range = ids[0];
+      const time_sel = this.refData.coltype.selections();
+      const time_selected = time_sel.isNone ? -1 : time_sel.dim(0).asList()[0];
+
+      ids.slice(1).forEach((id: ranges.Range) => {
         if (id) {
-          if (r === null) {
-            r = id;
-          } else {
-            r = r.intersect(id);
-          }
+          id_range = id_range.intersect(id);
         }
       });
-      return Promise.all([r, (xd ? xd : (yd ? yd : sd)).rows(r), to_data(xd, r), to_data(yd, r), to_data(sd, r)]);
+      id_range = ranges.list(id_range.dim(0).sort());
+      const localids = ids.map((id: ranges.Range) => {
+        return id ? id.indexOf(id_range) : null
+      });
+      return Promise.all([id_range, this.refData.rows(localids[0]), to_data(xd, localids[1], 0), to_data(yd, localids[2], 0), to_data(sd, localids[3], 0)]);
     }).then((dd) => {
       const r = dd[0];
       const names = dd[1];
       const x_data = dd[2];
       const y_data = dd[3];
       const s_data = dd[4];
+      const row_sel = this.refData.rowtype.selections();
 
       //r contains the valid ids
       return r.dim(0).asList().map((id, i) => {
         return {
           id: id,
+          selected : row_sel.dim(0).contains(id),
           name: names ? names[i] : 0,
           x: x_data ? x_data[i] : 0,
           y: y_data ? y_data[i] : 0,
@@ -296,17 +309,15 @@ class GapMinder extends views.AView {
       });
     });
   }
-
-
-  private update() {
-    //TODO
-
+  private updateLegend() {
     Object.keys(this.attrs).forEach((attr) => {
       const m = this.attrs[attr];
       this.$elem.select('.attr-'+attr).text(m.label);
       this.$elem.select('.attr-'+attr+'-scale').property('value',m.scale);
     });
+  }
 
+  private updateChart() {
     var $chart = this.$elem.select('svg.chart');
     $chart.attr({
       width: this.dim[0],
@@ -322,18 +333,20 @@ class GapMinder extends views.AView {
 
       const $marks = $chart.select('g.marks').selectAll('.mark').data(data, (d) => d.id);
       const $marks_enter = $marks.enter().append('g').classed('mark',true)
-        .attr('transform',(d) => `translate(${scales.x(d.x)},${scales.y(d.y)})`);
+        .attr('transform',(d) => `translate(${scales.x(d.x || 0)},${scales.y(d.y || 0)})`);
       $marks_enter.append('circle')
-        .attr('r',(d) => scales.size(d.size))
+        .attr('r',(d) => scales.size(d.size || 0))
         .style('fill', (d) => scales.color(d.color))
         .append('title');
 
       this.lasso.items($marks);
-
+      $marks.select('circle')
+          .classed('selected', (d) => d.selected)
+          .select('title').text((d) => d.name);
       $marks.transition()
-        .attr('transform',(d) => `translate(${scales.x(d.x)},${scales.y(d.y)})`)
-        .select('circle').attr('r',(d) => scales.size(d.size))
-        .select('title').text((d) => d.name);
+        .attr('transform',(d) => `translate(${scales.x(d.x || 0)},${scales.y(d.y || 0)})`)
+        .select('circle')
+          .attr('r',(d) => scales.size(d.size || 0));
 
       $marks.exit()
         .style('opacity',1)
@@ -341,6 +354,34 @@ class GapMinder extends views.AView {
           .style('opacity',0)
           .remove();
     });
+  }
+
+  private update() {
+    //update labels
+    this.updateLegend();
+    this.updateChart();
+    this.updateTimeLine();
+  }
+
+  private updateTimeLine() {
+    const d = this.refData;
+    var $chart = this.$elem.select('svg.timeline');
+    $chart.attr({
+      width: this.dim[0]-200,
+      height: 50
+    });
+    if (d) {
+      d.cols().then((cols) => {
+        this.timelinescale.domain(cols).rangeRoundBands([20, this.dim[0]-220]);
+        const sample = [];
+        for (let i = 0; i < cols.length; i+= 10) {
+          sample.push(cols[i]);
+        }
+        sample.push(cols[cols.length-1]);
+        $chart.call(this.timelineaxis.scale(this.timelinescale).tickValues(sample));
+
+      });
+    }
   }
 
   reset() {

@@ -35,15 +35,15 @@ svg .select-selected {
   vector-effect: non-scaling-stroke;
 }
 
-svg.chart {
-  .xaxis, .yaxis {
-    path, line {
-      stroke-width: 1;
-      stroke: black;
-      fill: none;
-    }
+svg.chart .xaxis, svg.chart .yaxis, svg.timeline {
+  path, line {
+    stroke-width: 1;
+    stroke: black;
+    fill: none;
   }
+}
 
+svg.chart {
   .mark {
     opacity: 0.5;
   }
