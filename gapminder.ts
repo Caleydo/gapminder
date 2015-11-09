@@ -107,6 +107,10 @@ class Attribute {
   get label() {
     return this.data ? this.data.desc.name : 'None';
   }
+
+  get valid() {
+    return this.data !== null;
+  }
 }
 
 interface IScale {
@@ -167,15 +171,70 @@ class GapMinder extends views.AView {
     const margin = 25;
     const dim = this.dim;
 
+    function to_scale(a : Attribute) {
+      if (!a.valid) {
+        return d3.scale.linear().domain([0,100]);
+      }
+      if (a.scale === 'log') {
+        return d3.scale.log().domain([Math.max(1,a.data.valuetype.range[0]),a.data.valuetype.range[1]]);
+      }
+      return d3.scale.linear().domain(a.data.valuetype.range);
+    }
+
+    const x = to_scale(this.attrs.x).range([100,dim[0]-25]);
+    const y = to_scale(this.attrs.y).range([dim[1]-margin,25]);
+    const s = to_scale(this.attrs.size).range([1,200]);
+
     return Promise.resolve( {
-      x: d3.scale.linear().domain([0,100]).range([60,dim[0]-25]),
-      y: d3.scale.linear().domain([0,100]).range([dim[1]-margin,25]),
-      size: d3.scale.linear().domain([0,100]).range([0,100]),
-      color: d3.scale.category20()
+      x: x,
+      y: y,
+      size: s,
+      color: (d) => d
     });
   }
   private computeData() : Promise<{ x: number; y: number; size: number; color: string }[]> {
-    return Promise.resolve([]);
+    //no data
+    if (!this.attrs.x.valid && !this.attrs.y.valid && !this.attrs.size.valid) {
+      return Promise.resolve([]);
+    }
+    const xd = this.attrs.x.data;
+    const yd = this.attrs.y.data;
+    const sd = this.attrs.size.data;
+
+    const to_ids = (d) => d ? d.rowIds(): null;
+    const to_data = (d, r) => d ? d.slice(0).data(r) : null;
+
+    return Promise.all([to_ids(xd), to_ids(yd), to_ids(sd)]).then((ids) => {
+      var r:ranges.Range = null;
+      ids.forEach((id) => {
+        if (id) {
+          if (r === null) {
+            r = id;
+          } else {
+            r = r.intersect(id);
+          }
+        }
+      });
+      return Promise.all([r, (xd ? xd : (yd ? yd : sd)).rows(r), to_data(xd, r), to_data(yd, r), to_data(sd, r)]);
+    }).then((dd) => {
+      const r = dd[0];
+      const names = dd[1];
+      const x_data = dd[2];
+      const y_data = dd[3];
+      const s_data = dd[4];
+
+      //r contains the valid ids
+      return r.dim(0).asList().map((id, i) => {
+        return {
+          id: id,
+          name: names ? names[i] : 0,
+          x: x_data ? x_data[i] : 0,
+          y: y_data ? y_data[i] : 0,
+          size: s_data ? s_data[i] : 0,
+          color: 'black'
+        };
+      });
+    });
   }
 
 
@@ -185,6 +244,7 @@ class GapMinder extends views.AView {
     Object.keys(this.attrs).forEach((attr) => {
       const m = this.attrs[attr];
       this.$elem.select('.attr-'+attr).text(m.label);
+      this.$elem.select('.attr-'+attr+'-scale').property('value',m.scale);
     });
 
     var $chart = this.$elem.select('svg.chart');
@@ -200,16 +260,18 @@ class GapMinder extends views.AView {
       $chart.select('g.xaxis').call(this.xaxis.scale(scales.x));
       $chart.select('g.yaxis').call(this.yaxis.scale(scales.y));
 
-      const $marks = $chart.select('g.marks').selectAll('.mark').data(data);
+      const $marks = $chart.select('g.marks').selectAll('.mark').data(data, (d) => d.id);
       const $marks_enter = $marks.enter().append('g').classed('mark',true)
         .attr('transform',(d) => `translate(${scales.x(d.x)},${scales.y(d.y)})`);
       $marks_enter.append('circle')
         .attr('r',(d) => scales.size(d.size))
-        .style('fill', (d) => scales.color(d.color));
+        .style('fill', (d) => scales.color(d.color))
+        .append('title');
 
       $marks.transition()
         .attr('transform',(d) => `translate(${scales.x(d.x)},${scales.y(d.y)})`)
-        .select('circle').attr('r',(d) => scales.size(d.size));
+        .select('circle').attr('r',(d) => scales.size(d.size))
+        .select('title').text((d) => d.name);
 
       $marks.exit()
         .style('opacity',1)
