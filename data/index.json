@@ -1,38 +1,41 @@
 [
   {
     "name": "Total GDP (PPP$, inflation-adjusted)",
-    "path": "gdb.csv",
+    "path": "gdp.csv",
+    "separator": "\t",
     "type": "matrix",
-    "size": [12, 2],
+    "size": [260, 217],
     "rowtype": "Country",
     "coltype": "Year",
     "value": {
       "type": "real",
-      "range": [0, 12]
+      "range": [0, 182700]
     }
   },
   {
     "name": "Child mortality (0-5 year-olds dying per 1,000 born)",
     "path": "mur.csv",
+    "separator": "\t",
     "type": "matrix",
-    "size": [12, 2],
+    "size": [261,217],
     "rowtype": "Country",
     "coltype": "Year",
     "value": {
       "type": "real",
-      "range": [0, 12]
+      "range": [0, 636.6]
     }
   },
   {
     "name": "Population, total",
     "path": "population.csv",
+    "separator": "\t",
     "type": "matrix",
-    "size": [12, 2],
+    "size": [262, 82],
     "rowtype": "Country",
     "coltype": "Year",
     "value": {
       "type": "real",
-      "range": [0, 12]
+      "range": [0, 1376000000]
     }
   }
 ]
