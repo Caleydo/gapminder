@@ -17,7 +17,8 @@ import d3 = require('d3');
 let helper = document.querySelector('div.gapminder');
 
 const elems = template.create(document.body, {
-  app: 'GapMinder'
+  app: 'GapMinder',
+  id: 'clue_gapminder'
 });
 {
   while(helper.firstChild) {
