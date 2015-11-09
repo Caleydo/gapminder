@@ -1,10 +1,12 @@
 /**
  * Created by Samuel Gratzl on 15.12.2014.
  */
+/// <amd-dependency path='d3-lasso-plugin' />
 import C = require('../caleydo_core/main');
 import datatypes = require('../caleydo_core/datatype');
 import matrix = require('../caleydo_core/matrix');
 import prov = require('../caleydo_provenance/main');
+import idtypes = require('../caleydo_core/idtype');
 import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
 import databrowser = require('../caleydo_window/databrowser');
@@ -138,6 +140,8 @@ class GapMinder extends views.AView {
   private xaxis = d3.svg.axis().orient('bottom');
   private yaxis = d3.svg.axis().orient('left');
 
+  private lasso : any;
+
   constructor(private elem:Element, private provGraph:prov.ProvenanceGraph) {
     super();
     this.$elem = d3.select(elem).datum(this);
@@ -146,6 +150,16 @@ class GapMinder extends views.AView {
     this.noneRef = provGraph.findOrAddObject('', 'None', 'data');
 
     this.init(this.$elem);
+  }
+
+  private get refData(): matrix.IMatrix {
+    if (this.attrs.x.valid) {
+      return this.attrs.x.data;
+    }
+    if (this.attrs.y.valid) {
+      return this.attrs.y.data;
+    }
+    return this.attrs.size.data;
   }
 
 
@@ -164,6 +178,52 @@ class GapMinder extends views.AView {
         that.provGraph.push(setAttributeScale(attr, that.ref, this.value));
       })
     });
+
+    // Lasso functions to execute while lassoing
+    var lasso_start = function () {
+      /*lasso.items()
+       .attr("r",3.5) // reset size
+       .style("fill",null) // clear all of the fills
+       .classed({"not_possible":true,"selected":false}); // style as not possible
+       */
+    };
+
+    var lasso_draw = function () {
+      /*// Style the possible dots
+       lasso.items().filter(function(d) {return d.possible===true})
+       .classed({"not_possible":false,"possible":true});
+
+       // Style the not possible dot
+       lasso.items().filter(function(d) {return d.possible===false})
+       .classed({"not_possible":true,"possible":false});
+       */
+    };
+
+    var lasso_end = () => {
+      const selected = this.lasso.items().filter(function(d) {return d.selected===true}).data();
+      console.log(selected.map((d) => d.id));
+      const refdata = this.refData;
+      if (refdata) {
+        refdata.rowtype.select(selected.map((d) => d.id));
+      }
+    };
+
+    // Create the area where the lasso event can be triggered
+    var $lasso_area = $elem.select('rect.lassoarea');
+
+    // Define the lasso
+    this.lasso = (<any>d3).lasso()
+      .closePathDistance(75) // max distance for the lasso loop to be closed
+      .closePathSelect(true) // can items be selected by closing the path?
+      .hoverSelect(true) // can items by selected by hovering over them?
+      .area($lasso_area) // area where the lasso can be started
+      .on('start', lasso_start) // lasso start function
+      .on('draw', lasso_draw) // lasso draw function
+      .on('end', lasso_end); // lasso end function
+
+    // Init the lasso on the svg:g that contains the dots
+    $elem.select('g.marks').call(this.lasso);
+
     this.update();
   }
 
@@ -267,6 +327,8 @@ class GapMinder extends views.AView {
         .attr('r',(d) => scales.size(d.size))
         .style('fill', (d) => scales.color(d.color))
         .append('title');
+
+      this.lasso.items($marks);
 
       $marks.transition()
         .attr('transform',(d) => `translate(${scales.x(d.x)},${scales.y(d.y)})`)
