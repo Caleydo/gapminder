@@ -14,22 +14,26 @@ import d3 = require('d3');
 
 
 //create main
-const main = document.querySelector('div.gapminder');
+let helper = document.querySelector('div.gapminder');
 
 const elems = template.create(document.body, {
   app: 'GapMinder'
 });
-(<Node>elems.$main.node()).appendChild(main);
+{
+  while(helper.firstChild) {
+    (<Node>elems.$main.node()).appendChild(helper.firstChild);
+  }
+}
 
-const app = gapminder.create(<Element>main,elems.graph);
+const app = gapminder.create(<Element>elems.$main.node(),elems.graph);
 
 databrowser.create(<Element>d3.select('aside.left').append('section').classed('databrowser',true).node(), {
   filter: (d) => /.*gapminder.*/.test(d.desc.fqname)
 });
 
 function updateBounds() {
-  var bounds = C.bounds(main);
-  app.setBounds(bounds.x, bounds.y, bounds.w, bounds.h);
+  var bounds = C.bounds(document.querySelector('div.gapminder_i'));
+  app.setBounds(bounds.x, bounds.y, bounds.w - 30, bounds.h - 60);
 }
 
 $(window).on('resize', updateBounds);
