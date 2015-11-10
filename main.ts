@@ -38,11 +38,14 @@ function updateBounds() {
 }
 
 elems.on('modeChanged', function(event, new_) {
+  app.setInteractive(new_.exploration >= 0.8);
   //for the animations to end
   setTimeout(updateBounds, 700);
 });
 
 $(window).on('resize', updateBounds);
 updateBounds();
+
+app.setInteractive(cmode.getMode().exploration >= 0.8);
 
 elems.jumpToStored();

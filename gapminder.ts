@@ -166,6 +166,12 @@ class GapMinder extends views.AView {
     return this.attrs.size.data;
   }
 
+  setInteractive(interactive: boolean) {
+    this.$elem.select('rect.lassoarea').style('display', interactive ? null: 'none');
+    this.$elem.selectAll('select').attr('disabled',interactive ? null: 'disabled');
+    this.$elem.select('line.marker').style('pointer-events', interactive ? null: 'none');
+  }
+
 
   private init($elem: d3.Selection<any>) {
     const that = this;
@@ -438,7 +444,6 @@ class GapMinder extends views.AView {
           if (d.y) {
             $this.attr('cy', scales.y(d.y));
           }
-          $this.style('display', d.x || d.y ? null : 'none');
         });
 
       $marks.exit()
