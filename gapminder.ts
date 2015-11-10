@@ -419,9 +419,18 @@ class GapMinder extends views.AView {
       y : this.dim[1]*0.5
     });
     var refData = this.refData;
-    if (this.refData && selectedTimePoint != null) {
-      this.refData.coltype.unmap([selectedTimePoint]).then((names) => {
+    if (refData && selectedTimePoint != null) {
+      refData.coltype.unmap([selectedTimePoint]).then((names) => {
         $chart.select('text.act_year').text(names[0]);
+      });
+    }
+
+    {
+      //
+      const b = C.bounds(<Element>$chart.node());
+      this.lasso.itemOffset({
+        left: b.x,
+        top: b.y,
       });
     }
 
@@ -445,7 +454,7 @@ class GapMinder extends views.AView {
             $this.attr('cy', scales.y(d.y));
           }
         })
-        .style('fill', (d) => scales.color(d.color))
+        //.style('fill', (d) => scales.color(d.color))
         .on('click', (d) => {
           this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event));
         })
@@ -476,11 +485,36 @@ class GapMinder extends views.AView {
     });
   }
 
+  private initedListener = false;
+
   private update() {
     //update labels
     this.updateLegend();
     this.updateTimeLine();
     this.updateChart();
+
+    const ref = this.refData;
+    if (!this.initedListener && ref) {
+      this.initedListener = true;
+      ref.coltype.on('select', (event: any, type: string, new_: ranges.Range) => {
+        const id = new_.first;
+        if (id) {
+          var $marker = this.$elem.select('svg.timeline line.marker');
+          const timeIds = <any>$marker.datum();
+          const selectedTimePoint = timeIds.names[timeIds.ids.indexOf(id)];
+          const x = this.timelinescale(selectedTimePoint);
+          $marker.attr({
+            x1: x,
+            x2: x
+          });
+          this.updateChart();
+        }
+      });
+      ref.rowtype.on('select', (event: any, type: string, new_: ranges.Range) => {
+        const ids = new_.dim(0).asList();
+        this.$elem.select('svg.chart g.marks').selectAll('.mark').classed('select-'+type,(d) => ids.indexOf(d.id) >= 0);
+      });
+    }
   }
 
   private updateTimeLine() {
@@ -507,13 +541,6 @@ class GapMinder extends views.AView {
           //j in the new position
           const timeIds = <any>$marker.datum();
           timeIds.idtype.select(idtypes.hoverSelectionType, [timeIds.ids[j]]);
-          const selectedTimePoint = timeIds.names[j];
-          const x = this.timelinescale(selectedTimePoint);
-          $marker.attr({
-            x1: x,
-            x2: x
-          });
-          this.updateChart();
         }).on('dragend', () => {
           //select the last entry
           const timeIds = <any>$marker.datum();
