@@ -205,6 +205,7 @@ class GapMinder extends views.AView {
 
     var lasso_end = () => {
       const selected = this.lasso.items().filter(function(d) {return d.selected===true}).data();
+      this.lasso.items().classed('select-selected', (d) => d.selected);
       console.log(selected.map((d) => d.id));
       const refdata = this.refData;
       if (refdata) {
@@ -228,11 +229,6 @@ class GapMinder extends views.AView {
     // Init the lasso on the svg:g that contains the dots
     $elem.select('g.marks').call(this.lasso);
 
-
-    $elem.select('div.timeline input').on('change', function() {
-      this.value
-    })
-
     this.update();
   }
 
@@ -252,7 +248,7 @@ class GapMinder extends views.AView {
 
     const x = to_scale(this.attrs.x).range([100,dim[0]-25]);
     const y = to_scale(this.attrs.y).range([dim[1]-margin,25]);
-    const s = to_scale(this.attrs.size).range([1,200]);
+    const s = to_scale(this.attrs.size).range([1,100]);
 
     return Promise.resolve( {
       x: x,
@@ -411,21 +407,39 @@ class GapMinder extends views.AView {
       $chart.select('g.yaxis').call(this.yaxis.scale(scales.y));
 
       const $marks = $chart.select('g.marks').selectAll('.mark').data(data, (d) => d.id);
-      const $marks_enter = $marks.enter().append('g').classed('mark',true)
-        .attr('transform',(d) => `translate(${scales.x(d.x || 0)},${scales.y(d.y || 0)})`);
-      $marks_enter.append('circle')
-        .attr('r',(d) => scales.size(d.size || 0))
+      const $marks_enter = $marks.enter().append('circle').classed('mark',true)
+        .each(function(d){
+          const $this = d3.select(this);
+          if (d.size) {
+            $this.attr('r', scales.size(d.size));
+          }
+          if (d.x) {
+            $this.attr('cx', scales.x(d.x));
+          }
+          if (d.y) {
+            $this.attr('cy', scales.y(d.y));
+          }
+        })
         .style('fill', (d) => scales.color(d.color))
         .append('title');
 
       this.lasso.items($marks);
-      $marks.select('circle')
-          .classed('selected', (d) => d.selected)
+      $marks.classed('select-selected', (d) => d.selected)
           .select('title').text((d) => d.name);
       $marks.transition()
-        .attr('transform',(d) => `translate(${scales.x(d.x || 0)},${scales.y(d.y || 0)})`)
-        .select('circle')
-          .attr('r',(d) => scales.size(d.size || 0));
+        .each(function(d){
+          const $this = d3.select(this);
+          if (d.size) {
+            $this.attr('r', scales.size(d.size));
+          }
+          if (d.x) {
+            $this.attr('cx', scales.x(d.x));
+          }
+          if (d.y) {
+            $this.attr('cy', scales.y(d.y));
+          }
+          $this.style('display', d.x || d.y ? null : 'none');
+        });
 
       $marks.exit()
         .style('opacity',1)
