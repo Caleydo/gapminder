@@ -141,7 +141,8 @@ class GapMinder extends views.AView {
   private yaxis = d3.svg.axis().orient('left');
 
   private timelineaxis = d3.svg.axis().orient('bottom');
-  private timelinescale = d3.scale.ordinal();
+  private timelinescale = d3.scale.ordinal<string,number>();
+  private selectedTimePoint = '';
 
   private lasso : any;
 
@@ -260,6 +261,77 @@ class GapMinder extends views.AView {
       color: (d) => d
     });
   }
+
+  private getTimeIds() {
+    const xd = this.attrs.x.data;
+    const yd = this.attrs.y.data;
+    const sd = this.attrs.size.data;
+    if (!xd && !yd && !sd) {
+      return Promise.resolve({
+        idtype: null,
+        ids: ranges.none(),
+        names: []
+      });
+    }
+    return Promise.all<any>([xd ? xd.colIds() : null, yd ? yd.colIds() : null, sd ? sd.colIds() : null, xd ? xd.cols() : null, yd ? yd.cols() : null, sd ? sd.cols() : null]).then((arr) => {
+      var ids = ranges.Range1D.none();
+      var lookup : any = {};
+      const names = arr.slice(3);
+      arr.slice(0,3).forEach((a: ranges.Range, i) => {
+        if (a) {
+          ids = ids.union(a.dim(0));
+          const name = names[i];
+          a.dim(0).asList().forEach((id,j) => {
+            lookup[id] = name[j];
+          });
+        }
+      });
+      //we have the union ids, now their names
+      ids = ids.sort();
+      var name = [];
+      ids.forEach((id) => name.push(lookup[id]));
+      return {
+        idtype: (xd ? xd.coltype : (yd ? yd.coltype : sd.coltype)),
+        ids: ranges.list(ids),
+        names: name
+      };
+    })
+  }
+
+  private getRowIds() {
+    const xd = this.attrs.x.data;
+    const yd = this.attrs.y.data;
+    const sd = this.attrs.size.data;
+    if (!xd && !yd && !sd) {
+      return Promise.resolve({
+        ids: ranges.none(),
+        names: []
+      });
+    }
+    return Promise.all<any>([xd ? xd.rowIds() : null, yd ? yd.rowIds() : null, sd ? sd.rowIds() : null, xd ? xd.rows() : null, yd ? yd.rows() : null, sd ? sd.rows() : null]).then((arr) => {
+      var ids = ranges.Range1D.none();
+      var lookup : any = {};
+      const names = arr.slice(3);
+      arr.slice(0,3).forEach((a: ranges.Range, i) => {
+        if (a) {
+          ids = ids.intersect(a.dim(0));
+          const name = names[i];
+          a.dim(0).asList().forEach((id,j) => {
+            lookup[id] = name[j];
+          });
+        }
+      });
+      //we have the union ids, now their names
+      ids = ids.sort();
+      var name = [];
+      ids.forEach((id) => name.push(lookup[id]));
+      return {
+        ids: ranges.list(ids),
+        names: name
+      };
+    })
+  }
+
   private computeData() : Promise<{ x: number; y: number; size: number; color: string }[]> {
     //no data
     if (!this.attrs.x.valid && !this.attrs.y.valid && !this.attrs.size.valid) {
@@ -270,23 +342,25 @@ class GapMinder extends views.AView {
     const sd = this.attrs.size.data;
 
     const to_ids = (d) => d ? d.rowIds(): null;
-    const to_data = (d, r, dim) => d ? d.slice(dim < 0 ? 0 : dim).data(r) : null;
+    const to_cols = (d) => d ? d.cols(): null;
+    const to_data = (d, r, dim) => d && dim >= 0 ? d.slice(dim).data(r) : null;
 
-    return Promise.all([this.refData.rowIds(), to_ids(xd), to_ids(yd), to_ids(sd)]).then((ids) => {
+    return Promise.all([this.refData.rowIds(), to_ids(xd), to_ids(yd), to_ids(sd), to_cols(xd), to_cols(yd), to_cols(sd)]).then((ids) => {
       var id_range:ranges.Range = ids[0];
-      const time_sel = this.refData.coltype.selections();
-      const time_selected = time_sel.isNone ? -1 : time_sel.dim(0).asList()[0];
 
-      ids.slice(1).forEach((id: ranges.Range) => {
+      ids.slice(1,4).forEach((id: ranges.Range) => {
         if (id) {
           id_range = id_range.intersect(id);
         }
       });
       id_range = ranges.list(id_range.dim(0).sort());
-      const localids = ids.map((id: ranges.Range) => {
+      const localids = ids.slice(0,4).map((id: ranges.Range) => {
         return id ? id.indexOf(id_range) : null
       });
-      return Promise.all([id_range, this.refData.rows(localids[0]), to_data(xd, localids[1], 0), to_data(yd, localids[2], 0), to_data(sd, localids[3], 0)]);
+      const localdims = ids.slice(4).map((cols) => {
+        return this.selectedTimePoint === '' || !cols ? 0 : cols.indexOf(this.selectedTimePoint);
+      });
+      return Promise.all([id_range, this.refData.rows(localids[0]), to_data(xd, localids[1], localdims[0]), to_data(yd, localids[2], localdims[1]), to_data(sd, localids[3], localdims[2])]);
     }).then((dd) => {
       const r = dd[0];
       const names = dd[1];
@@ -325,6 +399,11 @@ class GapMinder extends views.AView {
     });
     $chart.select('g.xaxis').attr('transform', `translate(0,${this.dim[1]-25})`);
 
+    $chart.select('text.act_year').text(this.selectedTimePoint).attr({
+      x : this.dim[0]*0.5,
+      y : this.dim[1]*0.5
+    });
+
     Promise.all<any>([this.computeScales(), this.computeData()]).then((args : any[]) => {
       const scales = args[0];
       const data : any[] = args[1];
@@ -359,27 +438,69 @@ class GapMinder extends views.AView {
   private update() {
     //update labels
     this.updateLegend();
-    this.updateChart();
     this.updateTimeLine();
+    this.updateChart();
   }
 
   private updateTimeLine() {
     const d = this.refData;
     var $chart = this.$elem.select('svg.timeline');
     $chart.attr({
-      width: this.dim[0]-200,
-      height: 50
+      width: Math.max(this.dim[0]-200,0),
+      height: 25
     });
     if (d) {
-      d.cols().then((cols) => {
-        this.timelinescale.domain(cols).rangeRoundBands([20, this.dim[0]-220]);
+      var $marker = $chart.select('line.marker');
+      var wasEmpty = $marker.empty();
+      if ($marker.empty()) {
+        $marker = $chart.append('line').classed('marker', true).attr({
+          y1: 2,
+          y2: 22
+        }).call(d3.behavior.drag().on('drag', () => {
+          var xPos = (<any>d3.event).x;
+          var leftEdges = this.timelinescale.range();
+          var width = this.timelinescale.rangeBand();
+          var j;
+          for(j=0; xPos > (leftEdges[j] + width); j++) {}
+            //do nothing, just increment j until case fails
+          //j in the new position
+          this.selectedTimePoint = this.timelinescale.domain()[j];
+          const x = this.timelinescale(this.selectedTimePoint);
+          $marker.attr({
+            x1: x,
+            x2: x
+          });
+          this.updateChart();
+        }).on('dragend', () => {
+          //select the last entry
+          d.select(1,[this.timelinescale.domain().indexOf(this.selectedTimePoint)]);
+        }));
+      }
+      this.getTimeIds().then((data) => {
+        this.timelinescale.domain(data.names).rangeRoundPoints([20, this.dim[0]-220]);
         const sample = [];
-        for (let i = 0; i < cols.length; i+= 10) {
-          sample.push(cols[i]);
+        for (let i = 0; i < data.names.length; i+= 10) {
+          sample.push(data.names[i]);
         }
-        sample.push(cols[cols.length-1]);
-        $chart.call(this.timelineaxis.scale(this.timelinescale).tickValues(sample));
+        sample.push(data.names[data.names.length-1]);
+        $chart.select('g.axis').call(this.timelineaxis.scale(this.timelinescale).tickValues(sample));
 
+        if (wasEmpty) {
+          const s = data.idtype.selections().dim(0);
+          var t;
+          if (s.isNone) {
+            data.idtype.select([data.ids.dim(0).asList()[0] ]);
+            t = data.names[0];
+          } else {
+            t = data.names[<any>(data.ids.dim(0).indexOf(s.asList()[0]))];
+          }
+          this.selectedTimePoint = t;
+          const x = this.timelinescale(this.selectedTimePoint);
+          $marker.attr({
+            x1: x,
+            x2: x
+          });
+        }
       });
     }
   }

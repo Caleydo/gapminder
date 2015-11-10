@@ -44,6 +44,11 @@ svg.chart .xaxis, svg.chart .yaxis, svg.timeline {
 }
 
 svg.chart {
+  text.act_year {
+    font-size: 200pt;
+    opacity: 0.2;
+    text-anchor: middle;
+  }
   .mark {
     opacity: 0.5;
   }
@@ -69,6 +74,15 @@ svg.chart {
   .lasso .origin {
     fill:#3399FF;
     fill-opacity:.5;
+  }
+}
+
+svg.timeline {
+  line.marker {
+    stroke-width: 5;
+    stroke: black;
+    stroke-linecap: round;
+    cursor: ew-resize;
   }
 }
 

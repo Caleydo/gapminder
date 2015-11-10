@@ -37,6 +37,11 @@ function updateBounds() {
   app.setBounds(bounds.x, bounds.y, bounds.w - 30, bounds.h - 60);
 }
 
+elems.on('modeChanged', function(event, new_) {
+  //for the animations to end
+  setTimeout(updateBounds, 700);
+});
+
 $(window).on('resize', updateBounds);
 updateBounds();
 
