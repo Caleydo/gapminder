@@ -394,8 +394,8 @@ class GapMinder extends views.AView {
 
   private selectTimePoint() {
     var refData = this.refData;
-    if (this.refData) {
-      const type = this.refData.coltype;
+    if (refData) {
+      const type = refData.coltype;
       const hovered = type.selections(idtypes.hoverSelectionType).first;
       if (hovered != null) {
         return hovered;
@@ -486,6 +486,7 @@ class GapMinder extends views.AView {
   }
 
   private initedListener = false;
+  private timeIds: any = null;
 
   private update() {
     //update labels
@@ -498,10 +499,9 @@ class GapMinder extends views.AView {
       this.initedListener = true;
       ref.coltype.on('select', (event: any, type: string, new_: ranges.Range) => {
         const id = new_.first;
-        if (id) {
+        if (id && this.timeIds) {
           var $marker = this.$elem.select('svg.timeline line.marker');
-          const timeIds = <any>$marker.datum();
-          const selectedTimePoint = timeIds.names[timeIds.ids.indexOf(id)];
+          const selectedTimePoint = this.timeIds.names[this.timeIds.ids.indexOf(id)];
           const x = this.timelinescale(selectedTimePoint);
           $marker.attr({
             x1: x,
@@ -539,18 +539,16 @@ class GapMinder extends views.AView {
           for(j=0; xPos > (leftEdges[j] + width); j++) {}
             //do nothing, just increment j until case fails
           //j in the new position
-          const timeIds = <any>$marker.datum();
-          timeIds.idtype.select(idtypes.hoverSelectionType, [timeIds.ids[j]]);
+          this.timeIds.idtype.select(idtypes.hoverSelectionType, [this.timeIds.ids[j]]);
         }).on('dragend', () => {
           //select the last entry
-          const timeIds = <any>$marker.datum();
           const s = d.coltype.selections(idtypes.hoverSelectionType);
-          timeIds.idtype.select(idtypes.hoverSelectionType, ranges.none());
-          timeIds.idtype.select(s.clone());
+          this.timeIds.idtype.select(idtypes.hoverSelectionType, ranges.none());
+          this.timeIds.idtype.select(s.clone());
         }));
       }
       this.getTimeIds().then((data) => {
-        $marker.datum(data);
+        this.timeIds = data;
         this.timelinescale.domain(data.names).rangeRoundPoints([20, this.dim[0]-220]);
         const sample = [];
         for (let i = 0; i < data.names.length; i+= 10) {
