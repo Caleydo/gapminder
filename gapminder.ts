@@ -142,7 +142,6 @@ class GapMinder extends views.AView {
 
   private timelineaxis = d3.svg.axis().orient('bottom');
   private timelinescale = d3.scale.ordinal<string,number>();
-  private selectedTimePoint = '';
 
   private lasso : any;
 
@@ -271,7 +270,7 @@ class GapMinder extends views.AView {
     if (!xd && !yd && !sd) {
       return Promise.resolve({
         idtype: null,
-        ids: ranges.none(),
+        ids: [],
         names: []
       });
     }
@@ -294,7 +293,7 @@ class GapMinder extends views.AView {
       ids.forEach((id) => name.push(lookup[id]));
       return {
         idtype: (xd ? xd.coltype : (yd ? yd.coltype : sd.coltype)),
-        ids: ranges.list(ids),
+        ids: ids.asList(),
         names: name
       };
     })
@@ -334,7 +333,7 @@ class GapMinder extends views.AView {
     })
   }
 
-  private computeData() : Promise<{ x: number; y: number; size: number; color: string }[]> {
+  private computeData(selectedTimeId : number) : Promise<{ x: number; y: number; size: number; color: string }[]> {
     //no data
     if (!this.attrs.x.valid && !this.attrs.y.valid && !this.attrs.size.valid) {
       return Promise.resolve([]);
@@ -344,7 +343,7 @@ class GapMinder extends views.AView {
     const sd = this.attrs.size.data;
 
     const to_ids = (d) => d ? d.rowIds(): null;
-    const to_cols = (d) => d ? d.cols(): null;
+    const to_cols = (d) => d ? d.colIds(): null;
     const to_data = (d, r, dim) => d && dim >= 0 ? d.slice(dim).data(r) : null;
 
     return Promise.all([this.refData.rowIds(), to_ids(xd), to_ids(yd), to_ids(sd), to_cols(xd), to_cols(yd), to_cols(sd)]).then((ids) => {
@@ -360,7 +359,7 @@ class GapMinder extends views.AView {
         return id ? id.indexOf(id_range) : null
       });
       const localdims = ids.slice(4).map((cols) => {
-        return this.selectedTimePoint === '' || !cols ? 0 : cols.indexOf(this.selectedTimePoint);
+        return selectedTimeId == null || !cols ? 0 : cols.indexOf(selectedTimeId);
       });
       return Promise.all([id_range, this.refData.rows(localids[0]), to_data(xd, localids[1], localdims[0]), to_data(yd, localids[2], localdims[1]), to_data(sd, localids[3], localdims[2])]);
     }).then((dd) => {
@@ -393,6 +392,19 @@ class GapMinder extends views.AView {
     });
   }
 
+  private selectTimePoint() {
+    var refData = this.refData;
+    if (this.refData) {
+      const type = this.refData.coltype;
+      const hovered = type.selections(idtypes.hoverSelectionType).first;
+      if (hovered != null) {
+        return hovered;
+      }
+      return type.selections().first;
+    }
+    return null;
+  }
+
   private updateChart() {
     var $chart = this.$elem.select('svg.chart');
     $chart.attr({
@@ -401,12 +413,19 @@ class GapMinder extends views.AView {
     });
     $chart.select('g.xaxis').attr('transform', `translate(0,${this.dim[1]-25})`);
 
-    $chart.select('text.act_year').text(this.selectedTimePoint).attr({
+    const selectedTimePoint = this.selectTimePoint();
+    $chart.select('text.act_year').attr({
       x : this.dim[0]*0.5,
       y : this.dim[1]*0.5
     });
+    var refData = this.refData;
+    if (this.refData && selectedTimePoint != null) {
+      this.refData.coltype.unmap([selectedTimePoint]).then((names) => {
+        $chart.select('text.act_year').text(names[0]);
+      });
+    }
 
-    Promise.all<any>([this.computeScales(), this.computeData()]).then((args : any[]) => {
+    Promise.all<any>([this.computeScales(), this.computeData(selectedTimePoint)]).then((args : any[]) => {
       const scales = args[0];
       const data : any[] = args[1];
       $chart.select('g.xaxis').call(this.xaxis.scale(scales.x));
@@ -427,6 +446,9 @@ class GapMinder extends views.AView {
           }
         })
         .style('fill', (d) => scales.color(d.color))
+        .on('click', (d) => {
+          this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event));
+        })
         .append('title');
 
       this.lasso.items($marks);
@@ -483,8 +505,10 @@ class GapMinder extends views.AView {
           for(j=0; xPos > (leftEdges[j] + width); j++) {}
             //do nothing, just increment j until case fails
           //j in the new position
-          this.selectedTimePoint = this.timelinescale.domain()[j];
-          const x = this.timelinescale(this.selectedTimePoint);
+          const timeIds = <any>$marker.datum();
+          timeIds.idtype.select(idtypes.hoverSelectionType, [timeIds.ids[j]]);
+          const selectedTimePoint = timeIds.names[j];
+          const x = this.timelinescale(selectedTimePoint);
           $marker.attr({
             x1: x,
             x2: x
@@ -492,10 +516,14 @@ class GapMinder extends views.AView {
           this.updateChart();
         }).on('dragend', () => {
           //select the last entry
-          d.select(1,[this.timelinescale.domain().indexOf(this.selectedTimePoint)]);
+          const timeIds = <any>$marker.datum();
+          const s = d.coltype.selections(idtypes.hoverSelectionType);
+          timeIds.idtype.select(idtypes.hoverSelectionType, ranges.none());
+          timeIds.idtype.select(s.clone());
         }));
       }
       this.getTimeIds().then((data) => {
+        $marker.datum(data);
         this.timelinescale.domain(data.names).rangeRoundPoints([20, this.dim[0]-220]);
         const sample = [];
         for (let i = 0; i < data.names.length; i+= 10) {
@@ -508,13 +536,12 @@ class GapMinder extends views.AView {
           const s = data.idtype.selections().dim(0);
           var t;
           if (s.isNone) {
-            data.idtype.select([data.ids.dim(0).asList()[0] ]);
+            data.idtype.select([data.ids[0] ]);
             t = data.names[0];
           } else {
-            t = data.names[<any>(data.ids.dim(0).indexOf(s.asList()[0]))];
+            t = data.names[<any>(data.ids.indexOf(s.first))];
           }
-          this.selectedTimePoint = t;
-          const x = this.timelinescale(this.selectedTimePoint);
+          const x = this.timelinescale(t);
           $marker.attr({
             x1: x,
             x2: x
