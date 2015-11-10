@@ -17,7 +17,7 @@
     "path": "mur.csv",
     "separator": "\t",
     "type": "matrix",
-    "size": [261,217],
+    "size": [260,217],
     "rowtype": "Country",
     "coltype": "Year",
     "value": {
@@ -30,7 +30,7 @@
     "path": "population.csv",
     "separator": "\t",
     "type": "matrix",
-    "size": [262, 82],
+    "size": [260, 82],
     "rowtype": "Country",
     "coltype": "Year",
     "value": {
