@@ -9,7 +9,7 @@ import prov = require('../caleydo_provenance/main');
 import idtypes = require('../caleydo_core/idtype');
 import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
-import databrowser = require('../caleydo_window/databrowser');
+import databrowser = require('../caleydo_d3/databrowser');
 import d3 = require('d3');
 
 function setAttributeImpl(inputs, parameter) {
