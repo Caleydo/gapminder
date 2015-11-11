@@ -1,6 +1,6 @@
 [
   {
-    "name": "Total GDP (PPP$, inflation-adjusted)",
+    "name": "total GDP (PPP$, inflation-adjusted)",
     "path": "gdp.csv",
     "separator": "\t",
     "type": "matrix",
@@ -13,7 +13,7 @@
     }
   },
   {
-    "name": "Child mortality (0-5 year-olds dying per 1,000 born)",
+    "name": "child mortality (0-5 year-olds dying per 1,000 born)",
     "path": "mur.csv",
     "separator": "\t",
     "type": "matrix",
@@ -26,7 +26,7 @@
     }
   },
   {
-    "name": "Population, total",
+    "name": "population, total",
     "path": "population.csv",
     "separator": "\t",
     "type": "matrix",
@@ -63,5 +63,32 @@
       "type": "real",
       "range": [0, 8291000]
     }
+  },
+  {
+    "name": "continent",
+    "type": "stratification",
+    "idtype": "Country",
+    "path": "continent.csv",
+    "separator": "\t",
+    "size": [ 260 ],
+    "ngroups": 4,
+    "groups": [
+      {
+        "name": "Africa",
+        "size": 59
+      },
+      {
+        "name": "America",
+        "size": 53
+      },
+      {
+        "name": "Asia",
+        "size": 76
+      },
+      {
+        "name": "Europe",
+        "size": 72
+      }
+    ]
   }
 ]
