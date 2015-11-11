@@ -31,7 +31,7 @@ svg .select-selected {
   //svg variant
   stroke: $select-color;
   stroke-width: 1px;
-  fill: $select-color;
+  fill: $select-color !important;
   vector-effect: non-scaling-stroke;
 }
 

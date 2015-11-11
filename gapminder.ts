@@ -5,6 +5,7 @@
 import C = require('../caleydo_core/main');
 import datatypes = require('../caleydo_core/datatype');
 import matrix = require('../caleydo_core/matrix');
+import stratification = require('../caleydo_core/stratification');
 import prov = require('../caleydo_provenance/main');
 import idtypes = require('../caleydo_core/idtype');
 import views = require('../caleydo_core/layout_view');
@@ -90,7 +91,7 @@ export function createCmd(id) {
   return null;
 }
 
-export function setAttribute(name: string, $main_ref:prov.IObjectRef<GapMinder>, data:prov.IObjectRef<matrix.IMatrix>) {
+export function setAttribute(name: string, $main_ref:prov.IObjectRef<GapMinder>, data:prov.IObjectRef<datatypes.IDataType>) {
   return prov.action(prov.meta('Set Attribute ' + name+' to '+(data?data.name:'<none>'), prov.cat.visual, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
     name: name
   });
@@ -134,6 +135,7 @@ class GapMinder extends views.AView {
     y: new Attribute(),
     size: new Attribute()
   };
+  private color : stratification.IStratification = null;
 
   private $elem: d3.Selection<GapMinder>;
 
@@ -176,7 +178,7 @@ class GapMinder extends views.AView {
     const that = this;
     Object.keys(this.attrs).forEach((attr) => {
       const sel = $elem.select('.attr-'+attr);
-      databrowser.makeDropable(<Element>sel.node())
+      databrowser.makeDropable(<Element>sel.node(), null, { types: ['matrix']})
       .on('enter', () => sel.classed('over', true))
       .on('enter', () => sel.classed('over', false))
       .on('drop', (event, d) => {
@@ -187,6 +189,16 @@ class GapMinder extends views.AView {
         that.provGraph.push(setAttributeScale(attr, that.ref, this.value));
       })
     });
+    {
+      const sel = $elem.select('.attr-color');
+      databrowser.makeDropable(<Element>sel.node(), null, { types: ['stratification']})
+      .on('enter', () => sel.classed('over', true))
+      .on('enter', () => sel.classed('over', false))
+      .on('drop', (event, d) => {
+        sel.classed('over', false);
+        this.setColor(d);
+      });
+    }
 
     // Lasso functions to execute while lassoing
     var lasso_start = function () {
@@ -379,7 +391,7 @@ class GapMinder extends views.AView {
           x: x_data ? x_data[i] : 0,
           y: y_data ? y_data[i] : 0,
           size: s_data ? s_data[i] : 0,
-          color: 'black'
+          color: id
         };
       });
     });
@@ -390,6 +402,7 @@ class GapMinder extends views.AView {
       this.$elem.select('.attr-'+attr).text(m.label);
       this.$elem.select('.attr-'+attr+'-scale').property('value',m.scale);
     });
+    this.$elem.select('.attr-color').text(this.color ? this.color.desc.name : 'None');
   }
 
   private selectTimePoint() {
@@ -405,7 +418,7 @@ class GapMinder extends views.AView {
     return null;
   }
 
-  private updateChart() {
+  private updateChart(force = false) {
     var $chart = this.$elem.select('svg.chart');
     $chart.attr({
       width: this.dim[0],
@@ -444,6 +457,13 @@ class GapMinder extends views.AView {
       const $marks_enter = $marks.enter().append('circle').classed('mark',true)
         .each(function(d){
           const $this = d3.select(this);
+          if (force) {
+            $this.attr({
+              r : 1,
+              cx: 0,
+              cy: 0
+            });
+          }
           if (d.size) {
             $this.attr('r', scales.size(d.size));
           }
@@ -488,11 +508,11 @@ class GapMinder extends views.AView {
   private initedListener = false;
   private timeIds: any = null;
 
-  private update() {
+  private update(force = false) {
     //update labels
     this.updateLegend();
     this.updateTimeLine();
-    this.updateChart();
+    this.updateChart(force);
 
     const ref = this.refData;
     if (!this.initedListener && ref) {
@@ -604,12 +624,27 @@ class GapMinder extends views.AView {
   setSizeAttribute(m:matrix.IMatrix) {
     this.setAttribute('size', m);
   }
+  setColor(m:stratification.IStratification) {
+    this.setAttribute('color',m);
+  }
+  setColorImpl(attr: string, m: stratification.IStratification) {
+    const old = this.color;
+    this.color = m;
 
-  setAttributeImpl(attr: string, m: matrix.IMatrix) {
-    const old = this.attrs[attr].data;
-    this.attrs[attr].data = m;
+    this.update(true);
 
-    this.update();
+    return old === null ? this.noneRef : this.provGraph.findObject(old);
+  }
+
+  setAttributeImpl(attr: string, m: datatypes.IDataType) {
+    const old = attr === 'color' ? this.color : this.attrs[attr].data;
+    if (attr === 'color') {
+      this.color = <stratification.IStratification>m;
+    } else {
+      this.attrs[attr].data = <matrix.IMatrix>m;
+    }
+
+    this.update(true);
 
     return old === null ? this.noneRef : this.provGraph.findObject(old);
   }
@@ -623,7 +658,7 @@ class GapMinder extends views.AView {
     return old;
   }
 
-  setAttribute(attr: string, m: matrix.IMatrix) {
+  setAttribute(attr: string, m: datatypes.IDataType) {
     var that = this;
     var mref = this.provGraph.findOrAddObject(m, m.desc.name, 'data');
     that.provGraph.push(setAttribute(attr, this.ref, mref));
