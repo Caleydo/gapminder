@@ -28,8 +28,11 @@ const elems = template.create(document.body, {
 
 const app = gapminder.create(<Element>elems.$main.node(),elems.graph);
 
-databrowser.create(<Element>d3.select('aside.left').append('section').classed('databrowser',true).node(), {
-  filter: (d) => /.*gapminder.*/.test(d.desc.fqname)
+const dd = d3.select('aside.left').append('section').classed('databrowser',true);
+dd.append('h1').text('Datasets');
+databrowser.create(<Element>dd.node(), {
+  filter: (d) => /.*gapminder.*/.test(d.desc.fqname),
+  layout: 'list'
 });
 
 function updateBounds() {
