@@ -37,5 +37,31 @@
       "type": "real",
       "range": [0, 1376000000]
     }
+  },
+  {
+    "name": "life expectancy at birth",
+    "path": "life.csv",
+    "separator": "\t",
+    "type": "matrix",
+    "size": [260, 217],
+    "rowtype": "Country",
+    "coltype": "Year",
+    "value": {
+      "type": "real",
+      "range": [0, 84.1]
+    }
+  },
+  {
+    "name": "child deaths",
+    "path": "child.csv",
+    "separator": "\t",
+    "type": "matrix",
+    "size": [260, 217],
+    "rowtype": "Country",
+    "coltype": "Year",
+    "value": {
+      "type": "real",
+      "range": [0, 8291000]
+    }
   }
 ]
