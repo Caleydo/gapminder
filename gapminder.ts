@@ -187,7 +187,7 @@ class GapMinder extends views.AView {
       });
       $elem.select('select.attr-'+attr+'-scale').on('change', function() {
         that.provGraph.push(setAttributeScale(attr, that.ref, this.value));
-      })
+      });
     });
     {
       const sel = $elem.select('.attr-color');
@@ -221,7 +221,7 @@ class GapMinder extends views.AView {
     };
 
     var lasso_end = () => {
-      const selected = this.lasso.items().filter(function(d) {return d.selected===true}).data();
+      const selected = this.lasso.items().filter((d) => d.selected===true).data();
       this.lasso.items().classed('select-selected', (d) => d.selected);
       console.log(selected.map((d) => d.id));
       const refdata = this.refData;
@@ -308,10 +308,10 @@ class GapMinder extends views.AView {
         ids: ids.asList(),
         names: name
       };
-    })
+    });
   }
 
-  private getRowIds() {
+  /*private getRowIds() {
     const xd = this.attrs.x.data;
     const yd = this.attrs.y.data;
     const sd = this.attrs.size.data;
@@ -342,8 +342,9 @@ class GapMinder extends views.AView {
         ids: ranges.list(ids),
         names: name
       };
-    })
+    });
   }
+  */
 
   private computeData(selectedTimeId : number) : Promise<{ x: number; y: number; size: number; color: string }[]> {
     //no data
@@ -368,7 +369,7 @@ class GapMinder extends views.AView {
       });
       id_range = ranges.list(id_range.dim(0).sort());
       const localids = ids.slice(0,4).map((id: ranges.Range) => {
-        return id ? id.indexOf(id_range) : null
+        return id ? id.indexOf(id_range) : null;
       });
       const localdims = ids.slice(4).map((cols) => {
         return selectedTimeId == null || !cols ? 0 : cols.indexOf(selectedTimeId);
@@ -443,7 +444,7 @@ class GapMinder extends views.AView {
       const b = C.bounds(<Element>$chart.node());
       this.lasso.itemOffset({
         left: b.x,
-        top: b.y,
+        top: b.y
       });
     }
 
@@ -454,7 +455,7 @@ class GapMinder extends views.AView {
       $chart.select('g.yaxis').call(this.yaxis.scale(scales.y));
 
       const $marks = $chart.select('g.marks').selectAll('.mark').data(data, (d) => d.id);
-      const $marks_enter = $marks.enter().append('circle').classed('mark',true)
+      $marks.enter().append('circle').classed('mark',true)
         .each(function(d){
           const $this = d3.select(this);
           if (force) {
@@ -555,9 +556,11 @@ class GapMinder extends views.AView {
           var xPos = (<any>d3.event).x;
           var leftEdges = this.timelinescale.range();
           var width = this.timelinescale.rangeBand();
-          var j;
-          for(j=0; xPos > (leftEdges[j] + width); j++) {}
-            //do nothing, just increment j until case fails
+          var j = 0;
+          while(xPos > (leftEdges[j] + width)) {
+            j++;
+          }
+
           //j in the new position
           this.timeIds.idtype.select(idtypes.hoverSelectionType, [this.timeIds.ids[j]]);
         }).on('dragend', () => {
@@ -612,7 +615,7 @@ class GapMinder extends views.AView {
   }
 
   relayout() {
-
+    //nothing to do
   }
 
   setXAttribute(m:matrix.IMatrix) {

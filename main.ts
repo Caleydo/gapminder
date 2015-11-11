@@ -2,8 +2,6 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 import C = require('../caleydo_core/main');
-import vis = require('../caleydo_core/vis');
-import data = require('../caleydo_core/data');
 import template = require('../clue_demo/template');
 import cmode = require('../caleydo_provenance/mode');
 import databrowser = require('../caleydo_d3/databrowser');
