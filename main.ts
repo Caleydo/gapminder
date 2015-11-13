@@ -25,7 +25,7 @@ const elems = template.create(document.body, {
 }
 
 elems.graph.then((graph) => {
-  const app = gapminder.create(<Element>elems.$main.node(), elems.graph);
+  const app = gapminder.create(<Element>elems.$main.node(), graph);
 
   const dd = d3.select('aside.left').append('section').classed('databrowser', true);
   dd.append('h1').text('Datasets');
