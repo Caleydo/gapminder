@@ -16,6 +16,7 @@ let helper = document.querySelector('div.gapminder');
 
 const elems = template.create(document.body, {
   app: 'GapMinder',
+  application: '/gapminder',
   id: 'clue_gapminder'
 });
 {
