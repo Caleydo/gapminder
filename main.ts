@@ -2,6 +2,7 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 import C = require('../caleydo_core/main');
+import datas = require('../caleydo_core/data');
 import template = require('../clue_demo/template');
 import cmode = require('../caleydo_provenance/mode');
 import databrowser = require('../caleydo_d3/databrowser');
@@ -27,6 +28,15 @@ const elems = template.create(document.body, {
 
 elems.graph.then((graph) => {
   const app = gapminder.create(<Element>elems.$main.node(), graph);
+
+  if (graph.states.length === 1) {
+    //initialize gap minder the first time
+    datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {
+      app.setXAttribute(<any>list[0]).then(() => {
+        app.setYAttribute(<any>list[1]);
+      });
+    });
+  }
 
   const dd = d3.select('aside.left').append('section').classed('databrowser', true);
   dd.append('h1').text('Datasets');

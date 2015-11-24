@@ -276,37 +276,21 @@ class GapMinder extends views.AView {
   }
 
   private getTimeIds() {
-    const xd = this.attrs.x.data;
-    const yd = this.attrs.y.data;
-    const sd = this.attrs.size.data;
-    if (!xd && !yd && !sd) {
+    const data = this.refData;
+    if (!data) {
       return Promise.resolve({
         idtype: null,
         ids: [],
         names: []
       });
     }
-    return Promise.all<any>([xd ? xd.colIds() : null, yd ? yd.colIds() : null, sd ? sd.colIds() : null, xd ? xd.cols() : null, yd ? yd.cols() : null, sd ? sd.cols() : null]).then((arr) => {
-      var ids = ranges.Range1D.none();
-      var lookup : any = {};
-      const names = arr.slice(3);
-      arr.slice(0,3).forEach((a: ranges.Range, i) => {
-        if (a) {
-          ids = ids.union(a.dim(0));
-          const name = names[i];
-          a.dim(0).asList().forEach((id,j) => {
-            lookup[id] = name[j];
-          });
-        }
-      });
-      //we have the union ids, now their names
-      ids = ids.sort();
-      var name = [];
-      ids.forEach((id) => name.push(lookup[id]));
+    return Promise.all<any>([data.cols(), data.colIds()]).then((args) => {
+      const names = <string[]>args[0];
+      const ids = <ranges.Range>args[1];
       return {
-        idtype: (xd ? xd.coltype : (yd ? yd.coltype : sd.coltype)),
-        ids: ids.asList(),
-        names: name
+        idtype: data.coltype,
+        ids: ids.dim(0).asList(),
+        names: names
       };
     });
   }
@@ -619,16 +603,16 @@ class GapMinder extends views.AView {
   }
 
   setXAttribute(m:matrix.IMatrix) {
-    this.setAttribute('x', m);
+    return this.setAttribute('x', m);
   }
   setYAttribute(m:matrix.IMatrix) {
-    this.setAttribute('y', m);
+    return this.setAttribute('y', m);
   }
   setSizeAttribute(m:matrix.IMatrix) {
-    this.setAttribute('size', m);
+    return this.setAttribute('size', m);
   }
   setColor(m:stratification.IStratification) {
-    this.setAttribute('color',m);
+    return this.setAttribute('color',m);
   }
   setColorImpl(attr: string, m: stratification.IStratification) {
     const old = this.color;
@@ -664,7 +648,7 @@ class GapMinder extends views.AView {
   setAttribute(attr: string, m: datatypes.IDataType) {
     var that = this;
     var mref = this.provGraph.findOrAddObject(m, m.desc.name, 'data');
-    that.provGraph.push(setAttribute(attr, this.ref, mref));
+    return that.provGraph.push(setAttribute(attr, this.ref, mref));
   }
 }
 export function create(parent:Element, provGraph:prov.ProvenanceGraph) {
