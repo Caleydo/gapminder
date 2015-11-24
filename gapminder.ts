@@ -3,6 +3,7 @@
  */
 /// <amd-dependency path='d3-lasso-plugin' />
 import C = require('../caleydo_core/main');
+import datas = require('../caleydo_core/data');
 import datatypes = require('../caleydo_core/datatype');
 import matrix = require('../caleydo_core/matrix');
 import stratification = require('../caleydo_core/stratification');
@@ -81,6 +82,8 @@ export function compressSetAttributeScale(path: prov.ActionNode[]) {
 }
 
 
+// externally called to recall implementation for prov graph
+// rebuild based on the --> createCmd --> maps name to a function
 export function createCmd(id) {
   switch (id) {
     case 'setGapMinderAttribute' :
@@ -90,6 +93,7 @@ export function createCmd(id) {
   }
   return null;
 }
+
 
 export function setAttribute(name: string, $main_ref:prov.IObjectRef<GapMinder>, data:prov.IObjectRef<datatypes.IDataType>) {
   return prov.action(prov.meta('Set Attribute ' + name+' to '+(data?data.name:'<none>'), prov.cat.visual, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
@@ -176,11 +180,11 @@ class GapMinder extends views.AView {
 
   private init($elem: d3.Selection<any>) {
     const that = this;
-    Object.keys(this.attrs).forEach((attr) => {
+/*    Object.keys(this.attrs).forEach((attr) => {
       const sel = $elem.select('.attr-'+attr);
       databrowser.makeDropable(<Element>sel.node(), null, { types: ['matrix']})
       .on('enter', () => sel.classed('over', true))
-      .on('enter', () => sel.classed('over', false))
+      .on('leave', () => sel.classed('over', false))
       .on('drop', (event, d) => {
         sel.classed('over', false);
         this.setAttribute(attr, d);
@@ -193,12 +197,12 @@ class GapMinder extends views.AView {
       const sel = $elem.select('.attr-color');
       databrowser.makeDropable(<Element>sel.node(), null, { types: ['stratification']})
       .on('enter', () => sel.classed('over', true))
-      .on('enter', () => sel.classed('over', false))
+      .on('leave', () => sel.classed('over', false))
       .on('drop', (event, d) => {
         sel.classed('over', false);
         this.setColor(d);
       });
-    }
+    }*/
 
     // Lasso functions to execute while lassoing
     var lasso_start = function () {
@@ -245,6 +249,9 @@ class GapMinder extends views.AView {
 
     // Init the lasso on the svg:g that contains the dots
     $elem.select('g.marks').call(this.lasso);
+
+    // idea: list all the available data sets and then setX, setY, setSize
+    //datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {});
 
     this.update();
   }
@@ -387,7 +394,7 @@ class GapMinder extends views.AView {
       this.$elem.select('.attr-'+attr).text(m.label);
       this.$elem.select('.attr-'+attr+'-scale').property('value',m.scale);
     });
-    this.$elem.select('.attr-color').text(this.color ? this.color.desc.name : 'None');
+      this.$elem.select('.attr-color').text(this.color ? this.color.desc.name : 'None');
   }
 
   private selectTimePoint() {
@@ -410,6 +417,14 @@ class GapMinder extends views.AView {
       height: this.dim[1]
     });
     $chart.select('g.xaxis').attr('transform', `translate(0,${this.dim[1]-25})`);
+
+
+    /*var referenceLine = d3.svg.line()
+                              .x(function () { return d3.event.x; })
+                              .y(function () { return d3.event.y; })
+                              .interpolate("linear");
+
+    /$chart.select('.referenceLine').on('mouseover', referenceLine);*/
 
     const selectedTimePoint = this.selectTimePoint();
     $chart.select('text.act_year').attr({
@@ -459,13 +474,14 @@ class GapMinder extends views.AView {
             $this.attr('cy', scales.y(d.y));
           }
         })
-        //.style('fill', (d) => scales.color(d.color))
+        .style('fill', (d) => scales.color(d.color))
         .on('click', (d) => {
           this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event));
         })
         .append('title');
 
       this.lasso.items($marks);
+
       $marks.classed('select-selected', (d) => d.selected)
           .select('title').text((d) => d.name);
       $marks.transition()
@@ -614,6 +630,7 @@ class GapMinder extends views.AView {
   setColor(m:stratification.IStratification) {
     return this.setAttribute('color',m);
   }
+
   setColorImpl(attr: string, m: stratification.IStratification) {
     const old = this.color;
     this.color = m;

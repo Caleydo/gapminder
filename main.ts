@@ -13,6 +13,7 @@ import d3 = require('d3');
 
 
 //create main
+//scoping let --> function level scope in js vs java global, local
 let helper = document.querySelector('div.gapminder');
 
 const elems = template.create(document.body, {
@@ -31,17 +32,18 @@ elems.graph.then((graph) => {
 
   if (graph.states.length === 1) {
     //initialize gap minder the first time
+    // get list of datasets then setX
     datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {
       app.setXAttribute(<any>list[0]).then(() => {
         app.setYAttribute(<any>list[1]);
-      });
-    });
+          })
+        });
   }
 
-  const dd = d3.select('aside.left').append('section').classed('databrowser', true);
-  dd.append('h1').text('Datasets');
-  databrowser.create(<Element>dd.node(), {
-    filter: (d) => /.*gapminder.*/.test(d.desc.fqname),
+    const dd = d3.select('aside.left').append('section').classed('databrowser', true);
+    dd.append('h1').text('Datasets');
+    databrowser.create(<Element>dd.node(), {
+    filter: (d) => /.*gapminder.*!/.test(d.desc.fqname),
     layout: 'list'
   });
 
