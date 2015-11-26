@@ -109,7 +109,8 @@ export function setAttributeScale(name: string, $main_ref:prov.IObjectRef<GapMin
 
 class Attribute {
   data : matrix.IMatrix = null;
-  scale = 'linear';
+  scale: 'linear';
+  //scale = scaler();
 
   get label() {
     return this.data ? this.data.desc.name : 'None';
@@ -118,6 +119,7 @@ class Attribute {
   get valid() {
     return this.data !== null;
   }
+
 }
 
 interface IScale {
@@ -145,10 +147,14 @@ class GapMinder extends views.AView {
   private xaxis = d3.svg.axis().orient('bottom');
   private yaxis = d3.svg.axis().orient('left');
   private timelineaxis = d3.svg.axis().orient('bottom');
-  private timelinescale = d3.scale.ordinal<string,number>();
-
+  private timelinescale = d3.scale.linear<string,number>();
   private lasso : any;
+  private xScale = d3.scale.linear();
+  private yScale = d3.scale.linear();
+  private rScale = d3.scale.linear();
+  private colorScale = d3.scale.quantize();
 
+  // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private provGraph:prov.ProvenanceGraph) {
     super();
     this.$elem = d3.select(elem).datum(this);
@@ -158,7 +164,7 @@ class GapMinder extends views.AView {
 
     this.init(this.$elem);
   }
-
+  /* ------------------ REF DATA ---------------------- */
   private get refData(): matrix.IMatrix {
     if (this.attrs.x.valid) {
       return this.attrs.x.data;
@@ -168,24 +174,18 @@ class GapMinder extends views.AView {
     }
     return this.attrs.size.data;
   }
-
+  /* ----------------------------------------- */
   setInteractive(interactive: boolean) {
     this.$elem.select('rect.lassoarea').style('display', interactive ? null: 'none');
     this.$elem.selectAll('select').attr('disabled',interactive ? null: 'disabled');
-    this.$elem.select('line.marker').style('pointer-events', interactive ? null: 'none');
+    this.$elem.select('line.slider').style('pointer-events', interactive ? null: 'none');
   }
 
 
   private init($elem: d3.Selection<any>) {
     const that = this;
-      // grab the list of data
 
-     /* datas.list((d) => /.*gapminder.*!/.test(d.desc.fqname)).then((list) => {
-      Object.keys(this.attrs).forEach((attr) ==> {}
-        const sel = $elem.select('.attr-'+attr);
-      }); // datas.list end*/
-
-/*    Object.keys(this.attrs).forEach((attr) => {
+    Object.keys(this.attrs).forEach((attr) => {
       const sel = $elem.select('.attr-'+attr);
       databrowser.makeDropable(<Element>sel.node(), null, { types: ['matrix']})
       .on('enter', () => sel.classed('over', true))
@@ -207,7 +207,7 @@ class GapMinder extends views.AView {
         sel.classed('over', false);
         this.setColor(d);
       });
-    }*/
+    }
 
     // Lasso functions to execute while lassoing
     var lasso_start = function () {
@@ -258,6 +258,7 @@ class GapMinder extends views.AView {
     this.update();
   }
 
+
   private computeScales() : Promise<{ x: IScale; y: IScale; size: IScale; color: (s:string) => string }> {
     const margin = 25;
     const dim = this.dim;
@@ -269,12 +270,14 @@ class GapMinder extends views.AView {
       if (a.scale === 'log') {
         return d3.scale.log().domain([Math.max(1,a.data.valuetype.range[0]),a.data.valuetype.range[1]]).clamp(true);
       }
+
       return d3.scale.linear().domain(a.data.valuetype.range).clamp(true);
     }
 
     const x = to_scale(this.attrs.x).range([100,dim[0]-25]);
     const y = to_scale(this.attrs.y).range([dim[1]-margin,25]);
     const s = to_scale(this.attrs.size).range([1,100]);
+
 
     return Promise.resolve( {
       x: x,
@@ -305,7 +308,6 @@ class GapMinder extends views.AView {
   }
 
   private computeData(selectedTimeId : number) : Promise<{ x: number; y: number; size: number; color: string }[]> {
-    //no data
     if (!this.attrs.x.valid && !this.attrs.y.valid && !this.attrs.size.valid) {
       return Promise.resolve([]);
     }
@@ -355,15 +357,21 @@ class GapMinder extends views.AView {
       });
     });
   }
-  private updateLegend() {
+
+  /* ------------------ Handling Dropdown Menu ------------- */
+  /* -------- called in update() --------------------------- */
+
+  public updateLegend() {
     Object.keys(this.attrs).forEach((attr) => {
       const m = this.attrs[attr];
-      this.$elem.select('.attr-'+attr).text(m.label);
+      //this.$elem.select('.attr-'+attr).text(m.label);
+      // select attr . property(value, if childMor --> list[0] or case)
       this.$elem.select('.attr-'+attr+'-scale').property('value',m.scale);
+      //update labels accordingly
     });
-      this.$elem.select('.attr-color').text(this.color ? this.color.desc.name : 'None');
-  }
-
+      //this.$elem.select('.attr-color').text(this.color ? this.color.desc.name :'None');
+    }
+ /* ---------------------- selectTimePoint() ------------------- */
   private selectTimePoint() {
     var refData = this.refData;
     if (refData) {
@@ -372,10 +380,12 @@ class GapMinder extends views.AView {
       if (hovered != null) {
         return hovered;
       }
+
       return type.selections().first;
     }
     return null;
   }
+ /* --------------------------- updateChart() ----------------------- */
 
   private updateChart(force = false) {
     var $chart = this.$elem.select('svg.chart');
@@ -383,22 +393,15 @@ class GapMinder extends views.AView {
       width: this.dim[0],
       height: this.dim[1]
     });
-    $chart.select('g.xaxis').attr('transform', `translate(0,${this.dim[1]-25})`);
-
-
-    /*var referenceLine = d3.svg.line()
-                              .x(function () { return d3.event.x; })
-                              .y(function () { return d3.event.y; })
-                              .interpolate("linear");
-
-    /$chart.select('.referenceLine').on('mouseover', referenceLine);*/
+    $chart.select('g.xaxis').attr('transform', `translate(0,${this.dim[1] - 25})`);
 
     const selectedTimePoint = this.selectTimePoint();
     $chart.select('text.act_year').attr({
-      x : this.dim[0]*0.5,
-      y : this.dim[1]*0.5
+      x: this.dim[0] * 0.5,
+      y: this.dim[1] * 0.5
     });
     var refData = this.refData;
+    // setting year label based on the selectedTimePoint
     if (refData && selectedTimePoint != null) {
       refData.coltype.unmap([selectedTimePoint]).then((names) => {
         $chart.select('text.act_year').text(names[0]);
@@ -406,34 +409,35 @@ class GapMinder extends views.AView {
     }
 
     {
-      //
       const b = C.bounds(<Element>$chart.node());
       this.lasso.itemOffset({
         left: b.x,
         top: b.y
       });
-    }
 
-    Promise.all<any>([this.computeScales(), this.computeData(selectedTimePoint)]).then((args : any[]) => {
+
+    }
+    /* ------ PROMISE using computeScales(), computeData() ------------- */
+    Promise.all<any>([this.computeScales(), this.computeData(selectedTimePoint)]).then((args:any[]) => {
       const scales = args[0];
-      const data : any[] = args[1];
+      const data:any[] = args[1];
       $chart.select('g.xaxis').call(this.xaxis.scale(scales.x));
       $chart.select('g.yaxis').call(this.yaxis.scale(scales.y));
 
       const $marks = $chart.select('g.marks').selectAll('.mark').data(data, (d) => d.id);
-      $marks.enter().append('circle').classed('mark',true)
+      $marks.enter().append('circle').classed('mark', true)
 
-        .each(function(d){
+        .each(function (d) {
           const $this = d3.select(this);
           if (force) {
             $this.attr({
-              r : 1,
+              r: 1,
               cx: 0,
               cy: 0
             });
           }
           if (d.size) {
-            $this.attr('r',scales.size(d.size));
+            $this.attr('r', scales.size(d.size));
             //$this.attr('r', radiusScale(d.size));
           }
           if (d.x) {
@@ -452,9 +456,9 @@ class GapMinder extends views.AView {
       this.lasso.items($marks);
 
       $marks.classed('select-selected', (d) => d.selected)
-          .select('title').text((d) => d.name);
+        .select('title').text((d) => d.name);
       $marks.transition()
-        .each(function(d){
+        .each(function (d) {
           const $this = d3.select(this);
           if (d.size) {
             $this.attr('r', scales.size(d.size));
@@ -468,32 +472,57 @@ class GapMinder extends views.AView {
         });
 
       $marks.exit()
-        .style('opacity',1)
+        .style('opacity', 1)
         .transition()
-          .style('opacity',0)
-          .remove();
+        .style('opacity', 0)
+        .remove();
     });
   }
+
+
+/*--------------- trail lines ------------- */
+private updateTrail(){
+  var trailine = d3.svg.line()
+                   .interpolate('bundle')
+                   .x(function (d) {
+                      // return year --> i.e over time
+                   })
+                   .y(function (d) {
+                      // return positional coordinates
+                   });
+
+/*  path
+      .datum(this.refData) //
+      .transition()
+      .duration(450)
+      .attr('d',trailine);*/
+  }
+
+  /* ------------------------------------------ */
 
   private initedListener = false;
   private timeIds: any = null;
 
+ /* --------------- update() --------------------------------------------- */
+ /* --- called in reset(), updateBounds(), setAttribute(), setAttributeImpScale() ------------- */
   private update(force = false) {
+
     //update labels
     this.updateLegend();
     this.updateTimeLine();
     this.updateChart(force);
 
     const ref = this.refData;
+
     if (!this.initedListener && ref) {
       this.initedListener = true;
       ref.coltype.on('select', (event: any, type: string, new_: ranges.Range) => {
         const id = new_.first;
         if (id && this.timeIds) {
-          var $marker = this.$elem.select('svg.timeline line.marker');
+          var $slider = this.$elem.select('svg.timeline line.slider');
           const selectedTimePoint = this.timeIds.names[this.timeIds.ids.indexOf(id)];
           const x = this.timelinescale(selectedTimePoint);
-          $marker.attr({
+          $slider.attr({
             x1: x,
             x2: x
           });
@@ -507,68 +536,109 @@ class GapMinder extends views.AView {
     }
   }
 
+  /* ------------------------- updateTimeLine() ------------------------------- */
   private updateTimeLine() {
     const d = this.refData;
-    var $chart = this.$elem.select('svg.timeline');
-    $chart.attr({
-      width: Math.max(this.dim[0]-200,0),
-      height: 25
+    var $timeline = this.$elem.select('svg.timeline');
+
+    $timeline.attr({
+      width: Math.max(this.dim[0]-20,0),
+      height: 30
     });
+
+    // if theres data
     if (d) {
-      var $marker = $chart.select('line.marker');
-      var wasEmpty = $marker.empty();
-      if ($marker.empty()) {
-        $marker = $chart.append('line').classed('marker', true).attr({
+      // slider
+      var $slider = $timeline.select('line.slider');
+
+      // returns true if no timeline and false if theres a timeline
+      var wasEmpty = $slider.empty();
+
+      console.log(wasEmpty);
+
+      /* ---------------- dragged() ------------------------- */
+
+      var dragged = function () {
+        var xPos = (<any>d3.event).x;
+        var leftEdges = this.timelinescale.range([0]);
+        var width = this.timelinescale.range([1]);
+        var j = 0;
+        while (xPos > (leftEdges[j] + width)) {
+          j++;
+        }
+        //j in the new position
+        this.timeIds.idtype.select(idtypes.hoverSelectionType, [this.timeIds.ids[j]]);
+        //this.timeIds.idtype.select(idtypes.hoverSelectionType, [this.timeIds.ids[j]]);
+
+      }
+
+       /* ---------------------------------------------------- */
+      /* --------------------- dragStart() --------------------- */
+      var dragStart = function (){
+            d3.event.x;
+            d3.select(this).classed('dragging',true);_
+      }
+      /* ---------------------------------------------------- */
+
+      if (wasEmpty) {
+        $slider = $timeline.append('line').classed('slider', true).attr({
           y1: 2,
           y2: 22
-        }).call(d3.behavior.drag().on('drag', () => {
-          var xPos = (<any>d3.event).x;
-          var leftEdges = this.timelinescale.range();
-          var width = this.timelinescale.rangeBand();
-          var j = 0;
-          while(xPos > (leftEdges[j] + width)) {
-            j++;
+        });
+        // using ref Data
+        $slider.call(d3.behavior.drag()
+               .origin(function (d) { return d;})
+               .on('dragstart',dragStart)
+               .on('drag',dragged)
+               .on('dragend', () => {
+                //select the last entry
+                 const s = d.coltype.selections(idtypes.hoverSelectionType);
+                 this.timeIds.idtype.select(idtypes.hoverSelectionType, ranges.none());
+                 this.timeIds.idtype.select(s.clone());
+                }));
+        } // end of if(wasEmpty)
+
+        // call getTimeIds()
+        this.getTimeIds().then((data) => {
+        this.timeIds = data;
+
+        // convert timeIds from string to integers
+        var years = this.timeIds.names.map(Number);
+        this.timelinescale.domain([years[0],d3.max(years, function (d) { return d; }) + 5]).range([20,this.dim[0]-100]).clamp();
+
+        var sample = [];
+        for (let i = 0; i < years.length; i+= 10) {
+          sample.push(years[i]);
           }
 
-          //j in the new position
-          this.timeIds.idtype.select(idtypes.hoverSelectionType, [this.timeIds.ids[j]]);
-        }).on('dragend', () => {
-          //select the last entry
-          const s = d.coltype.selections(idtypes.hoverSelectionType);
-          this.timeIds.idtype.select(idtypes.hoverSelectionType, ranges.none());
-          this.timeIds.idtype.select(s.clone());
-        }));
-      }
-      this.getTimeIds().then((data) => {
-        this.timeIds = data;
-        this.timelinescale.domain(data.names).rangeRoundPoints([20, this.dim[0]-220]);
-        const sample = [];
-        for (let i = 0; i < data.names.length; i+= 10) {
-          sample.push(data.names[i]);
-        }
-        sample.push(data.names[data.names.length-1]);
-        $chart.select('g.axis').call(this.timelineaxis.scale(this.timelinescale).tickValues(sample));
+          // timelineaxis --> d3.svg.axis orient bottom
+          $timeline.select('g.axis').call(this.timelineaxis.scale(this.timelinescale).ticks(10).tickFormat(d3.format('04d')).tickValues(sample).tickPadding(10));
+
 
         if (wasEmpty) {
           const s = data.idtype.selections().dim(0);
           var t;
           if (s.isNone) {
+            // set to 1800
             data.idtype.select([data.ids[0] ]);
             t = data.names[0];
           } else {
             t = data.names[<any>(data.ids.indexOf(s.first))];
           }
-          const x = this.timelinescale(t);
-          $marker.attr({
+          const x = this.timelinescale(parseInt(t));
+
+          // just visualizing where slider should be
+          $slider.attr({
             x1: x,
             x2: x
           });
         }
-      });
+        });
     }
-  }
+  } // end of updateTime()
 
-  reset() {
+  /* ------------------- reset() ------------------------------------- */
+  reset(){
     this.attrs.x = null;
     this.attrs.y = null;
     this.attrs.size = null;
@@ -587,10 +657,10 @@ class GapMinder extends views.AView {
     //nothing to do
   }
 
-  cleanData(m:matrix.IMatrix){
+/*  cleanData(m:matrix.IMatrix){
     //var ccd = m.filter(function (d) { return d.id > 0;});
     return cdd;
-    }
+    }*/
 
 
   setXAttribute(m:matrix.IMatrix) {

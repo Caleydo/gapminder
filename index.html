@@ -6,7 +6,6 @@
     <title>Caleydo GapMinder</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-
     <link rel="stylesheet" href="style.css">
     <script src="/caleydo_web.js"></script>
 </head>
@@ -15,17 +14,16 @@
   <div class="gapminder_i">
       <div style=" display: inline-block;">
         <div class="axis yaxis" style="transform: rotate(-90deg)translateX(-30em);transform-origin: 0% 0%;">
-           <select class="attr-y">
-            <option value="child mortality" selected="selected">childMor</option>
-            <option value="life expectancy">lifeExp</option>
-            <option value="GDP">gdp</option>
-            </select>
             <span class="attr-y"></span>
+            <select class="attr-y">
+               <option value="childMor" selected="selected">Child Mortality < 5 years</option>
+               <option value="lifeExp">Life Expectancy</option>
+               <option value="gdp">GDP</option>
+            </select>
               <select class="attr-y-scale">
                <option value="linear" selected="selected">Linear</option>
                 <option value="log">Log</option>
-          </select>
-
+              </select>
         </div>
       </div>
       <svg class="chart">
@@ -38,13 +36,13 @@
       <div class="axis xaxis" style="margin-left: 3em">
         <span class="attr-x"></span>
          <select class="attr-x">
-            <option value="child mortality">childMor</option>
-            <option value="life expectancy">lifeExp</option>
-            <option value="GDP" selected="selected">gdp</option>
+            <option value="childMor">Child Mortality < 5 years</option>
+            <option value="lifeExp">Life Expectancy</option>
+            <option value="gdp" selected="selected">GDP</option>
             </select>
-        <select class="attr-x-scale">
-          <option value="linear" selected="selected">Linear</option>
-          <option value="log">Log</option>
+            <select class="attr-x-scale">
+                <option value="linear" selected="selected">Linear</option>
+                <option value="log">Log</option>
         </select>
       </div>
     </div>
@@ -54,19 +52,7 @@
         <g class="axis"></g>
       </svg>
     </div>
-    <div class="col-sm-2">
-      <div>Size:
-        <span class="attr-size"></span>
-        <select class="attr-size-scale">
-          <option value="linear" selected="selected">Linear</option>
-          <option value="log">Log</option>
-        </select>
-      </div>
-      <div>Color:
-        <span class="attr-color"></span>
-      </div>
-    </div>
   </div>
-</div>
+  </div>
 </body>
 </html>

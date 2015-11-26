@@ -7,13 +7,9 @@ import template = require('../clue_demo/template');
 import cmode = require('../caleydo_provenance/mode');
 import databrowser = require('../caleydo_d3/databrowser');
 import gapminder = require('./gapminder');
-
-
 import d3 = require('d3');
 import {IStratification} from "../caleydo_core/stratification";
 
-
-//create main
 //scoping let --> function level scope in js vs java global, local
 let helper = document.querySelector('div.gapminder');
 
@@ -42,17 +38,6 @@ elems.graph.then((graph) => {
           })
       });
   }
-
-    // aside on left REMOVED
-    // show / hide databrowser on mouse over or mouse click event
-    const dd = d3.select('aside.top').append('section');
-    dd.append('h1').text('Datasets');
-
-/*
-    databrowser.create(<Element>dd.node(), {
-    filter: (d) => /.*gapminder.*!/.test(d.desc.fqname),
-    layout: 'list'
-  });*/
 
   function updateBounds() {
     var bounds = C.bounds(document.querySelector('div.gapminder_i'));

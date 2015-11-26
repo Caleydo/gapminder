@@ -13,15 +13,17 @@ body, html {
   -webkit-font-smoothing: subpixel-antialiased;
 }
 
+
 .selectioninfo {
   .no-selection-selected.no-selection-hovered {
     display: none;
   }
 }
 
+
 /* hide the aside left section */
 aside.left {
- display:none;
+ visibility: hidden;
 }
 
 $select-color: orange;
@@ -46,16 +48,26 @@ svg.chart .xaxis, svg.chart .yaxis, svg.timeline {
     stroke: black;
     fill: none;
   }
+
 }
 
+svg.trail path {
+  fill:none;
+  stroke: black;
+  stroke-width: 3;
+}
 svg.chart {
   text.act_year {
-    font-size: 200pt;
+    font-size: 150pt;
     opacity: 0.2;
     text-anchor: middle;
   }
   .mark {
     opacity: 0.5;
+  }
+
+  select .yaxis, .xaxis {
+    background-color: #00b3ee;
   }
 
   rect.lassoarea {
@@ -84,12 +96,13 @@ svg.chart {
 
 svg.timeline {
 
-  line.marker {
+  line.slider {
     stroke-width: 2;
     stroke: black;
     stroke-linecap: round;
     cursor: ew-resize;
   }
+
 }
 
 main {
