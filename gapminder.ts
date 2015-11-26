@@ -142,10 +142,8 @@ class GapMinder extends views.AView {
   private color : stratification.IStratification = null;
 
   private $elem: d3.Selection<GapMinder>;
-
   private xaxis = d3.svg.axis().orient('bottom');
   private yaxis = d3.svg.axis().orient('left');
-
   private timelineaxis = d3.svg.axis().orient('bottom');
   private timelinescale = d3.scale.ordinal<string,number>();
 
@@ -180,6 +178,13 @@ class GapMinder extends views.AView {
 
   private init($elem: d3.Selection<any>) {
     const that = this;
+      // grab the list of data
+
+     /* datas.list((d) => /.*gapminder.*!/.test(d.desc.fqname)).then((list) => {
+      Object.keys(this.attrs).forEach((attr) ==> {}
+        const sel = $elem.select('.attr-'+attr);
+      }); // datas.list end*/
+
 /*    Object.keys(this.attrs).forEach((attr) => {
       const sel = $elem.select('.attr-'+attr);
       databrowser.makeDropable(<Element>sel.node(), null, { types: ['matrix']})
@@ -250,9 +255,6 @@ class GapMinder extends views.AView {
     // Init the lasso on the svg:g that contains the dots
     $elem.select('g.marks').call(this.lasso);
 
-    // idea: list all the available data sets and then setX, setY, setSize
-    //datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {});
-
     this.update();
   }
 
@@ -301,41 +303,6 @@ class GapMinder extends views.AView {
       };
     });
   }
-
-  /*private getRowIds() {
-    const xd = this.attrs.x.data;
-    const yd = this.attrs.y.data;
-    const sd = this.attrs.size.data;
-    if (!xd && !yd && !sd) {
-      return Promise.resolve({
-        ids: ranges.none(),
-        names: []
-      });
-    }
-    return Promise.all<any>([xd ? xd.rowIds() : null, yd ? yd.rowIds() : null, sd ? sd.rowIds() : null, xd ? xd.rows() : null, yd ? yd.rows() : null, sd ? sd.rows() : null]).then((arr) => {
-      var ids = ranges.Range1D.none();
-      var lookup : any = {};
-      const names = arr.slice(3);
-      arr.slice(0,3).forEach((a: ranges.Range, i) => {
-        if (a) {
-          ids = ids.intersect(a.dim(0));
-          const name = names[i];
-          a.dim(0).asList().forEach((id,j) => {
-            lookup[id] = name[j];
-          });
-        }
-      });
-      //we have the union ids, now their names
-      ids = ids.sort();
-      var name = [];
-      ids.forEach((id) => name.push(lookup[id]));
-      return {
-        ids: ranges.list(ids),
-        names: name
-      };
-    });
-  }
-  */
 
   private computeData(selectedTimeId : number) : Promise<{ x: number; y: number; size: number; color: string }[]> {
     //no data
@@ -455,6 +422,7 @@ class GapMinder extends views.AView {
 
       const $marks = $chart.select('g.marks').selectAll('.mark').data(data, (d) => d.id);
       $marks.enter().append('circle').classed('mark',true)
+
         .each(function(d){
           const $this = d3.select(this);
           if (force) {
@@ -465,7 +433,8 @@ class GapMinder extends views.AView {
             });
           }
           if (d.size) {
-            $this.attr('r', scales.size(d.size));
+            $this.attr('r',scales.size(d.size));
+            //$this.attr('r', radiusScale(d.size));
           }
           if (d.x) {
             $this.attr('cx', scales.x(d.x));
@@ -618,7 +587,14 @@ class GapMinder extends views.AView {
     //nothing to do
   }
 
+  cleanData(m:matrix.IMatrix){
+    //var ccd = m.filter(function (d) { return d.id > 0;});
+    return cdd;
+    }
+
+
   setXAttribute(m:matrix.IMatrix) {
+    // cleanData(m);
     return this.setAttribute('x', m);
   }
   setYAttribute(m:matrix.IMatrix) {

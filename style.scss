@@ -19,6 +19,11 @@ body, html {
   }
 }
 
+/* hide the aside left section */
+aside.left {
+ display:none;
+}
+
 $select-color: orange;
 $hover-color: #ffc46b;
 

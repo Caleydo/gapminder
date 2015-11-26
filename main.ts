@@ -10,6 +10,7 @@ import gapminder = require('./gapminder');
 
 
 import d3 = require('d3');
+import {IStratification} from "../caleydo_core/stratification";
 
 
 //create main
@@ -32,20 +33,26 @@ elems.graph.then((graph) => {
 
   if (graph.states.length === 1) {
     //initialize gap minder the first time
-    // get list of datasets then setX
+    // get list of datasets then set
     datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {
       app.setXAttribute(<any>list[0]).then(() => {
         app.setYAttribute(<any>list[1]);
+          app.setSizeAttribute(<any>list[2]);
+            app.setColor(<IStratification>list[5]);
           })
-        });
+      });
   }
 
-    const dd = d3.select('aside.left').append('section').classed('databrowser', true);
+    // aside on left REMOVED
+    // show / hide databrowser on mouse over or mouse click event
+    const dd = d3.select('aside.top').append('section');
     dd.append('h1').text('Datasets');
+
+/*
     databrowser.create(<Element>dd.node(), {
     filter: (d) => /.*gapminder.*!/.test(d.desc.fqname),
     layout: 'list'
-  });
+  });*/
 
   function updateBounds() {
     var bounds = C.bounds(document.querySelector('div.gapminder_i'));
