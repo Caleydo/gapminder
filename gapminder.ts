@@ -1,7 +1,7 @@
 /**
  * Created by Samuel Gratzl on 15.12.2014.
  */
-/// <amd-dependency path='d3-lasso-plugin' />
+
 import C = require('../caleydo_core/main');
 import datas = require('../caleydo_core/data');
 import datatypes = require('../caleydo_core/datatype');
@@ -109,8 +109,7 @@ export function setAttributeScale(name: string, $main_ref:prov.IObjectRef<GapMin
 
 class Attribute {
   data : matrix.IMatrix = null;
-  scale: 'linear';
-  //scale = scaler();
+  scale ='linear';
 
   get label() {
     return this.data ? this.data.desc.name : 'None';
@@ -148,11 +147,12 @@ class GapMinder extends views.AView {
   private yaxis = d3.svg.axis().orient('left');
   private timelineaxis = d3.svg.axis().orient('bottom');
   private timelinescale = d3.scale.linear<string,number>();
-  private lasso : any;
   private xScale = d3.scale.linear();
   private yScale = d3.scale.linear();
-  private rScale = d3.scale.linear();
-  private colorScale = d3.scale.quantize();
+  public rScale = d3.scale.linear();
+
+  // uneven distribution of continents by colour domain is ngroups and range is colorPalette
+  private colorScale = d3.scale.quantile();
 
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private provGraph:prov.ProvenanceGraph) {
@@ -164,6 +164,8 @@ class GapMinder extends views.AView {
 
     this.init(this.$elem);
   }
+
+
   /* ------------------ REF DATA ---------------------- */
   private get refData(): matrix.IMatrix {
     if (this.attrs.x.valid) {
@@ -174,9 +176,12 @@ class GapMinder extends views.AView {
     }
     return this.attrs.size.data;
   }
+
+  /* ------ try calling data the way i normally do it ------ */
+
   /* ----------------------------------------- */
   setInteractive(interactive: boolean) {
-    this.$elem.select('rect.lassoarea').style('display', interactive ? null: 'none');
+
     this.$elem.selectAll('select').attr('disabled',interactive ? null: 'disabled');
     this.$elem.select('line.slider').style('pointer-events', interactive ? null: 'none');
   }
@@ -185,90 +190,44 @@ class GapMinder extends views.AView {
   private init($elem: d3.Selection<any>) {
     const that = this;
 
-    Object.keys(this.attrs).forEach((attr) => {
-      const sel = $elem.select('.attr-'+attr);
-      databrowser.makeDropable(<Element>sel.node(), null, { types: ['matrix']})
-      .on('enter', () => sel.classed('over', true))
-      .on('leave', () => sel.classed('over', false))
-      .on('drop', (event, d) => {
-        sel.classed('over', false);
-        this.setAttribute(attr, d);
-      });
-      $elem.select('select.attr-'+attr+'-scale').on('change', function() {
-        that.provGraph.push(setAttributeScale(attr, that.ref, this.value));
-      });
-    });
-    {
-      const sel = $elem.select('.attr-color');
-      databrowser.makeDropable(<Element>sel.node(), null, { types: ['stratification']})
-      .on('enter', () => sel.classed('over', true))
-      .on('leave', () => sel.classed('over', false))
-      .on('drop', (event, d) => {
-        sel.classed('over', false);
-        this.setColor(d);
-      });
-    }
-
-    // Lasso functions to execute while lassoing
-    var lasso_start = function () {
-      /*lasso.items()
-       .attr("r",3.5) // reset size
-       .style("fill",null) // clear all of the fills
-       .classed({"not_possible":true,"selected":false}); // style as not possible
-       */
-    };
-
-    var lasso_draw = function () {
-      /*// Style the possible dots
-       lasso.items().filter(function(d) {return d.possible===true})
-       .classed({"not_possible":false,"possible":true});
-
-       // Style the not possible dot
-       lasso.items().filter(function(d) {return d.possible===false})
-       .classed({"not_possible":true,"possible":false});
-       */
-    };
-
-    var lasso_end = () => {
-      const selected = this.lasso.items().filter((d) => d.selected===true).data();
-      this.lasso.items().classed('select-selected', (d) => d.selected);
-      console.log(selected.map((d) => d.id));
-      const refdata = this.refData;
-      if (refdata) {
-        refdata.rowtype.select(selected.map((d) => d.id));
-      }
-    };
-
-    // Create the area where the lasso event can be triggered
-    var $lasso_area = $elem.select('rect.lassoarea');
-
-    // Define the lasso
-    this.lasso = (<any>d3).lasso()
-      .closePathDistance(75) // max distance for the lasso loop to be closed
-      .closePathSelect(true) // can items be selected by closing the path?
-      .hoverSelect(true) // can items by selected by hovering over them?
-      .area($lasso_area) // area where the lasso can be started
-      .on('start', lasso_start) // lasso start function
-      .on('draw', lasso_draw) // lasso draw function
-      .on('end', lasso_end); // lasso end function
-
-    // Init the lasso on the svg:g that contains the dots
-    $elem.select('g.marks').call(this.lasso);
-
     this.update();
   }
 
+  /*public switchScales(b){
+
+     switch(b) {
+        case:'childMor'
+          break;
+
+        case:'gdp'
+
+          break;
+
+        case:'lifeExp'
+          break;
+
+        case:'population'
+
+          break;
+
+        case:'color'
+          break
+      }
+  }*/
 
   private computeScales() : Promise<{ x: IScale; y: IScale; size: IScale; color: (s:string) => string }> {
     const margin = 25;
     const dim = this.dim;
 
+
     function to_scale(a : Attribute) {
       if (!a.valid) {
         return d3.scale.linear().domain([0,100]);
       }
+
       if (a.scale === 'log') {
         return d3.scale.log().domain([Math.max(1,a.data.valuetype.range[0]),a.data.valuetype.range[1]]).clamp(true);
+        // need to update Labels
       }
 
       return d3.scale.linear().domain(a.data.valuetype.range).clamp(true);
@@ -278,7 +237,6 @@ class GapMinder extends views.AView {
     const y = to_scale(this.attrs.y).range([dim[1]-margin,25]);
     const s = to_scale(this.attrs.size).range([1,100]);
 
-
     return Promise.resolve( {
       x: x,
       y: y,
@@ -286,6 +244,7 @@ class GapMinder extends views.AView {
       color: (d) => d
     });
   }
+
 
   private getTimeIds() {
     const data = this.refData;
@@ -296,6 +255,8 @@ class GapMinder extends views.AView {
         names: []
       });
     }
+
+    //
     return Promise.all<any>([data.cols(), data.colIds()]).then((args) => {
       const names = <string[]>args[0];
       const ids = <ranges.Range>args[1];
@@ -306,6 +267,9 @@ class GapMinder extends views.AView {
       };
     });
   }
+
+  // getTimeIds() --> returns object type --> idtype, ids, names
+
 
   private computeData(selectedTimeId : number) : Promise<{ x: number; y: number; size: number; color: string }[]> {
     if (!this.attrs.x.valid && !this.attrs.y.valid && !this.attrs.size.valid) {
@@ -365,7 +329,6 @@ class GapMinder extends views.AView {
     Object.keys(this.attrs).forEach((attr) => {
       const m = this.attrs[attr];
       //this.$elem.select('.attr-'+attr).text(m.label);
-      // select attr . property(value, if childMor --> list[0] or case)
       this.$elem.select('.attr-'+attr+'-scale').property('value',m.scale);
       //update labels accordingly
     });
@@ -410,11 +373,6 @@ class GapMinder extends views.AView {
 
     {
       const b = C.bounds(<Element>$chart.node());
-      this.lasso.itemOffset({
-        left: b.x,
-        top: b.y
-      });
-
 
     }
     /* ------ PROMISE using computeScales(), computeData() ------------- */
@@ -425,6 +383,8 @@ class GapMinder extends views.AView {
       $chart.select('g.yaxis').call(this.yaxis.scale(scales.y));
 
       const $marks = $chart.select('g.marks').selectAll('.mark').data(data, (d) => d.id);
+      //var rS  = rScale.domain(d3.extent(data)).range([0,40]);
+
       $marks.enter().append('circle').classed('mark', true)
 
         .each(function (d) {
@@ -437,8 +397,7 @@ class GapMinder extends views.AView {
             });
           }
           if (d.size) {
-            $this.attr('r', scales.size(d.size));
-            //$this.attr('r', radiusScale(d.size));
+            $this.attr('r',scales.size(d.size));
           }
           if (d.x) {
             $this.attr('cx', scales.x(d.x));
@@ -452,8 +411,6 @@ class GapMinder extends views.AView {
           this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event));
         })
         .append('title');
-
-      this.lasso.items($marks);
 
       $marks.classed('select-selected', (d) => d.selected)
         .select('title').text((d) => d.name);
@@ -481,6 +438,7 @@ class GapMinder extends views.AView {
 
 
 /*--------------- trail lines ------------- */
+/*
 private updateTrail(){
   var trailine = d3.svg.line()
                    .interpolate('bundle')
@@ -491,12 +449,13 @@ private updateTrail(){
                       // return positional coordinates
                    });
 
-/*  path
+/!*  path
       .datum(this.refData) //
       .transition()
       .duration(450)
-      .attr('d',trailine);*/
+      .attr('d',trailine);*!/
   }
+*/
 
   /* ------------------------------------------ */
 
@@ -554,10 +513,7 @@ private updateTrail(){
       // returns true if no timeline and false if theres a timeline
       var wasEmpty = $slider.empty();
 
-      console.log(wasEmpty);
-
       /* ---------------- dragged() ------------------------- */
-
       var dragged = function () {
         var xPos = (<any>d3.event).x;
         var leftEdges = this.timelinescale.range([0]);
@@ -568,17 +524,9 @@ private updateTrail(){
         }
         //j in the new position
         this.timeIds.idtype.select(idtypes.hoverSelectionType, [this.timeIds.ids[j]]);
-        //this.timeIds.idtype.select(idtypes.hoverSelectionType, [this.timeIds.ids[j]]);
-
       }
 
        /* ---------------------------------------------------- */
-      /* --------------------- dragStart() --------------------- */
-      var dragStart = function (){
-            d3.event.x;
-            d3.select(this).classed('dragging',true);_
-      }
-      /* ---------------------------------------------------- */
 
       if (wasEmpty) {
         $slider = $timeline.append('line').classed('slider', true).attr({
@@ -587,8 +535,6 @@ private updateTrail(){
         });
         // using ref Data
         $slider.call(d3.behavior.drag()
-               .origin(function (d) { return d;})
-               .on('dragstart',dragStart)
                .on('drag',dragged)
                .on('dragend', () => {
                 //select the last entry
@@ -598,21 +544,23 @@ private updateTrail(){
                 }));
         } // end of if(wasEmpty)
 
-        // call getTimeIds()
         this.getTimeIds().then((data) => {
         this.timeIds = data;
+        // grab the col headers using names
+        var yearsAsStrings = this.timeIds.names;
 
-        // convert timeIds from string to integers
-        var years = this.timeIds.names.map(Number);
-        this.timelinescale.domain([years[0],d3.max(years, function (d) { return d; }) + 5]).range([20,this.dim[0]-100]).clamp();
+          var yearsAsInts =  yearsAsStrings.map(Number);
+
+        // timelinescale is linear
+        var timeScaler = this.timelinescale.domain(d3.extent(yearsAsInts)).range([20,this.dim[0] - 25]).clamp(false);
 
         var sample = [];
-        for (let i = 0; i < years.length; i+= 10) {
-          sample.push(years[i]);
+        for (let i = 0; i < yearsAsInts.length; i+= 10) {
+          sample.push(yearsAsInts[i]);
           }
 
-          // timelineaxis --> d3.svg.axis orient bottom
-          $timeline.select('g.axis').call(this.timelineaxis.scale(this.timelinescale).ticks(10).tickFormat(d3.format('04d')).tickValues(sample).tickPadding(10));
+          //var lineScaler = d3.scale.quantize().domain(d3.extent(yearsAsInts)).range([20,this.dim[0] - 25]);
+          $timeline.select('g.axis').call(this.timelineaxis.scale(timeScaler).ticks(10).tickFormat(d3.format('04d')).tickValues(sample).tickPadding(5));
 
 
         if (wasEmpty) {
@@ -625,6 +573,7 @@ private updateTrail(){
           } else {
             t = data.names[<any>(data.ids.indexOf(s.first))];
           }
+
           const x = this.timelinescale(parseInt(t));
 
           // just visualizing where slider should be

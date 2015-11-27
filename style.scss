@@ -26,6 +26,18 @@ aside.left {
  visibility: hidden;
 }
 
+/* mouse over mark and ref lines*/
+.active {
+  stroke: black;
+  stroke-width: 5px;
+  line{
+    stroke: magenta;
+    stroke-width: 3px;
+  }
+}
+
+
+
 $select-color: orange;
 $hover-color: #ffc46b;
 
@@ -51,11 +63,6 @@ svg.chart .xaxis, svg.chart .yaxis, svg.timeline {
 
 }
 
-svg.trail path {
-  fill:none;
-  stroke: black;
-  stroke-width: 3;
-}
 svg.chart {
   text.act_year {
     font-size: 150pt;
@@ -102,6 +109,8 @@ svg.timeline {
     stroke-linecap: round;
     cursor: ew-resize;
   }
+
+  font-size: small;
 
 }
 
