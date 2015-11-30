@@ -131,7 +131,7 @@ class GapMinder extends views.AView {
   ref:prov.IObjectRef<GapMinder>;
   noneRef : prov.IObjectRef<any>;
 
-  private attrs: {
+  public attrs: {
     x : Attribute,
     y : Attribute,
     size : Attribute,
@@ -147,12 +147,12 @@ class GapMinder extends views.AView {
   private yaxis = d3.svg.axis().orient('left');
   private timelineaxis = d3.svg.axis().orient('bottom');
   private timelinescale = d3.scale.linear<string,number>();
-  private xScale = d3.scale.linear();
-  private yScale = d3.scale.linear();
+  public xScale = d3.scale.linear();
+  public yScale = d3.scale.linear();
   public rScale = d3.scale.linear();
 
   // uneven distribution of continents by colour domain is ngroups and range is colorPalette
-  private colorScale = d3.scale.quantile();
+  public colorScale = d3.scale.quantile();
 
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private provGraph:prov.ProvenanceGraph) {
@@ -348,6 +348,7 @@ class GapMinder extends views.AView {
     }
     return null;
   }
+
  /* --------------------------- updateChart() ----------------------- */
 
   private updateChart(force = false) {
@@ -363,6 +364,9 @@ class GapMinder extends views.AView {
       x: this.dim[0] * 0.5,
       y: this.dim[1] * 0.5
     });
+
+
+
     var refData = this.refData;
     // setting year label based on the selectedTimePoint
     if (refData && selectedTimePoint != null) {
@@ -375,6 +379,9 @@ class GapMinder extends views.AView {
       const b = C.bounds(<Element>$chart.node());
 
     }
+
+
+
     /* ------ PROMISE using computeScales(), computeData() ------------- */
     Promise.all<any>([this.computeScales(), this.computeData(selectedTimePoint)]).then((args:any[]) => {
       const scales = args[0];
@@ -514,6 +521,7 @@ private updateTrail(){
       var wasEmpty = $slider.empty();
 
       /* ---------------- dragged() ------------------------- */
+
       var dragged = function () {
         var xPos = (<any>d3.event).x;
         var leftEdges = this.timelinescale.range([0]);
@@ -552,7 +560,7 @@ private updateTrail(){
           var yearsAsInts =  yearsAsStrings.map(Number);
 
         // timelinescale is linear
-        var timeScaler = this.timelinescale.domain(d3.extent(yearsAsInts)).range([20,this.dim[0] - 25]).clamp(false);
+        var timeScaler = this.timelinescale.domain(d3.extent(yearsAsStrings)).range([20,this.dim[0] - 25]).clamp(false);
 
         var sample = [];
         for (let i = 0; i < yearsAsInts.length; i+= 10) {

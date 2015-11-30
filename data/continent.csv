@@ -1,262 +1,174 @@
-Entity	Continent
-Abkhazia	Europe
-Afghanistan	Asia
-Akrotiri and Dhekelia	Europe
-Aland	Europe
-Albania	Europe
-Algeria	Africa
-American Samoa	Asia
-Andorra	Europe
-Angola	Africa
-Anguilla	America
-Antigua and Barbuda	America
-Argentina	America
-Armenia	Europe
-Aruba	America
-Australia	Asia
-Austria	Europe
-Azerbaijan	Europe
-Bahamas	America
-Bahrain	Asia
-Bangladesh	Asia
-Barbados	America
-Belarus	Europe
-Belgium	Europe
-Belize	America
-Benin	Africa
-Bermuda	America
-Bhutan	Asia
-Bolivia	America
-Bosnia and Herzegovina	Europe
-Botswana	Africa
-Brazil	America
-British Virgin Islands	America
-Brunei	Asia
-Bulgaria	Europe
-Burkina Faso	Africa
-Burundi	Africa
-Cambodia	Asia
-Cameroon	Africa
-Canada	America
-Cape Verde	Africa
-Cayman Islands	America
-Central African Rep.	Africa
-Chad	Africa
-Channel Islands	Europe
-Chile	America
-China	Asia
-Christmas Island	Asia
-Cocos Island	Asia
-Colombia	America
-Comoros	Africa
-Congo, Dem. Rep.	Africa
-Congo, Rep.	Africa
-Cook Islands	Asia
-Costa Rica	America
-Cote d'Ivoire	Africa
-Croatia	Europe
-Cuba	America
-Cyprus	Europe
-Czech Rep.	Europe
-Czechoslovakia	Europe
-Denmark	Europe
-Djibouti	Africa
-Dominica	America
-Dominican Rep.	America
-East Germany	Europe
-Ecuador	America
-Egypt	Africa
-El Salvador	America
-Equatorial Guinea	Africa
-Eritrea	Africa
-Eritrea and Ethiopia	Africa
-Estonia	Europe
-Ethiopia	Africa
-Faeroe Islands	Europe
-Falkland Islands (Malvinas)	America
-Fiji	Asia
-Finland	Europe
-France	Europe
-French Guiana	America
-French Polynesia	Asia
-Gabon	Africa
-Gambia	Africa
-Georgia	Europe
-Germany	Europe
-Ghana	Africa
-Gibraltar	Europe
-Greece	Europe
-Greenland	Europe
-Grenada	America
-Guadeloupe	America
-Guam	Asia
-Guatemala	America
-Guernsey	Europe
-Guinea	Africa
-Guinea-Bissau	Africa
-Guyana	America
-Haiti	America
-Holy See	Europe
-Honduras	America
-Hong Kong, China	Asia
-Hungary	Europe
-Iceland	Europe
-India	Asia
-Indonesia	Asia
-Iran	Asia
-Iraq	Asia
-Ireland	Europe
-Isle of Man	Europe
-Israel	Asia
-Italy	Europe
-Jamaica	America
-Japan	Asia
-Jersey	Europe
-Jordan	Asia
-Kazakhstan	Asia
-Kenya	Africa
-Kiribati	Asia
-Korea, Dem. Rep.	Asia
-Korea, Rep.	Asia
-Korea, United	Asia
-Kosovo	Europe
-Kuwait	Asia
-Kyrgyzstan	Asia
-Laos	Asia
-Latvia	Europe
-Lebanon	Asia
-Lesotho	Africa
-Liberia	Africa
-Libya	Africa
-Liechtenstein	Europe
-Lithuania	Europe
-Luxembourg	Europe
-Macao, China	Asia
-Macedonia, FYR	Europe
-Madagascar	Africa
-Malawi	Africa
-Malaysia	Asia
-Maldives	Asia
-Mali	Africa
-Malta	Europe
-Marshall Islands	Asia
-Martinique	America
-Mauritania	Africa
-Mauritius	Africa
-Mayotte	Africa
-Mexico	America
-Micronesia, Fed. Sts.	Asia
-Moldova	Europe
-Monaco	Europe
-Mongolia	Asia
-Montenegro	Europe
-Montserrat	America
-Morocco	Africa
-Mozambique	Africa
-Myanmar	Asia
-Namibia	Africa
-Nauru	Asia
-Nepal	Asia
-Netherlands	Europe
-Netherlands Antilles	America
-New Caledonia	Asia
-New Zealand	Asia
-Ngorno-Karabakh	Europe
-Nicaragua	America
-Niger	Africa
-Nigeria	Africa
-Niue	Asia
-Norfolk Island	Asia
-Northern Cyprus	Europe
-Northern Mariana Islands	Asia
-Norway	Europe
-Oman	Asia
-Pakistan	Asia
-Palau	Asia
-Panama	America
-Papua New Guinea	Asia
-Paraguay	America
-Peru	America
-Philippines	Asia
-Pitcairn	Asia
-Poland	Europe
-Portugal	Europe
-Puerto Rico	America
-Qatar	Asia
-Reunion	Africa
-Romania	Europe
-Russia	Europe
-Rwanda	Africa
-Saint Barthelemy	America
-Saint Helena	Africa
-Saint Kitts and Nevis	America
-Saint Lucia	America
-Saint Martin	America
-Saint Vincent and the Grenadines	America
-Saint-Pierre-et-Miquelon	America
-Samoa	Asia
-San Marino	Europe
-Sao Tome and Principe	Africa
-Saudi Arabia	Asia
-Senegal	Africa
-Serbia	Europe
-Serbia and Montenegro	Europe
-Serbia excluding Kosovo	Europe
-Seychelles	Africa
-Sierra Leone	Africa
-Singapore	Asia
-Slovak Republic	Europe
-Slovenia	Europe
-Solomon Islands	Asia
-Somalia	Africa
-Somaliland	Africa
-South Africa	Africa
-South Ossetia	Europe
-Spain	Europe
-Sri Lanka	Asia
-Sudan	Africa
-Suriname	America
-Svalbard	Europe
-Swaziland	Africa
-Sweden	Europe
-Switzerland	Europe
-Syria	Asia
-Taiwan	Asia
-Tajikistan	Asia
-Tanzania	Africa
-Thailand	Asia
-Timor-Leste	Asia
-Togo	Africa
-Tokelau	Asia
-Tonga	Asia
-Transnistria	Europe
-Trinidad and Tobago	America
-Tunisia	Africa
-Turkey	Europe
-Turkmenistan	Asia
-Turks and Caicos Islands	America
-Tuvalu	Asia
-Uganda	Africa
-Ukraine	Europe
-United Arab Emirates	Asia
-United Kingdom	Europe
-United States	America
-Uruguay	America
-USSR	Europe
-Uzbekistan	Asia
-Vanuatu	Asia
-Venezuela	America
-Vietnam	Asia
-Virgin Islands (U.S.)	America
-Wallis et Futuna	Asia
-West Bank and Gaza	Asia
-West Germany	Europe
-Western Sahara	Africa
-Yemen Arab Republic (Former)	Asia
-Yemen Democratic (Former)	Asia
-Yemen, Rep.	Asia
-Yugoslavia	Europe
-Zambia	Africa
-Zimbabwe	Africa
-South Sudan Africa
-
+country,continent,color
+Afghanistan,Asia,3
+Albania,Europe,2
+Algeria,Africa,0
+Angola,Africa,0
+Antigua and Barbuda,America,1
+Argentina,America,1
+Armenia,Europe,2
+Australia,Asia,3
+Austria,Europe,2
+Azerbaijan,Europe,2
+Bahamas,America,1
+Bahrain,Asia,3
+Bangladesh,Asia,3
+Barbados,America,1
+Belarus,Europe,2
+Belgium,Europe,2
+Belize,America,1
+Benin,Africa,0
+Bhutan,Asia,3
+Bolivia,America,1
+Bosnia and Herzegovina,Europe,2
+Botswana,Africa,0
+Brazil,America,1
+Brunei,Asia,3
+Bulgaria,Europe,2
+Burkina Faso,Africa,0
+Burundi,Africa,0
+Cambodia,Asia,3
+Cameroon,Africa,0
+Canada,America,1
+Cape Verde,Africa,0
+Chad,Africa,0
+Chile,America,1
+China,Asia,3
+Colombia,America,1
+Comoros,Africa,0
+Congo, Dem. Rep.,Africa,0
+Congo, Rep.,Africa,0
+Costa Rica,America,1
+Cote d'Ivoire,Africa,0
+Croatia,Europe,2
+Cuba,America,1
+Cyprus,Europe,2
+Denmark,Europe,2
+Djibouti,Africa,0
+Ecuador,America,1
+Egypt,Africa,0
+El Salvador,America,1
+Equatorial Guinea,Africa,0
+Eritrea,Africa,0
+Estonia,Europe,2
+Ethiopia,Africa,0
+Fiji,Asia,3
+Finland,Europe,2
+France,Europe,2
+Gabon,Africa,0
+Gambia,Africa,0
+Georgia,Europe,2
+Germany,Europe,2
+Ghana,Africa,0
+Greece,Europe,2
+Grenada,America,1
+Guatemala,America,1
+Guinea,Africa,0
+Guinea-Bissau,Africa,0
+Guyana,America,1
+Haiti,America,1
+Honduras,America,1
+Hungary,Europe,2
+Iceland,Europe,2
+India,Asia,3
+Indonesia,Asia,3
+Iran,Asia,3
+Iraq,Asia,3
+Ireland,Europe,2
+Israel,Asia,3
+Italy,Europe,2
+Jamaica,America,1
+Japan,Asia,3
+Jordan,Asia,3
+Kazakhstan,Asia,3
+Kenya,Africa,0
+Kiribati,Asia,3
+Kuwait,Asia,3
+Latvia,Europe,2
+Lebanon,Asia,3
+Lesotho,Africa,0
+Liberia,Africa,0
+Libya,Africa,0
+Lithuania,Europe,2
+Luxembourg,Europe,2
+Macedonia, FYR,Europe,2
+Madagascar,Africa,0
+Malawi,Africa,0
+Malaysia,Asia,3
+Maldives,Asia,3
+Mali,Africa,0
+Malta,Europe,2
+Mauritania,Africa,0
+Mauritius,Africa,0
+Mexico,America,1
+Micronesia, Fed. Sts.,Asia,3
+Moldova,Europe,2
+Mongolia,Asia,3
+Montenegro,Europe,2
+Morocco,Africa,0
+Mozambique,Africa,0
+Myanmar,Asia,3
+Namibia,Africa,0
+Nepal,Asia,3
+Netherlands,Europe,2
+New Zealand,Asia,3
+Nicaragua,America,1
+Niger,Africa,0
+Nigeria,Africa,0
+Norway,Europe,2
+Oman,Asia,3
+Pakistan,Asia,3
+Panama,America,1
+Papua New Guinea,Asia,3
+Paraguay,America,1
+Peru,America,1
+Philippines,Asia,3
+Poland,Europe,2
+Portugal,Europe,2
+Qatar,Asia,3
+Romania,Europe,2
+Russia,Europe,2
+Rwanda,Africa,0
+Samoa,Asia,3
+Sao Tome and Principe,Africa,0
+Saudi Arabia,Asia,3
+Senegal,Africa,0
+Serbia,Europe,2
+Seychelles,Africa,0
+Sierra Leone,Africa,0
+Singapore,Asia,3
+Slovak Republic,Europe,2
+Slovenia,Europe,2
+Solomon Islands,Asia,3
+Somalia,Africa,0
+South Africa,Africa,0
+Spain,Europe,2
+Sri Lanka,Asia,3
+Sudan,Africa,0
+Suriname,America,1
+Swaziland,Africa,0
+Sweden,Europe,2
+Switzerland,Europe,2
+Syria,Asia,3
+Tajikistan,Asia,3
+Tanzania,Africa,0
+Thailand,Asia,3
+Timor-Leste,Asia,3
+Togo,Africa,0
+Tonga,Asia,3
+Trinidad and Tobago,America,1
+Tunisia,Africa,0
+Turkey,Europe,2
+Turkmenistan,Asia,3
+Uganda,Africa,0
+Ukraine,Europe,2
+United Arab Emirates,Asia,3
+United Kingdom,Europe,2
+United States,America,1
+Uruguay,America,1
+Uzbekistan,Asia,3
+Vanuatu,Asia,3
+Venezuela,America,1
+Vietnam,Asia,3
+West Bank and Gaza,Asia,3
+Zambia,Africa,0
+Zimbabwe,Africa,0
