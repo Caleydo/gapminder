@@ -140,7 +140,6 @@ class GapMinder extends views.AView {
     y: new Attribute(),
     size: new Attribute()
   };
-  private color : stratification.IStratification = null;
 
   private $elem: d3.Selection<GapMinder>;
   private xaxis = d3.svg.axis().orient('bottom');
@@ -151,8 +150,29 @@ class GapMinder extends views.AView {
   public yScale = d3.scale.linear();
   public rScale = d3.scale.linear();
 
+  }
+
+  var colorPalette = ["#a6611a","#dfc27d","#f5f5f5","#80cdc1"];
+
+  // setColor will be taking an int which refers to continent
+  // attr("fill", setColor)
+  var setColor = function(c){
+    if (c == 0){
+      return colorPalette[0];
+    }
+    else if (c == 1){
+      return colorPalette[1];
+    }
+    else if (c == 2){
+      return colorPalette[2];
+    }
+
+    else return colorPalette[3];
+    ;
+  }
+
+
   // uneven distribution of continents by colour domain is ngroups and range is colorPalette
-  public colorScale = d3.scale.quantile();
 
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private provGraph:prov.ProvenanceGraph) {
@@ -165,7 +185,6 @@ class GapMinder extends views.AView {
     this.init(this.$elem);
   }
 
-
   /* ------------------ REF DATA ---------------------- */
   private get refData(): matrix.IMatrix {
     if (this.attrs.x.valid) {
@@ -175,9 +194,8 @@ class GapMinder extends views.AView {
       return this.attrs.y.data;
     }
     return this.attrs.size.data;
-  }
+  };
 
-  /* ------ try calling data the way i normally do it ------ */
 
   /* ----------------------------------------- */
   setInteractive(interactive: boolean) {
@@ -630,9 +648,9 @@ private updateTrail(){
   setSizeAttribute(m:matrix.IMatrix) {
     return this.setAttribute('size', m);
   }
-  setColor(m:stratification.IStratification) {
+/*  setColor(m:stratification.IStratification) {
     return this.setAttribute('color',m);
-  }
+  }*/
 
   setColorImpl(attr: string, m: stratification.IStratification) {
     const old = this.color;

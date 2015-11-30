@@ -28,18 +28,19 @@ const elems = template.create(document.body, {
 elems.graph.then((graph) => {
   const app = gapminder.create(<Element>elems.$main.node(), graph);
 
-  /*if (graph.states.length === 1) {
-    //initialize gap minder the first time
-    // get list of datasets then set
-    datas.list((d) => /.*gapminder.*!/.test(d.desc.fqname)).then((list) => {
+
+
+  if (graph.states.length === 1) {
+    datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {
       app.setXAttribute(<any>list[1]).then(() => {
+        console.log(list[1]);
         console.log(list[5]);
+        console.log(list[12]);
         app.setYAttribute(<any>list[5]);
           app.setSizeAttribute(<any>list[12]);
-            app.setColor(<IStratification>list[3]);
           })
       });
-  }*/
+  }
 
   function updateBounds() {
     var bounds = C.bounds(document.querySelector('div.gapminder_i'));
