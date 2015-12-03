@@ -28,18 +28,14 @@ const elems = template.create(document.body, {
 elems.graph.then((graph) => {
   const app = gapminder.create(<Element>elems.$main.node(), graph);
 
-
-
   if (graph.states.length === 1) {
     datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {
       app.setXAttribute(<any>list[1]).then(() => {
-        console.log(list[1]);
-        console.log(list[5]);
-        console.log(list[12]);
         app.setYAttribute(<any>list[5]);
-          app.setSizeAttribute(<any>list[12]);
-          })
-      });
+        app.setSizeAttribute(<any>list[12]);
+        app.setColor(<any>list[2]);
+      })
+    });
   }
 
   function updateBounds() {

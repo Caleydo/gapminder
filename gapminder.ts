@@ -141,6 +141,8 @@ class GapMinder extends views.AView {
     size: new Attribute()
   };
 
+  private color: stratification.IStratification = null;
+
   private $elem: d3.Selection<GapMinder>;
   private xaxis = d3.svg.axis().orient('bottom');
   private yaxis = d3.svg.axis().orient('left');
@@ -148,31 +150,6 @@ class GapMinder extends views.AView {
   private timelinescale = d3.scale.linear<string,number>();
   public xScale = d3.scale.linear();
   public yScale = d3.scale.linear();
-  public rScale = d3.scale.linear();
-
-  }
-
-  var colorPalette = ["#a6611a","#dfc27d","#f5f5f5","#80cdc1"];
-
-  // setColor will be taking an int which refers to continent
-  // attr("fill", setColor)
-  var setColor = function(c){
-    if (c == 0){
-      return colorPalette[0];
-    }
-    else if (c == 1){
-      return colorPalette[1];
-    }
-    else if (c == 2){
-      return colorPalette[2];
-    }
-
-    else return colorPalette[3];
-    ;
-  }
-
-
-  // uneven distribution of continents by colour domain is ngroups and range is colorPalette
 
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private provGraph:prov.ProvenanceGraph) {
@@ -194,7 +171,7 @@ class GapMinder extends views.AView {
       return this.attrs.y.data;
     }
     return this.attrs.size.data;
-  };
+  }
 
 
   /* ----------------------------------------- */
@@ -203,7 +180,6 @@ class GapMinder extends views.AView {
     this.$elem.selectAll('select').attr('disabled',interactive ? null: 'disabled');
     this.$elem.select('line.slider').style('pointer-events', interactive ? null: 'none');
   }
-
 
   private init($elem: d3.Selection<any>) {
     const that = this;
@@ -251,9 +227,11 @@ class GapMinder extends views.AView {
       return d3.scale.linear().domain(a.data.valuetype.range).clamp(true);
     }
 
+    // rewrite to_scale to take value of .property instead
+
     const x = to_scale(this.attrs.x).range([100,dim[0]-25]);
     const y = to_scale(this.attrs.y).range([dim[1]-margin,25]);
-    const s = to_scale(this.attrs.size).range([1,100]);
+    const s  =to_scale(this.attrs.size).range([0,40]);
 
     return Promise.resolve( {
       x: x,
@@ -264,7 +242,7 @@ class GapMinder extends views.AView {
   }
 
 
-  private getTimeIds() {
+  private getTimeIds(){
     const data = this.refData;
     if (!data) {
       return Promise.resolve({
@@ -287,7 +265,6 @@ class GapMinder extends views.AView {
   }
 
   // getTimeIds() --> returns object type --> idtype, ids, names
-
 
   private computeData(selectedTimeId : number) : Promise<{ x: number; y: number; size: number; color: string }[]> {
     if (!this.attrs.x.valid && !this.attrs.y.valid && !this.attrs.size.valid) {
@@ -318,10 +295,10 @@ class GapMinder extends views.AView {
       });
       return Promise.all([id_range, this.refData.rows(localids[0]), to_data(xd, localids[1], localdims[0]), to_data(yd, localids[2], localdims[1]), to_data(sd, localids[3], localdims[2])]);
     }).then((dd) => {
-      const r = dd[0];
-      const names = dd[1];
-      const x_data = dd[2];
-      const y_data = dd[3];
+      const r = dd[0]; //id_range
+      const names = dd[1]; // rows
+      const x_data = dd[2]; //
+      const y_data = dd[3]; //
       const s_data = dd[4];
       const row_sel = this.refData.rowtype.selections();
 
@@ -346,11 +323,11 @@ class GapMinder extends views.AView {
   public updateLegend() {
     Object.keys(this.attrs).forEach((attr) => {
       const m = this.attrs[attr];
-      //this.$elem.select('.attr-'+attr).text(m.label);
+      this.$elem.select('.attr-'+attr).text(m.label);
+      this.$elem.select('.attr-'+attr).property('value',m.label);
       this.$elem.select('.attr-'+attr+'-scale').property('value',m.scale);
-      //update labels accordingly
     });
-      //this.$elem.select('.attr-color').text(this.color ? this.color.desc.name :'None');
+      this.$elem.select('.attr-color').text(this.color ? this.color.desc.name :'None');
     }
  /* ---------------------- selectTimePoint() ------------------- */
   private selectTimePoint() {
@@ -383,8 +360,6 @@ class GapMinder extends views.AView {
       y: this.dim[1] * 0.5
     });
 
-
-
     var refData = this.refData;
     // setting year label based on the selectedTimePoint
     if (refData && selectedTimePoint != null) {
@@ -398,17 +373,16 @@ class GapMinder extends views.AView {
 
     }
 
-
-
     /* ------ PROMISE using computeScales(), computeData() ------------- */
     Promise.all<any>([this.computeScales(), this.computeData(selectedTimePoint)]).then((args:any[]) => {
-      const scales = args[0];
+      const scales = args[0]; // x y size color resolved
       const data:any[] = args[1];
+
       $chart.select('g.xaxis').call(this.xaxis.scale(scales.x));
       $chart.select('g.yaxis').call(this.yaxis.scale(scales.y));
 
       const $marks = $chart.select('g.marks').selectAll('.mark').data(data, (d) => d.id);
-      //var rS  = rScale.domain(d3.extent(data)).range([0,40]);
+
 
       $marks.enter().append('circle').classed('mark', true)
 
@@ -416,7 +390,7 @@ class GapMinder extends views.AView {
           const $this = d3.select(this);
           if (force) {
             $this.attr({
-              r: 1,
+              r:  0,
               cx: 0,
               cy: 0
             });
@@ -648,9 +622,10 @@ private updateTrail(){
   setSizeAttribute(m:matrix.IMatrix) {
     return this.setAttribute('size', m);
   }
-/*  setColor(m:stratification.IStratification) {
+
+  setColor(m:stratification.IStratification) {
     return this.setAttribute('color',m);
-  }*/
+  }
 
   setColorImpl(attr: string, m: stratification.IStratification) {
     const old = this.color;
@@ -689,6 +664,7 @@ private updateTrail(){
     return that.provGraph.push(setAttribute(attr, this.ref, mref));
   }
 }
+
 export function create(parent:Element, provGraph:prov.ProvenanceGraph) {
   return new GapMinder(parent, provGraph);
 }

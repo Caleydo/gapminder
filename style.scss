@@ -36,7 +36,11 @@ aside.left {
   }
 }
 
+div.buttonRow {
+  border-radius: 28px;
+  fill: green;
 
+}
 
 $select-color: orange;
 $hover-color: #ffc46b;
@@ -70,6 +74,7 @@ svg.chart {
     text-anchor: middle;
   }
   .mark {
+    stroke: none;
     opacity: 0.5;
   }
 
