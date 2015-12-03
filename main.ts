@@ -26,7 +26,7 @@ elems.graph.then((graph) => {
   const app = gapminder.create(<Element>elems.$main.node(), graph);
 
   function updateBounds() {
-    var bounds = C.bounds(document.querySelector('div.gapminder_i'));
+    var bounds = C.bounds(document.querySelector('div.chart'));
     app.setBounds(bounds.x, bounds.y, bounds.w - 30, bounds.h - 60);
   }
 

@@ -4,44 +4,48 @@
     "path": "gdp.txt",
     "separator": "\t",
     "type": "matrix",
+    "loadAtOnce": "true",
     "size": [173, 217],
     "rowtype": "Country",
     "coltype": "Year",
     "value": {
       "type": "real",
-      "range": [0, 182700]
+      "range": [0, 182670]
     }
   },
   {
     "name": "Child Mortality < 5 years",
     "path": "childmortality.txt",
     "separator": "\t",
+    "loadAtOnce": "true",
     "type": "matrix",
     "size": [173,217],
     "rowtype": "Country",
     "coltype": "Year",
     "value": {
       "type": "real",
-      "range": [0, 636.6]
+      "range": [0, 829100]
     }
   },
   {
     "name": "Population",
     "path": "totalPop_interpolated.txt",
     "separator": "\t",
+    "loadAtOnce": "true",
     "type": "matrix",
     "size": [173, 217],
     "rowtype": "Country",
     "coltype": "Year",
     "value": {
       "type": "real",
-      "range": [0, 1376000000]
+      "range": [0, 1376050000]
     }
   },
   {
     "name": "Life Expectancy",
     "path": "lifeexpectancy.txt",
     "separator": "\t",
+    "loadAtOnce": "true",
     "type": "matrix",
     "size": [173, 217],
     "rowtype": "Country",

@@ -13,10 +13,6 @@ body, html {
   -webkit-font-smoothing: subpixel-antialiased;
 }
 
-/* hide the aside left section */
-aside.left {
- visibility: hidden;
-}
 
 /* mouse over mark and ref lines*/
 .active {
@@ -105,17 +101,22 @@ svg.timeline {
 }
 
 main {
+  display: -webkit-flex !important;
   display: flex !important;
+  -webkit-align-items: stretch;
+  -webkit-flex-flow: column;
   align-items: stretch;
   flex-flow: column;
 
   div.gapminder_i {
-    flex: 1 1 auto;
+    -webkit-flex: 0 0 0px;
+    flex: 0 0 0px;
     display: block;
   }
 
-  > div.row {
-    height: 3em;
+  div.chart {
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
   }
 
   .over {

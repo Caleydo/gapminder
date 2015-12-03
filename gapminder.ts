@@ -129,11 +129,7 @@ class GapMinder extends views.AView {
   ref:prov.IObjectRef<GapMinder>;
   noneRef : prov.IObjectRef<any>;
 
-  public attrs: {
-    x : Attribute,
-    y : Attribute,
-    size : Attribute,
-  } = {
+  public attrs = {
     x: new Attribute(),
     y: new Attribute(),
     size: new Attribute()
@@ -144,8 +140,8 @@ class GapMinder extends views.AView {
   private $node: d3.Selection<GapMinder>;
   private xaxis = d3.svg.axis().orient('bottom');
   private yaxis = d3.svg.axis().orient('left');
-  private timelineaxis = d3.svg.axis().orient('bottom');
   private timelinescale = d3.scale.linear();
+  private timelineaxis = d3.svg.axis().orient('bottom').scale(this.timelinescale).ticks(1).tickFormat(d3.format('d'));
 
   private initedListener = false;
   private timeIds: any = null;
@@ -237,7 +233,7 @@ class GapMinder extends views.AView {
 
     const x = to_scale(this.attrs.x).range([100,dim[0]-25]);
     const y = to_scale(this.attrs.y).range([dim[1]-margin,25]);
-    const s = to_scale(this.attrs.size).range([0,40]);
+    const s = to_scale(this.attrs.size).range([0,200]);
     const color = this.color ? d3.scale.category10().domain(this.color.groups.map((g) => g.name)) : () => 'gray';
 
     return Promise.resolve( {
@@ -308,7 +304,7 @@ class GapMinder extends views.AView {
           x: x_data ? x_data[i] : 0,
           y: y_data ? y_data[i] : 0,
           size: s_data ? s_data[i] : 0,
-          color: c_data ? C.search(c_data.groups, (g) => g.contains(id)).color : null
+          color: c_data ? C.search(c_data.groups, (g) => g.contains(id)).name : null
         };
       });
     });
@@ -381,7 +377,7 @@ class GapMinder extends views.AView {
         .append('title');
 
       $marks.classed('select-selected', (d) => d.selected)
-        .select('title').text((d) => d.name);
+        .select('title').text((d) => `${d.name}\nx=${d.x}\ny=${d.y}\nsize=${d.size}\ncolor=${d.color}`);
       $marks.interrupt().transition()
         .attr({
           r: (d) => scales.size(d.size),
@@ -458,8 +454,8 @@ private updateTrail(){
     var $timeline = this.$node.select('svg.timeline');
 
     $timeline.attr({
-      width: Math.max(this.dim[0]-20,0),
-      height: 30
+      width: Math.max(this.dim[0],0),
+      height: 40
     });
 
     // if theres data
@@ -487,7 +483,9 @@ private updateTrail(){
      /* ---------------------------------------------------- */
 
     if (wasEmpty) {
-      $slider = $timeline.append('circle').classed('slider', true).attr('r', 10);
+      $slider = $timeline.append('circle').classed('slider', true)
+        .attr('r', 10)
+        .attr('cy', 20);
       // using ref Data
       $slider.call(d3.behavior.drag()
         .on('drag', dragged)
@@ -503,7 +501,7 @@ private updateTrail(){
       this.timeIds = data;
 
       // timelinescale is linear
-      var timeScaler = this.timelinescale.domain(data.minmax).range([20, this.dim[0] - 25]).clamp(true);
+      var timeScaler = this.timelinescale.domain(data.minmax).range([40, this.dim[0] - 40]).clamp(true);
 
       const s = data.idtype.selections().dim(0);
       var t;
@@ -520,7 +518,7 @@ private updateTrail(){
       // just visualizing where slider should be
       $slider.attr('transform', 'translate('+x+',0)');
 
-      $timeline.call(this.timelineaxis.scale(this.timelinescale).ticks(2));
+      $timeline.select('g.axis').attr('transform','translate(0,20)').call(this.timelineaxis);
     });
   } // end of updateTime()
 
