@@ -11,7 +11,6 @@ import prov = require('../caleydo_provenance/main');
 import idtypes = require('../caleydo_core/idtype');
 import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
-import databrowser = require('../caleydo_d3/databrowser');
 import d3 = require('d3');
 
 function setAttributeImpl(inputs, parameter) {
@@ -96,20 +95,20 @@ export function createCmd(id) {
 
 
 export function setAttribute(name: string, $main_ref:prov.IObjectRef<GapMinder>, data:prov.IObjectRef<datatypes.IDataType>) {
-  return prov.action(prov.meta('Set Attribute ' + name+' to '+(data?data.name:'<none>'), prov.cat.visual, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
+  return prov.action(prov.meta(name+'='+(data?data.name:'<none>'), prov.cat.visual, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
     name: name
   });
 }
 export function setAttributeScale(name: string, $main_ref:prov.IObjectRef<GapMinder>, scale: string) {
-  return prov.action(prov.meta('Set Attribute ' + name+' to '+scale, prov.cat.visual, prov.op.update), 'setGapMinderAttributeScale', setAttributeScaleImpl, [$main_ref], {
+  return prov.action(prov.meta(name+'_scale='+scale, prov.cat.visual, prov.op.update), 'setGapMinderAttributeScale', setAttributeScaleImpl, [$main_ref], {
     scale: scale,
     name: name
   });
 }
 
 class Attribute {
-  data : matrix.IMatrix = null;
-  scale ='linear';
+  data:matrix.IMatrix = null;
+  scale = 'linear';
 
   get label() {
     return this.data ? this.data.desc.name : 'None';
@@ -118,7 +117,6 @@ class Attribute {
   get valid() {
     return this.data !== null;
   }
-
 }
 
 interface IScale {
@@ -147,17 +145,17 @@ class GapMinder extends views.AView {
   private xaxis = d3.svg.axis().orient('bottom');
   private yaxis = d3.svg.axis().orient('left');
   private timelineaxis = d3.svg.axis().orient('bottom');
-  private timelinescale = d3.scale.linear<string,number>();
-  public xScale = d3.scale.linear();
-  public yScale = d3.scale.linear();
+  private timelinescale = d3.scale.linear();
+  private xScale = d3.scale.linear();
+  private yScale = d3.scale.linear();
 
   // for colorScale domain is continent groups mapped to the range which is colorPalette
-  constructor(private elem:Element, private provGraph:prov.ProvenanceGraph) {
+  constructor(private elem:Element, private graph:prov.ProvenanceGraph) {
     super();
     this.$elem = d3.select(elem).datum(this);
-    this.ref = provGraph.findOrAddObject(this, 'GapMinder', 'visual');
+    this.ref = graph.findOrAddObject(this, 'GapMinder', 'visual');
 
-    this.noneRef = provGraph.findOrAddObject('', 'None', 'data');
+    this.noneRef = graph.findOrAddObject('', 'None', 'data');
 
     this.init(this.$elem);
   }
@@ -182,32 +180,27 @@ class GapMinder extends views.AView {
   }
 
   private init($elem: d3.Selection<any>) {
-    const that = this;
+
+    //find all gapminder datasets
+    datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {
+      const matrices = <matrix.IMatrix[]>list.filter((d) => d.desc.type === 'matrix');
+      ['x', 'y'].forEach((attr) => {
+        const $options = d3.select('select.attr-'+attr).selectAll('option').data(matrices);
+        $options.enter().append('option');
+        $options.attr('value', (d) => d.desc.id).text((d) => d.desc.name);
+        $options.exit().remove();
+      });
+      if (this.graph.states.length === 1) { //first one
+        this.setXAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderGdp') || matrices[0]);
+        this.setYAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderChildMortality5Years') || matrices[0]);
+        this.setSizeAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderPopulation') || matrices[0]);
+        const stratifications = <stratification.IStratification[]>list.filter((d) => d.desc.type === 'stratification');
+        this.setColor(C.search(stratifications, (d) => d.desc.id === 'gapminderContinent') || stratifications[0]);
+      }
+    });
 
     this.update();
   }
-
-  /*public switchScales(b){
-
-     switch(b) {
-        case:'childMor'
-          break;
-
-        case:'gdp'
-
-          break;
-
-        case:'lifeExp'
-          break;
-
-        case:'population'
-
-          break;
-
-        case:'color'
-          break
-      }
-  }*/
 
   private computeScales() : Promise<{ x: IScale; y: IScale; size: IScale; color: (s:string) => string }> {
     const margin = 25;
@@ -231,7 +224,7 @@ class GapMinder extends views.AView {
 
     const x = to_scale(this.attrs.x).range([100,dim[0]-25]);
     const y = to_scale(this.attrs.y).range([dim[1]-margin,25]);
-    const s  =to_scale(this.attrs.size).range([0,40]);
+    const s = to_scale(this.attrs.size).range([0,40]);
 
     return Promise.resolve( {
       x: x,
@@ -549,19 +542,10 @@ private updateTrail(){
         // grab the col headers using names
         var yearsAsStrings = this.timeIds.names;
 
-          var yearsAsInts =  yearsAsStrings.map(Number);
+          var yearsAsInts =  yearsAsStrings.map(parseInt);
 
         // timelinescale is linear
-        var timeScaler = this.timelinescale.domain(d3.extent(yearsAsStrings)).range([20,this.dim[0] - 25]).clamp(false);
-
-        var sample = [];
-        for (let i = 0; i < yearsAsInts.length; i+= 10) {
-          sample.push(yearsAsInts[i]);
-          }
-
-          //var lineScaler = d3.scale.quantize().domain(d3.extent(yearsAsInts)).range([20,this.dim[0] - 25]);
-          $timeline.select('g.axis').call(this.timelineaxis.scale(timeScaler).ticks(10).tickFormat(d3.format('04d')).tickValues(sample).tickPadding(5));
-
+        var timeScaler = this.timelinescale.domain(d3.extent(yearsAsInts)).range([20,this.dim[0] - 25]).clamp(false);
 
         if (wasEmpty) {
           const s = data.idtype.selections().dim(0);
@@ -574,7 +558,7 @@ private updateTrail(){
             t = data.names[<any>(data.ids.indexOf(s.first))];
           }
 
-          const x = this.timelinescale(parseInt(t));
+          const x = this.timelinescale(parseInt(t, 10));
 
           // just visualizing where slider should be
           $slider.attr({
@@ -633,7 +617,7 @@ private updateTrail(){
 
     this.update(true);
 
-    return old === null ? this.noneRef : this.provGraph.findObject(old);
+    return old === null ? this.noneRef : this.graph.findObject(old);
   }
 
   setAttributeImpl(attr: string, m: datatypes.IDataType) {
@@ -646,7 +630,7 @@ private updateTrail(){
 
     this.update(true);
 
-    return old === null ? this.noneRef : this.provGraph.findObject(old);
+    return old === null ? this.noneRef : this.graph.findObject(old);
   }
 
   setAttributeScaleImpl(attr: string, scale: string) {
@@ -660,8 +644,8 @@ private updateTrail(){
 
   setAttribute(attr: string, m: datatypes.IDataType) {
     var that = this;
-    var mref = this.provGraph.findOrAddObject(m, m.desc.name, 'data');
-    return that.provGraph.push(setAttribute(attr, this.ref, mref));
+    var mref = this.graph.findOrAddObject(m, m.desc.name, 'data');
+    return that.graph.push(setAttribute(attr, this.ref, mref));
   }
 }
 

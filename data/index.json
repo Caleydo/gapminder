@@ -1,6 +1,6 @@
 [
   {
-    "name": "total GDP (PPP$, inflation-adjusted)",
+    "name": "GDP",
     "path": "gdp_2.csv",
     "separator": "\t",
     "type": "matrix",
@@ -13,7 +13,7 @@
     }
   },
   {
-    "name": "child mortality (0-5 year-olds dying per 1,000 born)",
+    "name": "Child Mortality < 5 years",
     "path": "childmortality.csv",
     "separator": "\t",
     "type": "matrix",
@@ -26,7 +26,7 @@
     }
   },
   {
-    "name": "population, total",
+    "name": "Population",
     "path": "totalPopulation.csv",
     "separator": "\t",
     "type": "matrix",
@@ -39,7 +39,7 @@
     }
   },
   {
-    "name": "life expectancy at birth",
+    "name": "Life Expectancy",
     "path": "lifeexpectancy.csv",
     "separator": "\t",
     "type": "matrix",
@@ -52,42 +52,29 @@
     }
   },
   {
-    "name": "child deaths",
-    "path": "child.csv",
-    "separator": "\t",
-    "type": "matrix",
-    "size": [260, 217],
-    "rowtype": "Country",
-    "coltype": "Year",
-    "value": {
-      "type": "real",
-      "range": [0, 8291000]
-    }
-  },
-  {
-    "name": "continent",
+    "name": "Continent",
     "type": "stratification",
     "idtype": "Country",
     "path": "continent.csv",
-    "separator": "\t",
-    "size": [ 260 ],
+    "separator": ",",
+    "size": [ 173 ],
     "ngroups": 4,
     "groups": [
       {
         "name": "Africa",
-        "size": 59
+        "size": 50
       },
       {
         "name": "America",
-        "size": 53
+        "size": 30
       },
       {
         "name": "Asia",
-        "size": 76
+        "size": 47
       },
       {
         "name": "Europe",
-        "size": 72
+        "size": 42
       }
     ]
   }
