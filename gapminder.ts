@@ -149,6 +149,9 @@ class GapMinder extends views.AView {
   private xScale = d3.scale.linear();
   private yScale = d3.scale.linear();
 
+  private initedListener = false;
+  private timeIds: any = null;
+
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private graph:prov.ProvenanceGraph) {
     super();
@@ -190,6 +193,7 @@ class GapMinder extends views.AView {
         $options.attr('value', (d) => d.desc.id).text((d) => d.desc.name);
         $options.exit().remove();
       });
+      //select default datasets
       if (this.graph.states.length === 1) { //first one
         this.setXAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderGdp') || matrices[0]);
         this.setYAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderChildMortality5Years') || matrices[0]);
@@ -225,12 +229,13 @@ class GapMinder extends views.AView {
     const x = to_scale(this.attrs.x).range([100,dim[0]-25]);
     const y = to_scale(this.attrs.y).range([dim[1]-margin,25]);
     const s = to_scale(this.attrs.size).range([0,40]);
+    const color = this.color ? d3.scale.category10().domain(this.color.groups.map((g) => g.name)) : () => 'gray';
 
     return Promise.resolve( {
       x: x,
       y: y,
       size: s,
-      color: (d) => d
+      color: color
     });
   }
 
@@ -241,7 +246,9 @@ class GapMinder extends views.AView {
       return Promise.resolve({
         idtype: null,
         ids: [],
-        names: []
+        names: [],
+        ts: [],
+        minmax : [0,0]
       });
     }
 
@@ -249,10 +256,14 @@ class GapMinder extends views.AView {
     return Promise.all<any>([data.cols(), data.colIds()]).then((args) => {
       const names = <string[]>args[0];
       const ids = <ranges.Range>args[1];
+      const ts = names.map((d) => parseInt(d,10));
+
       return {
         idtype: data.coltype,
         ids: ids.dim(0).asList(),
-        names: names
+        names: names,
+        ts : ts,
+        minmax: d3.extent(ts)
       };
     });
   }
@@ -266,37 +277,21 @@ class GapMinder extends views.AView {
     const xd = this.attrs.x.data;
     const yd = this.attrs.y.data;
     const sd = this.attrs.size.data;
+    const cd = this.color;
 
-    const to_ids = (d) => d ? d.rowIds(): null;
-    const to_cols = (d) => d ? d.colIds(): null;
-    const to_data = (d, r, dim) => d && dim >= 0 ? d.slice(dim).data(r) : null;
+    const to_data = (d) => d && selectedTimeId >= 0 ? d.slice(selectedTimeId).data() : null;
+    const to_range = (d) => d ? d.range() : null;
 
-    return Promise.all([this.refData.rowIds(), to_ids(xd), to_ids(yd), to_ids(sd), to_cols(xd), to_cols(yd), to_cols(sd)]).then((ids) => {
-      var id_range:ranges.Range = ids[0];
-
-      ids.slice(1,4).forEach((id: ranges.Range) => {
-        if (id) {
-          id_range = id_range.intersect(id);
-        }
-      });
-      id_range = ranges.list(id_range.dim(0).sort());
-      const localids = ids.slice(0,4).map((id: ranges.Range) => {
-        return id ? id.indexOf(id_range) : null;
-      });
-      const localdims = ids.slice(4).map((cols) => {
-        return selectedTimeId == null || !cols ? 0 : cols.indexOf(selectedTimeId);
-      });
-      return Promise.all([id_range, this.refData.rows(localids[0]), to_data(xd, localids[1], localdims[0]), to_data(yd, localids[2], localdims[1]), to_data(sd, localids[3], localdims[2])]);
-    }).then((dd) => {
-      const r = dd[0]; //id_range
-      const names = dd[1]; // rows
-      const x_data = dd[2]; //
-      const y_data = dd[3]; //
-      const s_data = dd[4];
+    return Promise.all([this.refData.rowIds(), this.refData.rows(), to_data(xd), to_data(yd), to_data(sd), to_range(cd)]).then((dd) => {
+      const ids : ranges.Range = dd[0]; //id_range
+      const names :string[] = dd[1]; // rows
+      const x_data : number[] = dd[2]; //
+      const y_data : number[] = dd[3]; //
+      const s_data : number[] = dd[4];
+      const c_data : ranges.CompositeRange1D = dd[5];
       const row_sel = this.refData.rowtype.selections();
 
-      //r contains the valid ids
-      return r.dim(0).asList().map((id, i) => {
+      return ids.dim(0).asList().map((id, i) => {
         return {
           id: id,
           selected : row_sel.dim(0).contains(id),
@@ -304,7 +299,7 @@ class GapMinder extends views.AView {
           x: x_data ? x_data[i] : 0,
           y: y_data ? y_data[i] : 0,
           size: s_data ? s_data[i] : 0,
-          color: id
+          color: c_data ? C.search(c_data.groups, (g) => g.contains(id)).color : null
         };
       });
     });
@@ -316,12 +311,11 @@ class GapMinder extends views.AView {
   public updateLegend() {
     Object.keys(this.attrs).forEach((attr) => {
       const m = this.attrs[attr];
-      this.$elem.select('.attr-'+attr).text(m.label);
-      this.$elem.select('.attr-'+attr).property('value',m.label);
+      this.$elem.select('.attr-'+attr).property('value',m.valid ? m.data.desc.id: null);
       this.$elem.select('.attr-'+attr+'-scale').property('value',m.scale);
     });
-      this.$elem.select('.attr-color').text(this.color ? this.color.desc.name :'None');
-    }
+    this.$elem.select('.attr-color').text(this.color ? this.color.desc.name :'None');
+  }
  /* ---------------------- selectTimePoint() ------------------- */
   private selectTimePoint() {
     var refData = this.refData;
@@ -331,7 +325,6 @@ class GapMinder extends views.AView {
       if (hovered != null) {
         return hovered;
       }
-
       return type.selections().first;
     }
     return null;
@@ -339,7 +332,7 @@ class GapMinder extends views.AView {
 
  /* --------------------------- updateChart() ----------------------- */
 
-  private updateChart(force = false) {
+  private updateChart() {
     var $chart = this.$elem.select('svg.chart');
     $chart.attr({
       width: this.dim[0],
@@ -355,15 +348,8 @@ class GapMinder extends views.AView {
 
     var refData = this.refData;
     // setting year label based on the selectedTimePoint
-    if (refData && selectedTimePoint != null) {
-      refData.coltype.unmap([selectedTimePoint]).then((names) => {
-        $chart.select('text.act_year').text(names[0]);
-      });
-    }
-
-    {
-      const b = C.bounds(<Element>$chart.node());
-
+    if (this.timeIds && selectedTimePoint != null) {
+      $chart.select('text.act_year').text(this.timeIds.names[this.timeIds.ids.indexOf(selectedTimePoint)]);
     }
 
     /* ------ PROMISE using computeScales(), computeData() ------------- */
@@ -378,48 +364,18 @@ class GapMinder extends views.AView {
 
 
       $marks.enter().append('circle').classed('mark', true)
-
-        .each(function (d) {
-          const $this = d3.select(this);
-          if (force) {
-            $this.attr({
-              r:  0,
-              cx: 0,
-              cy: 0
-            });
-          }
-          if (d.size) {
-            $this.attr('r',scales.size(d.size));
-          }
-          if (d.x) {
-            $this.attr('cx', scales.x(d.x));
-          }
-          if (d.y) {
-            $this.attr('cy', scales.y(d.y));
-          }
-        })
-        .style('fill', (d) => scales.color(d.color))
-        .on('click', (d) => {
-          this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event));
-        })
+       .on('click', (d) => this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event)))
         .append('title');
 
       $marks.classed('select-selected', (d) => d.selected)
         .select('title').text((d) => d.name);
       $marks.transition()
-        .each(function (d) {
-          const $this = d3.select(this);
-          if (d.size) {
-            $this.attr('r', scales.size(d.size));
-          }
-          if (d.x) {
-            $this.attr('cx', scales.x(d.x));
-          }
-          if (d.y) {
-            $this.attr('cy', scales.y(d.y));
-          }
-        });
-
+        .attr({
+          r: (d) => scales.size(d.size),
+          cx: (d) => scales.x(d.x),
+          cy: (d) => scales.y(d.y)
+        })
+        .style('fill', (d) => scales.color(d.color));
       $marks.exit()
         .style('opacity', 1)
         .transition()
@@ -451,17 +407,15 @@ private updateTrail(){
 
   /* ------------------------------------------ */
 
-  private initedListener = false;
-  private timeIds: any = null;
 
  /* --------------- update() --------------------------------------------- */
  /* --- called in reset(), updateBounds(), setAttribute(), setAttributeImpScale() ------------- */
-  private update(force = false) {
+  private update() {
 
     //update labels
     this.updateLegend();
     this.updateTimeLine();
-    this.updateChart(force);
+    this.updateChart();
 
     const ref = this.refData;
 
@@ -470,13 +424,10 @@ private updateTrail(){
       ref.coltype.on('select', (event: any, type: string, new_: ranges.Range) => {
         const id = new_.first;
         if (id && this.timeIds) {
-          var $slider = this.$elem.select('svg.timeline line.slider');
-          const selectedTimePoint = this.timeIds.names[this.timeIds.ids.indexOf(id)];
+          var $slider = this.$elem.select('svg.timeline .slider');
+          const selectedTimePoint = this.timeIds.ts[this.timeIds.ids.indexOf(id)];
           const x = this.timelinescale(selectedTimePoint);
-          $slider.attr({
-            x1: x,
-            x2: x
-          });
+          $slider.attr('transform', 'translate('+x+',0)');
           this.updateChart();
         }
       });
@@ -498,76 +449,63 @@ private updateTrail(){
     });
 
     // if theres data
-    if (d) {
-      // slider
-      var $slider = $timeline.select('line.slider');
-
-      // returns true if no timeline and false if theres a timeline
-      var wasEmpty = $slider.empty();
-
-      /* ---------------- dragged() ------------------------- */
-
-      var dragged = function () {
-        var xPos = (<any>d3.event).x;
-        var leftEdges = this.timelinescale.range([0]);
-        var width = this.timelinescale.range([1]);
-        var j = 0;
-        while (xPos > (leftEdges[j] + width)) {
-          j++;
-        }
-        //j in the new position
-        this.timeIds.idtype.select(idtypes.hoverSelectionType, [this.timeIds.ids[j]]);
-      }
-
-       /* ---------------------------------------------------- */
-
-      if (wasEmpty) {
-        $slider = $timeline.append('line').classed('slider', true).attr({
-          y1: 2,
-          y2: 22
-        });
-        // using ref Data
-        $slider.call(d3.behavior.drag()
-               .on('drag',dragged)
-               .on('dragend', () => {
-                //select the last entry
-                 const s = d.coltype.selections(idtypes.hoverSelectionType);
-                 this.timeIds.idtype.select(idtypes.hoverSelectionType, ranges.none());
-                 this.timeIds.idtype.select(s.clone());
-                }));
-        } // end of if(wasEmpty)
-
-        this.getTimeIds().then((data) => {
-        this.timeIds = data;
-        // grab the col headers using names
-        var yearsAsStrings = this.timeIds.names;
-
-          var yearsAsInts =  yearsAsStrings.map(parseInt);
-
-        // timelinescale is linear
-        var timeScaler = this.timelinescale.domain(d3.extent(yearsAsInts)).range([20,this.dim[0] - 25]).clamp(false);
-
-        if (wasEmpty) {
-          const s = data.idtype.selections().dim(0);
-          var t;
-          if (s.isNone) {
-            // set to 1800
-            data.idtype.select([data.ids[0] ]);
-            t = data.names[0];
-          } else {
-            t = data.names[<any>(data.ids.indexOf(s.first))];
-          }
-
-          const x = this.timelinescale(parseInt(t, 10));
-
-          // just visualizing where slider should be
-          $slider.attr({
-            x1: x,
-            x2: x
-          });
-        }
-        });
+    if (!d) {
+      return;
     }
+    // slider
+    var $slider = $timeline.select('.slider');
+
+    // returns true if no timeline and false if theres a timeline
+    var wasEmpty = $slider.empty();
+
+    if (!$slider.empty()) { //already there
+      return;
+    }
+    /* ---------------- dragged() ------------------------- */
+
+    var dragged = () => {
+      const xPos = (<any>d3.event).x;
+      const year = d3.round(this.timelinescale.invert(xPos),0);
+      const j = this.timeIds.ts.indexOf(year);
+      this.timeIds.idtype.select(idtypes.hoverSelectionType, [this.timeIds.ids[j]]);
+    };
+
+     /* ---------------------------------------------------- */
+
+    if (wasEmpty) {
+      $slider = $timeline.append('circle').classed('slider', true).attr('r', 10);
+      // using ref Data
+      $slider.call(d3.behavior.drag()
+        .on('drag', dragged)
+        .on('dragend', () => {
+          //select the last entry
+          const s = d.coltype.selections(idtypes.hoverSelectionType);
+          this.timeIds.idtype.select(idtypes.hoverSelectionType, ranges.none());
+          this.timeIds.idtype.select(s.clone());
+        }));
+    }
+
+    this.getTimeIds().then((data) => {
+      this.timeIds = data;
+
+      // timelinescale is linear
+      var timeScaler = this.timelinescale.domain(data.minmax).range([20, this.dim[0] - 25]).clamp(true);
+
+      const s = data.idtype.selections().dim(0);
+      var t;
+
+      if (s.isNone) {
+        // set to 1800
+        data.idtype.select([data.ids[0]]);
+        t = data.ts[0];
+      } else {
+        t = data.ts[data.ids.indexOf(s.first)];
+      }
+      const x = this.timelinescale(t);
+
+      // just visualizing where slider should be
+      $slider.attr('transform', 'translate('+x+',0)');
+    });
   } // end of updateTime()
 
   /* ------------------- reset() ------------------------------------- */
@@ -575,7 +513,7 @@ private updateTrail(){
     this.attrs.x = null;
     this.attrs.y = null;
     this.attrs.size = null;
-    this.$elem.selectAll('.attr-x,.attr-y,.attr-size').text('');
+    this.color = null;
     this.update();
   }
 
@@ -615,7 +553,7 @@ private updateTrail(){
     const old = this.color;
     this.color = m;
 
-    this.update(true);
+    this.update();
 
     return old === null ? this.noneRef : this.graph.findObject(old);
   }
@@ -628,7 +566,7 @@ private updateTrail(){
       this.attrs[attr].data = <matrix.IMatrix>m;
     }
 
-    this.update(true);
+    this.update();
 
     return old === null ? this.noneRef : this.graph.findObject(old);
   }

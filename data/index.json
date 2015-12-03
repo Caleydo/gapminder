@@ -62,19 +62,23 @@
     "groups": [
       {
         "name": "Africa",
-        "size": 50
+        "size": 50,
+        "color": "rgb(27, 158, 119)"
       },
       {
         "name": "America",
-        "size": 30
+        "size": 30,
+        "color": "rgb(117, 112, 179)"
       },
       {
         "name": "Asia",
-        "size": 47
+        "size": 47,
+        "color": "rgb(217, 95, 2)"
       },
       {
         "name": "Europe",
-        "size": 42
+        "size": 42,
+        "color": "rgb(231, 41, 138)"
       }
     ]
   }
