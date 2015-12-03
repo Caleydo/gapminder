@@ -1,0 +1,174 @@
+country	continent
+Afghanistan	Asia
+Albania	Europe
+Algeria	Africa
+Angola	Africa
+Antigua and Barbuda	America
+Argentina	America
+Armenia	Europe
+Australia	Asia
+Austria	Europe
+Azerbaijan	Europe
+Bahamas	America
+Bahrain	Asia
+Bangladesh	Asia
+Barbados	America
+Belarus	Europe
+Belgium	Europe
+Belize	America
+Benin	Africa
+Bhutan	Asia
+Bolivia	America
+Bosnia and Herzegovina	Europe
+Botswana	Africa
+Brazil	America
+Brunei	Asia
+Bulgaria	Europe
+Burkina Faso	Africa
+Burundi	Africa
+Cambodia	Asia
+Cameroon	Africa
+Canada	America
+Cape Verde	Africa
+Chad	Africa
+Chile	America
+China	Asia
+Colombia	America
+Comoros	Africa
+Congo, Dem. Rep.	Africa
+Congo, Rep.	Africa
+Costa Rica	America
+Cote d'Ivoire	Africa
+Croatia	Europe
+Cuba	America
+Cyprus	Europe
+Denmark	Europe
+Djibouti	Africa
+Ecuador	America
+Egypt	Africa
+El Salvador	America
+Equatorial Guinea	Africa
+Eritrea	Africa
+Estonia	Europe
+Ethiopia	Africa
+Fiji	Asia
+Finland	Europe
+France	Europe
+Gabon	Africa
+Gambia	Africa
+Georgia	Europe
+Germany	Europe
+Ghana	Africa
+Greece	Europe
+Grenada	America
+Guatemala	America
+Guinea	Africa
+Guinea-Bissau	Africa
+Guyana	America
+Haiti	America
+Honduras	America
+Hungary	Europe
+Iceland	Europe
+India	Asia
+Indonesia	Asia
+Iran	Asia
+Iraq	Asia
+Ireland	Europe
+Israel	Asia
+Italy	Europe
+Jamaica	America
+Japan	Asia
+Jordan	Asia
+Kazakhstan	Asia
+Kenya	Africa
+Kiribati	Asia
+Kuwait	Asia
+Latvia	Europe
+Lebanon	Asia
+Lesotho	Africa
+Liberia	Africa
+Libya	Africa
+Lithuania	Europe
+Luxembourg	Europe
+Macedonia, FYR	Europe
+Madagascar	Africa
+Malawi	Africa
+Malaysia	Asia
+Maldives	Asia
+Mali	Africa
+Malta	Europe
+Mauritania	Africa
+Mauritius	Africa
+Mexico	America
+Micronesia, Fed. Sts.	Asia
+Moldova	Europe
+Mongolia	Asia
+Montenegro	Europe
+Morocco	Africa
+Mozambique	Africa
+Myanmar	Asia
+Namibia	Africa
+Nepal	Asia
+Netherlands	Europe
+New Zealand	Asia
+Nicaragua	America
+Niger	Africa
+Nigeria	Africa
+Norway	Europe
+Oman	Asia
+Pakistan	Asia
+Panama	America
+Papua New Guinea	Asia
+Paraguay	America
+Peru	America
+Philippines	Asia
+Poland	Europe
+Portugal	Europe
+Qatar	Asia
+Romania	Europe
+Russia	Europe
+Rwanda	Africa
+Samoa	Asia
+Sao Tome and Principe	Africa
+Saudi Arabia	Asia
+Senegal	Africa
+Serbia	Europe
+Seychelles	Africa
+Sierra Leone	Africa
+Singapore	Asia
+Slovak Republic	Europe
+Slovenia	Europe
+Solomon Islands	Asia
+Somalia	Africa
+South Africa	Africa
+Spain	Europe
+Sri Lanka	Asia
+Sudan	Africa
+Suriname	America
+Swaziland	Africa
+Sweden	Europe
+Switzerland	Europe
+Syria	Asia
+Tajikistan	Asia
+Tanzania	Africa
+Thailand	Asia
+Timor-Leste	Asia
+Togo	Africa
+Tonga	Asia
+Trinidad and Tobago	America
+Tunisia	Africa
+Turkey	Europe
+Turkmenistan	Asia
+Uganda	Africa
+Ukraine	Europe
+United Arab Emirates	Asia
+United Kingdom	Europe
+United States	America
+Uruguay	America
+Uzbekistan	Asia
+Vanuatu	Asia
+Venezuela	America
+Vietnam	Asia
+West Bank and Gaza	Asia
+Zambia	Africa
+Zimbabwe	Africa
