@@ -13,14 +13,6 @@ body, html {
   -webkit-font-smoothing: subpixel-antialiased;
 }
 
-
-.selectioninfo {
-  .no-selection-selected.no-selection-hovered {
-    display: none;
-  }
-}
-
-
 /* hide the aside left section */
 aside.left {
  visibility: hidden;
@@ -36,11 +28,6 @@ aside.left {
   }
 }
 
-div.buttonRow {
-  border-radius: 28px;
-  fill: green;
-
-}
 
 $select-color: orange;
 $hover-color: #ffc46b;
@@ -48,14 +35,6 @@ $hover-color: #ffc46b;
 svg {
   vector-effect : non-scaling-stroke;
   shape-rendering: geometricPrecision;
-}
-
-svg .select-selected {
-  //svg variant
-  stroke: $select-color;
-  stroke-width: 1px;
-  fill: $select-color !important;
-  vector-effect: non-scaling-stroke;
 }
 
 svg.chart .xaxis, svg.chart .yaxis, svg.timeline {
@@ -76,6 +55,12 @@ svg.chart {
   .mark {
     stroke: none;
     opacity: 0.5;
+
+    &.select-selected {
+      //svg variant
+      stroke: $select-color;
+      stroke-width: 1px;
+    }
   }
 
   select .yaxis, .xaxis {
@@ -108,11 +93,11 @@ svg.chart {
 
 svg.timeline {
 
-  line.slider {
+  circle.slider {
     stroke-width: 2;
     stroke: black;
-    stroke-linecap: round;
     cursor: ew-resize;
+    fill: orange;
   }
 
   font-size: small;
@@ -126,6 +111,7 @@ main {
 
   div.gapminder_i {
     flex: 1 1 auto;
+    display: block;
   }
 
   > div.row {

@@ -146,8 +146,6 @@ class GapMinder extends views.AView {
   private yaxis = d3.svg.axis().orient('left');
   private timelineaxis = d3.svg.axis().orient('bottom');
   private timelinescale = d3.scale.linear();
-  private xScale = d3.scale.linear();
-  private yScale = d3.scale.linear();
 
   private initedListener = false;
   private timeIds: any = null;
@@ -369,7 +367,7 @@ class GapMinder extends views.AView {
 
       $marks.classed('select-selected', (d) => d.selected)
         .select('title').text((d) => d.name);
-      $marks.transition()
+      $marks.interrupt().transition()
         .attr({
           r: (d) => scales.size(d.size),
           cx: (d) => scales.x(d.x),
@@ -505,6 +503,8 @@ private updateTrail(){
 
       // just visualizing where slider should be
       $slider.attr('transform', 'translate('+x+',0)');
+
+      $timeline.call(this.timelineaxis.scale(this.timelinescale).ticks(2));
     });
   } // end of updateTime()
 
