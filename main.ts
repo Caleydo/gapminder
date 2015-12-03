@@ -5,7 +5,6 @@ import C = require('../caleydo_core/main');
 import template = require('../clue_demo/template');
 import cmode = require('../caleydo_provenance/mode');
 import gapminder = require('./gapminder');
-import d3 = require('d3');
 
 //scoping let --> function level scope in js vs java global, local
 let helper = document.querySelector('div.gapminder');

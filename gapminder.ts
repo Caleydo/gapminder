@@ -245,7 +245,7 @@ class GapMinder extends views.AView {
   }
 
 
-  private getTimeIds(){
+  private getTimeIds() {
     const data = this.refData;
     if (!data) {
       return Promise.resolve({
@@ -355,7 +355,6 @@ class GapMinder extends views.AView {
       y: this.dim[1] * 0.5
     });
 
-    var refData = this.refData;
     // setting year label based on the selectedTimePoint
     if (this.timeIds && selectedTimePoint != null) {
       $chart.select('text.act_year').text(this.timeIds.names[this.timeIds.ids.indexOf(selectedTimePoint)]);
@@ -501,7 +500,7 @@ private updateTrail(){
       this.timeIds = data;
 
       // timelinescale is linear
-      var timeScaler = this.timelinescale.domain(data.minmax).range([40, this.dim[0] - 40]).clamp(true);
+     this.timelinescale.domain(data.minmax).range([40, this.dim[0] - 40]).clamp(true);
 
       const s = data.idtype.selections().dim(0);
       var t;
@@ -523,7 +522,7 @@ private updateTrail(){
   } // end of updateTime()
 
   /* ------------------- reset() ------------------------------------- */
-  reset(){
+  reset() {
     this.attrs.x = null;
     this.attrs.y = null;
     this.attrs.size = null;
