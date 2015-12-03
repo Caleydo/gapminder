@@ -141,7 +141,7 @@ class GapMinder extends views.AView {
 
   private color: stratification.IStratification = null;
 
-  private $elem: d3.Selection<GapMinder>;
+  private $node: d3.Selection<GapMinder>;
   private xaxis = d3.svg.axis().orient('bottom');
   private yaxis = d3.svg.axis().orient('left');
   private timelineaxis = d3.svg.axis().orient('bottom');
@@ -153,12 +153,12 @@ class GapMinder extends views.AView {
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private graph:prov.ProvenanceGraph) {
     super();
-    this.$elem = d3.select(elem).datum(this);
+    this.$node = d3.select(elem).datum(this);
     this.ref = graph.findOrAddObject(this, 'GapMinder', 'visual');
 
     this.noneRef = graph.findOrAddObject('', 'None', 'data');
 
-    this.init(this.$elem);
+    this.init(this.$node);
   }
 
   /* ------------------ REF DATA ---------------------- */
@@ -176,11 +176,12 @@ class GapMinder extends views.AView {
   /* ----------------------------------------- */
   setInteractive(interactive: boolean) {
 
-    this.$elem.selectAll('select').attr('disabled',interactive ? null: 'disabled');
-    this.$elem.select('line.slider').style('pointer-events', interactive ? null: 'none');
+    this.$node.selectAll('select').attr('disabled',interactive ? null: 'disabled');
+    this.$node.select('line.slider').style('pointer-events', interactive ? null: 'none');
   }
 
   private init($elem: d3.Selection<any>) {
+    const that = this;
 
     //find all gapminder datasets
     datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {
@@ -190,6 +191,13 @@ class GapMinder extends views.AView {
         $options.enter().append('option');
         $options.attr('value', (d) => d.desc.id).text((d) => d.desc.name);
         $options.exit().remove();
+
+        $elem.select('select.attr-' + attr).on('change', function () {
+          that.setAttribute(attr, matrices[this.selectedIndex]);
+        });
+        $elem.select('select.attr-' + attr + '-scale').on('change', function () {
+          that.setAttributeScale(attr, this.value);
+        });
       });
       //select default datasets
       if (this.graph.states.length === 1) { //first one
@@ -200,6 +208,9 @@ class GapMinder extends views.AView {
         this.setColor(C.search(stratifications, (d) => d.desc.id === 'gapminderContinent') || stratifications[0]);
       }
     });
+
+
+
 
     this.update();
   }
@@ -309,10 +320,14 @@ class GapMinder extends views.AView {
   public updateLegend() {
     Object.keys(this.attrs).forEach((attr) => {
       const m = this.attrs[attr];
-      this.$elem.select('.attr-'+attr).property('value',m.valid ? m.data.desc.id: null);
-      this.$elem.select('.attr-'+attr+'-scale').property('value',m.scale);
-    });
-    this.$elem.select('.attr-color').text(this.color ? this.color.desc.name :'None');
+      const $optionns = this.$node.select('.attr-'+attr).selectAll('option');
+      if (!$optionns.empty()) {
+        const choices = $optionns.data();
+        this.$node.select('.attr-'+attr).property('selectedIndex', choices.indexOf(m.data));
+        this.$node.select('.attr-'+attr+'-scale').property('value',m.scale);
+      }
+      });
+    this.$node.select('.attr-color').text(this.color ? this.color.desc.name :'None');
   }
  /* ---------------------- selectTimePoint() ------------------- */
   private selectTimePoint() {
@@ -331,7 +346,7 @@ class GapMinder extends views.AView {
  /* --------------------------- updateChart() ----------------------- */
 
   private updateChart() {
-    var $chart = this.$elem.select('svg.chart');
+    var $chart = this.$node.select('svg.chart');
     $chart.attr({
       width: this.dim[0],
       height: this.dim[1]
@@ -351,7 +366,7 @@ class GapMinder extends views.AView {
     }
 
     /* ------ PROMISE using computeScales(), computeData() ------------- */
-    Promise.all<any>([this.computeScales(), this.computeData(selectedTimePoint)]).then((args:any[]) => {
+    Promise.all<any>([this.computeScales(), this.computeData(selectedTimePoint == null ? -1 : selectedTimePoint)]).then((args:any[]) => {
       const scales = args[0]; // x y size color resolved
       const data:any[] = args[1];
 
@@ -374,6 +389,7 @@ class GapMinder extends views.AView {
           cy: (d) => scales.y(d.y)
         })
         .style('fill', (d) => scales.color(d.color));
+
       $marks.exit()
         .style('opacity', 1)
         .transition()
@@ -422,7 +438,7 @@ private updateTrail(){
       ref.coltype.on('select', (event: any, type: string, new_: ranges.Range) => {
         const id = new_.first;
         if (id && this.timeIds) {
-          var $slider = this.$elem.select('svg.timeline .slider');
+          var $slider = this.$node.select('svg.timeline .slider');
           const selectedTimePoint = this.timeIds.ts[this.timeIds.ids.indexOf(id)];
           const x = this.timelinescale(selectedTimePoint);
           $slider.attr('transform', 'translate('+x+',0)');
@@ -431,7 +447,7 @@ private updateTrail(){
       });
       ref.rowtype.on('select', (event: any, type: string, new_: ranges.Range) => {
         const ids = new_.dim(0).asList();
-        this.$elem.select('svg.chart g.marks').selectAll('.mark').classed('select-'+type,(d) => ids.indexOf(d.id) >= 0);
+        this.$node.select('svg.chart g.marks').selectAll('.mark').classed('select-'+type,(d) => ids.indexOf(d.id) >= 0);
       });
     }
   }
@@ -439,7 +455,7 @@ private updateTrail(){
   /* ------------------------- updateTimeLine() ------------------------------- */
   private updateTimeLine() {
     const d = this.refData;
-    var $timeline = this.$elem.select('svg.timeline');
+    var $timeline = this.$node.select('svg.timeline');
 
     $timeline.attr({
       width: Math.max(this.dim[0]-20,0),
@@ -579,11 +595,13 @@ private updateTrail(){
 
     return old;
   }
+  setAttributeScale(attr: string, scale: string) {
+    return this.graph.push(setAttributeScale(attr, this.ref, scale));
+  }
 
   setAttribute(attr: string, m: datatypes.IDataType) {
-    var that = this;
-    var mref = this.graph.findOrAddObject(m, m.desc.name, 'data');
-    return that.graph.push(setAttribute(attr, this.ref, mref));
+    const mref = this.graph.findOrAddObject(m, m.desc.name, 'data');
+    return this.graph.push(setAttribute(attr, this.ref, mref));
   }
 }
 
