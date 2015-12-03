@@ -1,7 +1,7 @@
 [
   {
     "name": "GDP",
-    "path": "gdp_2.csv",
+    "path": "gdp.txt",
     "separator": "\t",
     "type": "matrix",
     "size": [173, 217],
@@ -14,7 +14,7 @@
   },
   {
     "name": "Child Mortality < 5 years",
-    "path": "childmortality.csv",
+    "path": "childmortality.txt",
     "separator": "\t",
     "type": "matrix",
     "size": [173,217],
@@ -27,10 +27,10 @@
   },
   {
     "name": "Population",
-    "path": "totalPopulation.csv",
+    "path": "totalPop_interpolated.txt",
     "separator": "\t",
     "type": "matrix",
-    "size": [173, 82],
+    "size": [173, 217],
     "rowtype": "Country",
     "coltype": "Year",
     "value": {
@@ -40,7 +40,7 @@
   },
   {
     "name": "Life Expectancy",
-    "path": "lifeexpectancy.csv",
+    "path": "lifeexpectancy.txt",
     "separator": "\t",
     "type": "matrix",
     "size": [173, 217],
@@ -55,8 +55,8 @@
     "name": "Continent",
     "type": "stratification",
     "idtype": "Country",
-    "path": "continent.csv",
-    "separator": ",",
+    "path": "continent.txt",
+    "separator": "\t",
     "size": [ 173 ],
     "ngroups": 4,
     "groups": [
