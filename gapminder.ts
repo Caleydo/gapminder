@@ -18,10 +18,14 @@ function setAttributeImpl(inputs, parameter) {
     name = parameter.name;
 
   return inputs[1].v.then((data) => {
-    const old = gapminder.setAttributeImpl(name, data);
-    return {
-      inverse: setAttribute(name, inputs[0], old)
-    };
+    if (data == '') {
+      data = null;
+    }
+    return gapminder.setAttributeImpl(name, data).then((old) => {
+      return {
+        inverse: setAttribute(name, inputs[0], old)
+      };
+    });
   });
 }
 function setAttributeScaleImpl(inputs, parameter) {
@@ -277,7 +281,7 @@ class GapMinder extends views.AView {
   }
 
   private computeData(selectedTimeId:number):{ x: number; y: number; size: number; color: string }[] {
-    if (this.items.length <= 0 || !this.timeIds) {
+    if (this.items.length <= 0 || !this.timeIds || !this.refData) {
       return [];
     }
     const x_data = this.attrs.x.arr;
@@ -296,9 +300,9 @@ class GapMinder extends views.AView {
         name: item.name,
         selected: row_sel.dim(0).contains(item.id),
         filtered: row_sel.dim(0).contains(item.id),
-        x: x_data ? x_data[i][selectecdTimeIndex] : 0,
-        y: y_data ? y_data[i][selectecdTimeIndex] : 0,
-        size: s_data ? s_data[i][selectecdTimeIndex] : 0,
+        x: x_data && selectecdTimeIndex >= 0 ? x_data[i][selectecdTimeIndex] : 0,
+        y: y_data && selectecdTimeIndex >= 0 ? y_data[i][selectecdTimeIndex] : 0,
+        size: s_data && selectecdTimeIndex >= 0 ? s_data[i][selectecdTimeIndex] : 0,
         color: c_data ? C.search(c_data.groups, (g) => g.contains(item.id)).name : null
       };
     });
@@ -585,11 +589,14 @@ class GapMinder extends views.AView {
   }
 
   setAttributeImpl(attr:string, m:datatypes.IDataType) {
+    if (m == null) {
+      m = null;
+    }
     const old = attr === 'color' ? this.color : this.attrs[attr].data;
     if (attr === 'color') {
       this.color = <stratification.IStratification>m;
 
-      return this.color.range().then((arr) => {
+      return (this.color ? this.color.range() : Promise.resolve(null)).then((arr) => {
         this.color_range = arr;
         this.fire('ready');
 
@@ -603,7 +610,7 @@ class GapMinder extends views.AView {
       att.data = matrix;
 
       this.fire('wait');
-      if (this.refData === matrix) {
+      if (this.refData === matrix && matrix != null) {
         return Promise.all<any>([matrix.data(), matrix.rows(), matrix.rowIds(), matrix.cols(), matrix.colIds()]).then((args) => {
           att.arr = args[0];
 
@@ -620,7 +627,7 @@ class GapMinder extends views.AView {
           return old === null ? this.noneRef : this.graph.findObject(old);
         });
       } else {
-        return this.attrs[attr].data.data().then((arr) => {
+        return (matrix ? matrix.data(): Promise.resolve(null)).then((arr) => {
           this.attrs[attr].arr = arr;
           this.fire('ready');
 
