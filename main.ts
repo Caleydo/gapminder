@@ -28,8 +28,8 @@ elems.graph.then((graph) => {
   app.on('ready', elems.header.ready.bind(elems.header));
 
   function updateBounds() {
-    var bounds = C.bounds(document.querySelector('div.chart'));
-    app.setBounds(bounds.x, bounds.y, bounds.w - 30, bounds.h - 60);
+    var bounds = C.bounds(document.querySelector('main'));
+    app.setBounds(bounds.x, bounds.y, bounds.w - 50, bounds.h - 70);
   }
 
   elems.on('modeChanged', function (event, new_) {

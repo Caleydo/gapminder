@@ -91,23 +91,18 @@ svg.timeline {
 }
 
 main {
-  display: -webkit-flex !important;
-  display: flex !important;
-  -webkit-align-items: stretch;
-  -webkit-flex-flow: column;
-  align-items: stretch;
-  flex-flow: column;
+  position: relative;
 
   div.gapminder_i {
-    -webkit-flex: 0 0 0px;
-    flex: 0 0 0px;
     display: block;
+    position: absolute;
+    width: 40em;
   }
 
   div.chart {
-    -webkit-flex: 1 1 auto;
-    flex: 1 1 auto;
-
+    position: absolute;
+    top: 0;
+    left: 0px;
     div.color_legend {
       position: absolute;
       top: 1em;
@@ -117,6 +112,18 @@ main {
        margin-right: 3px;
       }
     }
+  }
+
+  div.axis {
+    position: absolute;
+    bottom: 50px;
+  }
+
+  svg.timeline {
+    position: absolute;
+    left: 0;
+    right :0;
+    bottom: 2px;
   }
 
   .over {
