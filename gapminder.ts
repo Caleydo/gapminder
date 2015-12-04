@@ -133,17 +133,21 @@ interface IItem {
 
 function createTimeIds(names:string[], ids:ranges.Range, idtype:idtypes.IDType) {
   const ts = names.map((d) => parseInt(d, 10));
+  const ids_l = ids.dim(0).asList();
+  idtype.fillMapCache(ids_l, names);
   return {
     idtype: idtype,
-    ids: ids.dim(0).asList(),
+    ids: ids_l,
     names: names,
     ts: ts,
     minmax: d3.extent(ts)
   };
 }
 
-function createItems(names:string[], ids:ranges.Range):IItem[] {
-  return ids.dim(0).asList().map((id, i) => {
+function createItems(names:string[], ids:ranges.Range, idtype:idtypes.IDType):IItem[] {
+  const ids_l = ids.dim(0).asList();
+  idtype.fillMapCache(ids_l, names);
+  return ids_l.map((id, i) => {
     return {
       id: id,
       name: names[i]
@@ -604,7 +608,7 @@ class GapMinder extends views.AView {
           att.arr = args[0];
 
           //prepare the items
-          this.items = createItems(<string[]>args[1], <ranges.Range>args[2]);
+          this.items = createItems(<string[]>args[1], <ranges.Range>args[2], matrix.rowtype);
 
           //prepare time ids
           this.timeIds = createTimeIds(<string[]>args[3], <ranges.Range>args[4], matrix.coltype);
