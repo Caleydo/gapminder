@@ -273,7 +273,7 @@ class GapMinder extends views.AView {
   }
 
   private computeData(selectedTimeId:number):{ x: number; y: number; size: number; color: string }[] {
-    if (this.items.length <= 0) {
+    if (this.items.length <= 0 || !this.timeIds) {
       return [];
     }
     const x_data = this.attrs.x.arr;
@@ -284,15 +284,17 @@ class GapMinder extends views.AView {
     const row_sel = this.refData.rowtype.selections();
     const row_filter = this.refData.rowtype.selections('filter');
 
+    const selectecdTimeIndex = this.timeIds.ids.indexOf(selectedTimeId);
+
     return this.items.map((item, i) => {
       return {
         id: item.id,
         name: item.name,
         selected: row_sel.dim(0).contains(item.id),
         filtered: row_sel.dim(0).contains(item.id),
-        x: x_data ? x_data[i][selectedTimeId] : 0,
-        y: y_data ? y_data[i][selectedTimeId] : 0,
-        size: s_data ? s_data[i][selectedTimeId] : 0,
+        x: x_data ? x_data[i][selectecdTimeIndex] : 0,
+        y: y_data ? y_data[i][selectecdTimeIndex] : 0,
+        size: s_data ? s_data[i][selectecdTimeIndex] : 0,
         color: c_data ? C.search(c_data.groups, (g) => g.contains(item.id)).name : null
       };
     });

@@ -25,7 +25,7 @@ body, html {
 }
 
 
-$select-color: orange;
+$select-color: black;
 $hover-color: #ffc46b;
 
 svg {
@@ -55,35 +55,17 @@ svg.chart {
     &.select-selected {
       //svg variant
       stroke: $select-color;
-      stroke-width: 1px;
+      stroke-width: 3px;
+    }
+    &.select-hover {
+      //svg variant
+      stroke: $select-color;
+      stroke-width: 3px;
     }
   }
 
   select .yaxis, .xaxis {
     background-color: #00b3ee;
-  }
-
-  rect.lassoarea {
-    opacity: 0;
-  }
-
-  .lasso path {
-    stroke: rgb(80,80,80);
-    stroke-width:2px;
-  }
-
-  .lasso .drawn {
-    fill-opacity:.05 ;
-  }
-
-  .lasso .loop_close {
-    fill:none;
-    stroke-dasharray: 4,4;
-  }
-
-  .lasso .origin {
-    fill:#3399FF;
-    fill-opacity:.5;
   }
 }
 
