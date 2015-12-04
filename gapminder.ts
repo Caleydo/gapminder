@@ -548,7 +548,7 @@ class GapMinder extends views.AView {
     const s = this.timeIds.idtype.selections().dim(0);
     var t;
 
-    if (s.isNone) {
+    if (s.isNone && this.graph.states.length <= 4) { //just the initial datasets
       // set to 1800
       this.timeIds.idtype.select([this.timeIds.ids[0]]);
       t = this.timeIds.ts[0];
