@@ -24,6 +24,9 @@ const elems = template.create(document.body, {
 elems.graph.then((graph) => {
   const app = gapminder.create(<Element>elems.$main.node(), graph);
 
+  app.on('wait', elems.header.wait.bind(elems.header));
+  app.on('ready', elems.header.ready.bind(elems.header));
+
   function updateBounds() {
     var bounds = C.bounds(document.querySelector('div.chart'));
     app.setBounds(bounds.x, bounds.y, bounds.w - 30, bounds.h - 60);

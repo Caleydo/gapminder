@@ -39,8 +39,8 @@ function setAttributeScaleImpl(inputs, parameter) {
  * @param path
  * @returns {prov.ActionNode[]}
  */
-export function compressSetAttribute(path: prov.ActionNode[]) {
-  const lastByAttribute : any = {};
+export function compressSetAttribute(path:prov.ActionNode[]) {
+  const lastByAttribute:any = {};
   path.forEach((p) => {
     if (p.f_id === 'setGapMinderAttribute') {
       const para = p.parameter.name;
@@ -62,8 +62,8 @@ export function compressSetAttribute(path: prov.ActionNode[]) {
  * @param path
  * @returns {prov.ActionNode[]}
  */
-export function compressSetAttributeScale(path: prov.ActionNode[]) {
-  const lastByAttribute : any = {};
+export function compressSetAttributeScale(path:prov.ActionNode[]) {
+  const lastByAttribute:any = {};
   path.forEach((p) => {
     if (p.f_id === 'setGapMinderAttributeScale') {
       const para = p.parameter.name;
@@ -94,13 +94,13 @@ export function createCmd(id) {
 }
 
 
-export function setAttribute(name: string, $main_ref:prov.IObjectRef<GapMinder>, data:prov.IObjectRef<datatypes.IDataType>) {
-  return prov.action(prov.meta(name+'='+(data?data.name:'<none>'), prov.cat.visual, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
+export function setAttribute(name:string, $main_ref:prov.IObjectRef<GapMinder>, data:prov.IObjectRef<datatypes.IDataType>) {
+  return prov.action(prov.meta(name + '=' + (data ? data.name : '<none>'), prov.cat.visual, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
     name: name
   });
 }
-export function setAttributeScale(name: string, $main_ref:prov.IObjectRef<GapMinder>, scale: string) {
-  return prov.action(prov.meta(name+'_scale='+scale, prov.cat.visual, prov.op.update), 'setGapMinderAttributeScale', setAttributeScaleImpl, [$main_ref], {
+export function setAttributeScale(name:string, $main_ref:prov.IObjectRef<GapMinder>, scale:string) {
+  return prov.action(prov.meta(name + '_scale=' + scale, prov.cat.visual, prov.op.update), 'setGapMinderAttributeScale', setAttributeScaleImpl, [$main_ref], {
     scale: scale,
     name: name
   });
@@ -109,6 +109,8 @@ export function setAttributeScale(name: string, $main_ref:prov.IObjectRef<GapMin
 class Attribute {
   data:matrix.IMatrix = null;
   scale = 'linear';
+
+  arr:number[][] = null;
 
   get label() {
     return this.data ? this.data.desc.name : 'None';
@@ -120,31 +122,60 @@ class Attribute {
 }
 
 interface IScale {
-  (x: number): number;
+  (x:number): number;
+}
+
+interface IItem {
+  id: number;
+  name: string;
+}
+
+
+function createTimeIds(names:string[], ids:ranges.Range, idtype:idtypes.IDType) {
+  const ts = names.map((d) => parseInt(d, 10));
+  return {
+    idtype: idtype,
+    ids: ids.dim(0).asList(),
+    names: names,
+    ts: ts,
+    minmax: d3.extent(ts)
+  };
+}
+
+function createItems(names:string[], ids:ranges.Range):IItem[] {
+  return ids.dim(0).asList().map((id, i) => {
+    return {
+      id: id,
+      name: names[i]
+    };
+  });
 }
 
 class GapMinder extends views.AView {
 
-  private dim:[number, number] = [100,100];
+  private dim:[number, number] = [100, 100];
   ref:prov.IObjectRef<GapMinder>;
-  noneRef : prov.IObjectRef<any>;
+  noneRef:prov.IObjectRef<any>;
 
-  public attrs = {
+  attrs = {
     x: new Attribute(),
     y: new Attribute(),
     size: new Attribute()
   };
 
-  private color: stratification.IStratification = null;
+  private items:IItem[] = [];
 
-  private $node: d3.Selection<GapMinder>;
+  private color:stratification.IStratification = null;
+  private color_range:ranges.CompositeRange1D = null;
+
+  private $node:d3.Selection<GapMinder>;
   private xaxis = d3.svg.axis().orient('bottom');
   private yaxis = d3.svg.axis().orient('left');
   private timelinescale = d3.scale.linear();
   private timelineaxis = d3.svg.axis().orient('bottom').scale(this.timelinescale).ticks(1).tickFormat(d3.format('d'));
 
   private initedListener = false;
-  private timeIds: any = null;
+  private timeIds:any = null;
 
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private graph:prov.ProvenanceGraph) {
@@ -158,7 +189,7 @@ class GapMinder extends views.AView {
   }
 
   /* ------------------ REF DATA ---------------------- */
-  private get refData(): matrix.IMatrix {
+  private get refData():matrix.IMatrix {
     if (this.attrs.x.valid) {
       return this.attrs.x.data;
     }
@@ -170,20 +201,20 @@ class GapMinder extends views.AView {
 
 
   /* ----------------------------------------- */
-  setInteractive(interactive: boolean) {
+  setInteractive(interactive:boolean) {
 
-    this.$node.selectAll('select').attr('disabled',interactive ? null: 'disabled');
-    this.$node.select('line.slider').style('pointer-events', interactive ? null: 'none');
+    this.$node.selectAll('select').attr('disabled', interactive ? null : 'disabled');
+    this.$node.select('line.slider').style('pointer-events', interactive ? null : 'none');
   }
 
-  private init($elem: d3.Selection<any>) {
+  private init($elem:d3.Selection<any>) {
     const that = this;
 
     //find all gapminder datasets
     datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {
       const matrices = <matrix.IMatrix[]>list.filter((d) => d.desc.type === 'matrix');
       ['x', 'y'].forEach((attr) => {
-        const $options = d3.select('select.attr-'+attr).selectAll('option').data(matrices);
+        const $options = d3.select('select.attr-' + attr).selectAll('option').data(matrices);
         $options.enter().append('option');
         $options.attr('value', (d) => d.desc.id).text((d) => d.desc.name);
         $options.exit().remove();
@@ -205,24 +236,21 @@ class GapMinder extends views.AView {
       }
     });
 
-
-
-
     this.update();
   }
 
-  private computeScales() : Promise<{ x: IScale; y: IScale; size: IScale; color: (s:string) => string }> {
+  private computeScales():Promise<{ x: IScale; y: IScale; size: IScale; color: (s:string) => string }> {
     const margin = 25;
     const dim = this.dim;
 
 
-    function to_scale(a : Attribute) {
+    function to_scale(a:Attribute) {
       if (!a.valid) {
-        return d3.scale.linear().domain([0,100]);
+        return d3.scale.linear().domain([0, 100]);
       }
 
       if (a.scale === 'log') {
-        return d3.scale.log().domain([Math.max(1,a.data.valuetype.range[0]),a.data.valuetype.range[1]]).clamp(true);
+        return d3.scale.log().domain([Math.max(1, a.data.valuetype.range[0]), a.data.valuetype.range[1]]).clamp(true);
         // need to update Labels
       }
 
@@ -231,12 +259,12 @@ class GapMinder extends views.AView {
 
     // rewrite to_scale to take value of .property instead
 
-    const x = to_scale(this.attrs.x).range([100,dim[0]-25]);
-    const y = to_scale(this.attrs.y).range([dim[1]-margin,25]);
-    const s = to_scale(this.attrs.size).range([0,200]);
+    const x = to_scale(this.attrs.x).range([100, dim[0] - 25]);
+    const y = to_scale(this.attrs.y).range([dim[1] - margin, 25]);
+    const s = to_scale(this.attrs.size).range([0, 200]);
     const color = this.color ? d3.scale.category10().domain(this.color.groups.map((g) => g.name)) : () => 'gray';
 
-    return Promise.resolve( {
+    return Promise.resolve({
       x: x,
       y: y,
       size: s,
@@ -244,69 +272,27 @@ class GapMinder extends views.AView {
     });
   }
 
-
-  private getTimeIds() {
-    const data = this.refData;
-    if (!data) {
-      return Promise.resolve({
-        idtype: null,
-        ids: [],
-        names: [],
-        ts: [],
-        minmax : [0,0]
-      });
+  private computeData(selectedTimeId:number):{ x: number; y: number; size: number; color: string }[] {
+    if (this.items.length <= 0) {
+      return [];
     }
+    const x_data = this.attrs.x.arr;
+    const y_data = this.attrs.y.arr;
+    const s_data = this.attrs.size.arr;
+    const c_data = this.color_range;
 
-    //
-    return Promise.all<any>([data.cols(), data.colIds()]).then((args) => {
-      const names = <string[]>args[0];
-      const ids = <ranges.Range>args[1];
-      const ts = names.map((d) => parseInt(d,10));
+    const row_sel = this.refData.rowtype.selections();
 
+    return this.items.map((item, i) => {
       return {
-        idtype: data.coltype,
-        ids: ids.dim(0).asList(),
-        names: names,
-        ts : ts,
-        minmax: d3.extent(ts)
-      };
-    });
-  }
-
-  // getTimeIds() --> returns object type --> idtype, ids, names
-
-  private computeData(selectedTimeId : number) : Promise<{ x: number; y: number; size: number; color: string }[]> {
-    if (!this.attrs.x.valid && !this.attrs.y.valid && !this.attrs.size.valid) {
-      return Promise.resolve([]);
-    }
-    const xd = this.attrs.x.data;
-    const yd = this.attrs.y.data;
-    const sd = this.attrs.size.data;
-    const cd = this.color;
-
-    const to_data = (d) => d && selectedTimeId >= 0 ? d.slice(selectedTimeId).data() : null;
-    const to_range = (d) => d ? d.range() : null;
-
-    return Promise.all([this.refData.rowIds(), this.refData.rows(), to_data(xd), to_data(yd), to_data(sd), to_range(cd)]).then((dd) => {
-      const ids : ranges.Range = dd[0]; //id_range
-      const names :string[] = dd[1]; // rows
-      const x_data : number[] = dd[2]; //
-      const y_data : number[] = dd[3]; //
-      const s_data : number[] = dd[4];
-      const c_data : ranges.CompositeRange1D = dd[5];
-      const row_sel = this.refData.rowtype.selections();
-
-      return ids.dim(0).asList().map((id, i) => {
-        return {
-          id: id,
-          selected : row_sel.dim(0).contains(id),
-          name: names ? names[i] : 0,
-          x: x_data ? x_data[i] : 0,
-          y: y_data ? y_data[i] : 0,
-          size: s_data ? s_data[i] : 0,
-          color: c_data ? C.search(c_data.groups, (g) => g.contains(id)).name : null
-        };
-      });
+        id: item.id,
+        name: item.name,
+        selected: row_sel.dim(0).contains(item.id),
+        x: x_data ? x_data[i][selectedTimeId] : 0,
+        y: y_data ? y_data[i][selectedTimeId] : 0,
+        size: s_data ? s_data[i][selectedTimeId] : 0,
+        color: c_data ? C.search(c_data.groups, (g) => g.contains(item.id)).name : null
+      }
     });
   }
 
@@ -316,16 +302,17 @@ class GapMinder extends views.AView {
   public updateLegend() {
     Object.keys(this.attrs).forEach((attr) => {
       const m = this.attrs[attr];
-      const $optionns = this.$node.select('.attr-'+attr).selectAll('option');
+      const $optionns = this.$node.select('.attr-' + attr).selectAll('option');
       if (!$optionns.empty()) {
         const choices = $optionns.data();
-        this.$node.select('.attr-'+attr).property('selectedIndex', choices.indexOf(m.data));
-        this.$node.select('.attr-'+attr+'-scale').property('value',m.scale);
+        this.$node.select('.attr-' + attr).property('selectedIndex', choices.indexOf(m.data));
+        this.$node.select('.attr-' + attr + '-scale').property('value', m.scale);
       }
-      });
-    this.$node.select('.attr-color').text(this.color ? this.color.desc.name :'None');
+    });
+    this.$node.select('.attr-color').text(this.color ? this.color.desc.name : 'None');
   }
- /* ---------------------- selectTimePoint() ------------------- */
+
+  /* ---------------------- selectTimePoint() ------------------- */
   private selectTimePoint() {
     var refData = this.refData;
     if (refData) {
@@ -339,7 +326,7 @@ class GapMinder extends views.AView {
     return null;
   }
 
- /* --------------------------- updateChart() ----------------------- */
+  /* --------------------------- updateChart() ----------------------- */
 
   private updateChart() {
     var $chart = this.$node.select('svg.chart');
@@ -372,12 +359,13 @@ class GapMinder extends views.AView {
 
 
       $marks.enter().append('circle').classed('mark', true)
-       .on('click', (d) => this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event)))
+        .on('click', (d) => this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event)))
         .append('title');
 
       $marks.classed('select-selected', (d) => d.selected)
         .select('title').text((d) => `${d.name}\nx=${d.x}\ny=${d.y}\nsize=${d.size}\ncolor=${d.color}`);
       $marks.interrupt().transition()
+        .duration(100)
         .attr({
           r: (d) => scales.size(d.size),
           cx: (d) => scales.x(d.x),
@@ -394,31 +382,31 @@ class GapMinder extends views.AView {
   }
 
 
-/*--------------- trail lines ------------- */
-/*
-private updateTrail(){
-  var trailine = d3.svg.line()
-                   .interpolate('bundle')
-                   .x(function (d) {
-                      // return year --> i.e over time
-                   })
-                   .y(function (d) {
-                      // return positional coordinates
-                   });
+  /*--------------- trail lines ------------- */
+  /*
+   private updateTrail(){
+   var trailine = d3.svg.line()
+   .interpolate('bundle')
+   .x(function (d) {
+   // return year --> i.e over time
+   })
+   .y(function (d) {
+   // return positional coordinates
+   });
 
-/!*  path
-      .datum(this.refData) //
-      .transition()
-      .duration(450)
-      .attr('d',trailine);*!/
-  }
-*/
+   /!*  path
+   .datum(this.refData) //
+   .transition()
+   .duration(450)
+   .attr('d',trailine);*!/
+   }
+   */
 
   /* ------------------------------------------ */
 
 
- /* --------------- update() --------------------------------------------- */
- /* --- called in reset(), updateBounds(), setAttribute(), setAttributeImpScale() ------------- */
+  /* --------------- update() --------------------------------------------- */
+  /* --- called in reset(), updateBounds(), setAttribute(), setAttributeImpScale() ------------- */
   private update() {
 
     //update labels
@@ -430,35 +418,34 @@ private updateTrail(){
 
     if (!this.initedListener && ref) {
       this.initedListener = true;
-      ref.coltype.on('select', (event: any, type: string, new_: ranges.Range) => {
+      ref.coltype.on('select', (event:any, type:string, new_:ranges.Range) => {
         const id = new_.first;
         if (id && this.timeIds) {
           var $slider = this.$node.select('svg.timeline .slider');
           const selectedTimePoint = this.timeIds.ts[this.timeIds.ids.indexOf(id)];
           const x = this.timelinescale(selectedTimePoint);
-          $slider.attr('transform', 'translate('+x+',0)');
+          $slider.attr('transform', 'translate(' + x + ',0)');
           this.updateChart();
         }
       });
-      ref.rowtype.on('select', (event: any, type: string, new_: ranges.Range) => {
+      ref.rowtype.on('select', (event:any, type:string, new_:ranges.Range) => {
         const ids = new_.dim(0).asList();
-        this.$node.select('svg.chart g.marks').selectAll('.mark').classed('select-'+type,(d) => ids.indexOf(d.id) >= 0);
+        this.$node.select('svg.chart g.marks').selectAll('.mark').classed('select-' + type, (d) => ids.indexOf(d.id) >= 0);
       });
     }
   }
 
   /* ------------------------- updateTimeLine() ------------------------------- */
   private updateTimeLine() {
-    const d = this.refData;
     var $timeline = this.$node.select('svg.timeline');
 
     $timeline.attr({
-      width: Math.max(this.dim[0],0),
+      width: Math.max(this.dim[0], 0),
       height: 40
     });
 
     // if theres data
-    if (!d) {
+    if (!this.timeIds) {
       return;
     }
     // slider
@@ -474,12 +461,12 @@ private updateTrail(){
 
     var dragged = () => {
       const xPos = (<any>d3.event).x;
-      const year = d3.round(this.timelinescale.invert(xPos),0);
+      const year = d3.round(this.timelinescale.invert(xPos), 0);
       const j = this.timeIds.ts.indexOf(year);
       this.timeIds.idtype.select(idtypes.hoverSelectionType, [this.timeIds.ids[j]]);
     };
 
-     /* ---------------------------------------------------- */
+    /* ---------------------------------------------------- */
 
     if (wasEmpty) {
       $slider = $timeline.append('circle').classed('slider', true)
@@ -490,35 +477,31 @@ private updateTrail(){
         .on('drag', dragged)
         .on('dragend', () => {
           //select the last entry
-          const s = d.coltype.selections(idtypes.hoverSelectionType);
+          const s = this.timeIds.idtype.selections(idtypes.hoverSelectionType);
           this.timeIds.idtype.select(idtypes.hoverSelectionType, ranges.none());
           this.timeIds.idtype.select(s.clone());
         }));
     }
 
-    this.getTimeIds().then((data) => {
-      this.timeIds = data;
+    // timelinescale is linear
+    this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0] - 40]).clamp(true);
 
-      // timelinescale is linear
-     this.timelinescale.domain(data.minmax).range([40, this.dim[0] - 40]).clamp(true);
+    const s = this.timeIds.idtype.selections().dim(0);
+    var t;
 
-      const s = data.idtype.selections().dim(0);
-      var t;
+    if (s.isNone) {
+      // set to 1800
+      this.timeIds.idtype.select([this.timeIds.ids[0]]);
+      t = this.timeIds.ts[0];
+    } else {
+      t = this.timeIds.ts[this.timeIds.ids.indexOf(s.first)];
+    }
+    const x = this.timelinescale(t);
 
-      if (s.isNone) {
-        // set to 1800
-        data.idtype.select([data.ids[0]]);
-        t = data.ts[0];
-      } else {
-        t = data.ts[data.ids.indexOf(s.first)];
-      }
-      const x = this.timelinescale(t);
+    // just visualizing where slider should be
+    $slider.attr('transform', 'translate(' + x + ',0)');
 
-      // just visualizing where slider should be
-      $slider.attr('transform', 'translate('+x+',0)');
-
-      $timeline.select('g.axis').attr('transform','translate(0,20)').call(this.timelineaxis);
-    });
+    $timeline.select('g.axis').attr('transform', 'translate(0,20)').call(this.timelineaxis);
   } // end of updateTime()
 
   /* ------------------- reset() ------------------------------------- */
@@ -541,28 +524,30 @@ private updateTrail(){
     //nothing to do
   }
 
-/*  cleanData(m:matrix.IMatrix){
-    //var ccd = m.filter(function (d) { return d.id > 0;});
-    return cdd;
-    }*/
+  /*  cleanData(m:matrix.IMatrix){
+   //var ccd = m.filter(function (d) { return d.id > 0;});
+   return cdd;
+   }*/
 
 
   setXAttribute(m:matrix.IMatrix) {
     // cleanData(m);
     return this.setAttribute('x', m);
   }
+
   setYAttribute(m:matrix.IMatrix) {
     return this.setAttribute('y', m);
   }
+
   setSizeAttribute(m:matrix.IMatrix) {
     return this.setAttribute('size', m);
   }
 
   setColor(m:stratification.IStratification) {
-    return this.setAttribute('color',m);
+    return this.setAttribute('color', m);
   }
 
-  setColorImpl(attr: string, m: stratification.IStratification) {
+  setColorImpl(attr:string, m:stratification.IStratification) {
     const old = this.color;
     this.color = m;
 
@@ -571,20 +556,58 @@ private updateTrail(){
     return old === null ? this.noneRef : this.graph.findObject(old);
   }
 
-  setAttributeImpl(attr: string, m: datatypes.IDataType) {
+  setAttributeImpl(attr:string, m:datatypes.IDataType) {
     const old = attr === 'color' ? this.color : this.attrs[attr].data;
     if (attr === 'color') {
       this.color = <stratification.IStratification>m;
+
+      return this.color.range().then((arr) => {
+        this.color_range = arr;
+        this.fire('ready');
+
+        this.update();
+
+        return old === null ? this.noneRef : this.graph.findObject(old);
+      });
     } else {
-      this.attrs[attr].data = <matrix.IMatrix>m;
+      let matrix = <matrix.IMatrix>m;
+      let att = this.attrs[attr];
+      att.data = matrix;
+
+      this.fire('wait');
+      if (this.refData === matrix) {
+        return Promise.all<any>([matrix.data(), matrix.rows(), matrix.rowIds(), matrix.cols(), matrix.colIds()]).then((args) => {
+          att.arr = args[0];
+
+          const ids = args[3];
+
+          //prepare the items
+          this.items = createItems(<string[]>args[1], <ranges.Range>args[2]);
+
+
+          //prepare time ids
+          this.timeIds = createTimeIds(<string[]>args[3], <ranges.Range>args[4], matrix.coltype);
+
+          this.fire('ready');
+
+          this.update();
+
+          return old === null ? this.noneRef : this.graph.findObject(old);
+        });
+      } else {
+        return this.attrs[attr].data.data().then((arr) => {
+          this.attrs[attr].arr = arr;
+          this.fire('ready');
+
+          this.update();
+
+          return old === null ? this.noneRef : this.graph.findObject(old);
+        });
+      }
     }
-
-    this.update();
-
-    return old === null ? this.noneRef : this.graph.findObject(old);
   }
 
-  setAttributeScaleImpl(attr: string, scale: string) {
+  setAttributeScaleImpl(attr:string, scale:string) {
     const old = this.attrs[attr].scale;
     this.attrs[attr].scale = scale;
 
@@ -592,11 +615,12 @@ private updateTrail(){
 
     return old;
   }
-  setAttributeScale(attr: string, scale: string) {
+
+  setAttributeScale(attr:string, scale:string) {
     return this.graph.push(setAttributeScale(attr, this.ref, scale));
   }
 
-  setAttribute(attr: string, m: datatypes.IDataType) {
+  setAttribute(attr:string, m:datatypes.IDataType) {
     const mref = this.graph.findOrAddObject(m, m.desc.name, 'data');
     return this.graph.push(setAttribute(attr, this.ref, mref));
   }
