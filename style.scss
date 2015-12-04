@@ -117,6 +117,16 @@ main {
   div.chart {
     -webkit-flex: 1 1 auto;
     flex: 1 1 auto;
+
+    div.color_legend {
+      position: absolute;
+      top: 1em;
+      right: 1em;
+
+      i {
+       margin-right: 3px;
+      }
+    }
   }
 
   .over {

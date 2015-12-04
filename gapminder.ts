@@ -262,7 +262,7 @@ class GapMinder extends views.AView {
     const x = to_scale(this.attrs.x).range([100, dim[0] - 25]);
     const y = to_scale(this.attrs.y).range([dim[1] - margin, 25]);
     const s = to_scale(this.attrs.size).range([0, 200]);
-    const color = this.color ? d3.scale.category10().domain(this.color.groups.map((g) => g.name)) : () => 'gray';
+    const color = this.color ? d3.scale.ordinal<string,string>().domain(this.color.groups.map((g) => g.name)).range(this.color.groups.map((g) => g.color)) : () => 'gray';
 
     return Promise.resolve({
       x: x,
@@ -282,12 +282,14 @@ class GapMinder extends views.AView {
     const c_data = this.color_range;
 
     const row_sel = this.refData.rowtype.selections();
+    const row_filter = this.refData.rowtype.selections('filter');
 
     return this.items.map((item, i) => {
       return {
         id: item.id,
         name: item.name,
         selected: row_sel.dim(0).contains(item.id),
+        filtered: row_sel.dim(0).contains(item.id),
         x: x_data ? x_data[i][selectedTimeId] : 0,
         y: y_data ? y_data[i][selectedTimeId] : 0,
         size: s_data ? s_data[i][selectedTimeId] : 0,
@@ -310,6 +312,24 @@ class GapMinder extends views.AView {
       }
     });
     this.$node.select('.attr-color').text(this.color ? this.color.desc.name : 'None');
+
+    if (this.color_range) {
+      const that = this;
+      const $legends = d3.select('div.color_legend').selectAll('div.legend').data(this.color_range.groups);
+      const $legends_enter = $legends.enter().append('div').classed('legend', true)
+        .on('click', function(d) {
+          const isActive = d3.select(this).select('i').classed('fa-circle-o');
+          d3.select(this).select('i').classed('fa-circle-o', !isActive).classed('fa-circle', isActive);
+          that.color.idtype.select('filter',ranges.list(d), isActive ? idtypes.SelectOperation.ADD : idtypes.SelectOperation.REMOVE);
+        });
+      $legends_enter.append('i').attr('class', 'fa fa-circle-o');
+      $legends_enter.append('span');
+
+
+      $legends.select('i').style('color', (d) => d.color);
+      $legends.select('span').text((d) => d.name);
+      $legends.exit().remove();
+    }
   }
 
   /* ---------------------- selectTimePoint() ------------------- */
@@ -362,7 +382,9 @@ class GapMinder extends views.AView {
         .on('click', (d) => this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event)))
         .append('title');
 
-      $marks.classed('select-selected', (d) => d.selected)
+      $marks
+        .classed('select-selected', (d) => d.selected)
+        .classed('select-filtered', (d) => d.filtered)
         .select('title').text((d) => `${d.name}\nx=${d.x}\ny=${d.y}\nsize=${d.size}\ncolor=${d.color}`);
       $marks.interrupt().transition()
         .duration(100)
