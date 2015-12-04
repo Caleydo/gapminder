@@ -488,7 +488,7 @@ class GapMinder extends views.AView {
           .attr('points', `${x0},${y} ${x},${y} ${x},${y0}`)
           .style('opacity', 1);
       } else {
-        this.$node.select('path.hover_line').transition().style('opacity', 0);
+        this.$node.select('polyline.hover_line').transition().style('opacity', 0);
       }
       //show the hover line for this item
     }
@@ -553,7 +553,7 @@ class GapMinder extends views.AView {
       this.timeIds.idtype.select([this.timeIds.ids[0]]);
       t = this.timeIds.ts[0];
     } else {
-      t = this.timeIds.ts[this.timeIds.ids.indexOf(s.first)];
+      t = this.timeIds.ts[s.first != null ? this.timeIds.ids.indexOf(s.first): 0];
     }
     const x = this.timelinescale(t);
 
