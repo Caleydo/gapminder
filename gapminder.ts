@@ -292,7 +292,7 @@ class GapMinder extends views.AView {
         y: y_data ? y_data[i][selectedTimeId] : 0,
         size: s_data ? s_data[i][selectedTimeId] : 0,
         color: c_data ? C.search(c_data.groups, (g) => g.contains(item.id)).name : null
-      }
+      };
     });
   }
 
@@ -579,11 +579,8 @@ class GapMinder extends views.AView {
         return Promise.all<any>([matrix.data(), matrix.rows(), matrix.rowIds(), matrix.cols(), matrix.colIds()]).then((args) => {
           att.arr = args[0];
 
-          const ids = args[3];
-
           //prepare the items
           this.items = createItems(<string[]>args[1], <ranges.Range>args[2]);
-
 
           //prepare time ids
           this.timeIds = createTimeIds(<string[]>args[3], <ranges.Range>args[4], matrix.coltype);
