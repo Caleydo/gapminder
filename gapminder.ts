@@ -390,11 +390,14 @@ class GapMinder extends views.AView {
 
       $marks.enter().append('circle').classed('mark', true)
         .on('click', (d) => this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event)))
+        .on('mouseenter', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.ADD))
+        .on('mouseleave', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.REMOVE))
         .append('title');
 
       $marks
         .classed('select-selected', (d) => d.selected)
         .classed('select-filtered', (d) => d.filtered)
+        .attr('data-id', (d) => d.id)
         .select('title').text((d) => `${d.name}\nx=${d.x}\ny=${d.y}\nsize=${d.size}\ncolor=${d.color}`);
       $marks.interrupt().transition()
         .duration(100)
@@ -450,20 +453,44 @@ class GapMinder extends views.AView {
 
     if (!this.initedListener && ref) {
       this.initedListener = true;
-      ref.coltype.on('select', (event:any, type:string, new_:ranges.Range) => {
-        const id = new_.first;
-        if (id !== null && this.timeIds) {
-          var $slider = this.$node.select('svg.timeline .slider');
-          const selectedTimePoint = this.timeIds.ts[this.timeIds.ids.indexOf(id)];
-          const x = this.timelinescale(selectedTimePoint);
-          $slider.attr('transform', 'translate(' + x + ',0)');
-          this.updateChart();
-        }
-      });
-      ref.rowtype.on('select', (event:any, type:string, new_:ranges.Range) => {
-        const ids = new_.dim(0).asList();
-        this.$node.select('svg.chart g.marks').selectAll('.mark').classed('select-' + type, (d) => ids.indexOf(d.id) >= 0);
-      });
+      ref.coltype.on('select', this.onYearSelect.bind(this));
+      ref.rowtype.on('select', this.onItemSelect.bind(this));
+    }
+  }
+
+  private onYearSelect(event:any, type:string, new_:ranges.Range) {
+    const id = new_.first;
+    if (id !== null && this.timeIds) {
+      var $slider = this.$node.select('svg.timeline .slider');
+      const selectedTimePoint = this.timeIds.ts[this.timeIds.ids.indexOf(id)];
+      const x = this.timelinescale(selectedTimePoint);
+      $slider.attr('transform', 'translate(' + x + ',0)');
+      this.updateChart();
+    }
+  }
+
+  private onItemSelect(event:any, type:string, new_:ranges.Range) {
+    const ids = new_.dim(0).asList();
+    const $marks = this.$node.select('svg.chart g.marks').selectAll('.mark').classed('select-' + type, (d) => ids.indexOf(d.id) >= 0);
+
+    if (type === idtypes.hoverSelectionType) {
+      if (ids.length > 0) {
+        let first = ids[0];
+        let $item = $marks.filter((d) => d.id === first);
+        let x = parseInt($item.attr('cx'), 10);
+        let y = parseInt($item.attr('cy'), 10);
+
+        //hack from computeScale
+        const x0 = 100;
+        const y0 = this.dim[1] - 25;
+
+        this.$node.select('polyline.hover_line').transition()
+          .attr('points', `${x0},${y} ${x},${y} ${x},${y0}`)
+          .style('opacity', 1)
+      } else {
+        this.$node.select('path.hover_line').transition().style('opacity', 0);
+      }
+      //show the hover line for this item
     }
   }
 

@@ -42,7 +42,15 @@ svg.chart .xaxis, svg.chart .yaxis, svg.timeline {
 
 }
 
+
 svg.chart {
+  polyline.hover_line {
+    fill: none;
+    stroke: $hover-color;
+    stroke-width: 3px;
+    stroke-dasharray: 10 10;
+  }
+
   text.act_year {
     font-size: 150pt;
     opacity: 0.2;
@@ -59,7 +67,7 @@ svg.chart {
     }
     &.select-hover {
       //svg variant
-      stroke: $select-color;
+      stroke: $hover-color;
       stroke-width: 3px;
     }
   }
