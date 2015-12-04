@@ -18,7 +18,7 @@ function setAttributeImpl(inputs, parameter) {
     name = parameter.name;
 
   return inputs[1].v.then((data) => {
-    if (data == '') {
+    if (data === '') {
       data = null;
     }
     return gapminder.setAttributeImpl(name, data).then((old) => {
@@ -290,7 +290,7 @@ class GapMinder extends views.AView {
     const c_data = this.color_range;
 
     const row_sel = this.refData.rowtype.selections();
-    const row_filter = this.refData.rowtype.selections('filter');
+    //TODO const row_filter = this.refData.rowtype.selections('filter');
 
     const selectecdTimeIndex = this.timeIds.ids.indexOf(selectedTimeId);
 
@@ -486,7 +486,7 @@ class GapMinder extends views.AView {
 
         this.$node.select('polyline.hover_line').transition()
           .attr('points', `${x0},${y} ${x},${y} ${x},${y0}`)
-          .style('opacity', 1)
+          .style('opacity', 1);
       } else {
         this.$node.select('path.hover_line').transition().style('opacity', 0);
       }
