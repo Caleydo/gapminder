@@ -13,7 +13,8 @@ const elems = template.create(document.body, {
   app: 'GapMinder',
   application: '/gapminder',
   id: 'clue_gapminder',
-  recordSelectionTypes: 'selected,filtered'
+  recordSelectionTypes: 'selected,filtered',
+  animatedSelections: true
 });
 
 {

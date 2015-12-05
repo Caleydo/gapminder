@@ -15,7 +15,7 @@ import d3 = require('d3');
 
 const filteredSelectionType = 'filtered';
 
-function setAttributeImpl(inputs, parameter) {
+function setAttributeImpl(inputs, parameter, graph, within) {
   var gapminder:GapMinder = inputs[0].value,
     name = parameter.name;
 
@@ -25,18 +25,20 @@ function setAttributeImpl(inputs, parameter) {
     }
     return gapminder.setAttributeImpl(name, data).then((old) => {
       return {
-        inverse: setAttribute(name, inputs[0], old)
+        inverse: setAttribute(name, inputs[0], old),
+        consumed: within
       };
     });
   });
 }
-function setAttributeScaleImpl(inputs, parameter) {
+function setAttributeScaleImpl(inputs, parameter, graph, within) {
   var gapminder:GapMinder = inputs[0].value,
     name = parameter.name;
 
   const old = gapminder.setAttributeScaleImpl(name, parameter.scale);
   return {
-    inverse: setAttributeScale(name, inputs[0], old)
+    inverse: setAttributeScale(name, inputs[0], old),
+    consumed: within
   };
 }
 
@@ -424,6 +426,11 @@ class GapMinder extends views.AView {
     return r.slice(0,r.length-1);
   }
 
+  animationDuration() {
+    var guess = this.graph.executeCurrentActionWithin;
+    return guess < 0 ? 100 : guess;
+  }
+
   /* --------------------------- updateChart() ----------------------- */
 
   private updateChart() {
@@ -483,7 +490,7 @@ class GapMinder extends views.AView {
         .select('title').text(this.createTooltip.bind(this));
 
       $marks.interrupt().transition()
-        .duration(100)
+        .duration(this.animationDuration())
         .attr({
           r: (d) => d.ssize ,
           cx: (d) => d.xx,
@@ -601,7 +608,7 @@ class GapMinder extends views.AView {
       var l : any = this.$node.select('polyline.hover_line');
       if (animate) {
         l = l.interrupt().transition()
-        .duration(100);
+        .duration(this.animationDuration());
       }
       l.attr('points', `${x0},${y} ${x},${y} ${x},${y0}`).style('opacity', 1);
     } else {
@@ -616,7 +623,7 @@ class GapMinder extends views.AView {
     var l : any = $lines;
     if (animate) {
       l = l.interrupt().transition()
-        .duration(100);
+        .duration(this.animationDuration());
     }
     l.attr('points', (id) => {
       let d = (<any>this.node.querySelector('svg.chart g.marks .mark[data-id="'+id+'"]')).__data__;
