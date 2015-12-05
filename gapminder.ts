@@ -469,7 +469,7 @@ class GapMinder extends views.AView {
           if (!this.interactive) {
             return;
           }
-          this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event))
+          this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event));
         })
         .on('mouseenter', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.ADD))
         .on('mouseleave', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.REMOVE))
@@ -576,7 +576,7 @@ class GapMinder extends views.AView {
 
   private onItemSelect(event:any, type:string, new_:ranges.Range) {
     const ids = new_.dim(0).asList();
-    const $marks = this.$node.select('svg.chart g.marks').selectAll('.mark').classed('select-' + type, (d) => ids.indexOf(d.id) >= 0);
+    this.$node.select('svg.chart g.marks').selectAll('.mark').classed('select-' + type, (d) => ids.indexOf(d.id) >= 0);
 
     if (type === idtypes.hoverSelectionType) {
       this.updateHoverLine(ids);
@@ -610,7 +610,7 @@ class GapMinder extends views.AView {
     //show the hover line for this item
   }
 
-  private updateSelectionLines(ids: number[], animate = false){
+  private updateSelectionLines(ids:number[], animate = false) {
     let $lines = this.$node.select('g.select_lines').selectAll('polyline').data(ids, String);
     $lines.enter().append('polyline').attr('class', 'select_line');
     var l : any = $lines;
