@@ -42,8 +42,7 @@ svg.chart {
   polyline.hover_line {
     fill: none;
     stroke: $hover-color;
-    stroke-width: 3px;
-    stroke-dasharray: 10 10;
+    stroke-width: 1px;
   }
 
   text.act_year {
@@ -58,14 +57,14 @@ svg.chart {
     &.select-selected {
       //svg variant
       stroke: $select-color;
-      stroke-width: 3px;
+      stroke-width: 2px;
       opacity: 1;
     }
     &.select-hovered {
       //svg variant
       opacity: 1;
       stroke: $hover-color;
-      stroke-width: 3px;
+      stroke-width: 2px;
     }
   }
 

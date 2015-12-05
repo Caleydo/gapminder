@@ -356,6 +356,21 @@ class GapMinder extends views.AView {
     return null;
   }
 
+  private createTooltip(d: any) {
+    var r= d.name+'\n';
+    const f = d3.format(',.0f');
+    if (this.color) {
+      r += this.color.desc.name+':\t' + d.color +'\n';
+    }
+    Object.keys(this.attrs).forEach((attr) => {
+      const a = this.attrs[attr];
+      if (a.valid) {
+        r += a.data.desc.name+':\t' + f(d[attr]) +'\n';
+      }
+    });
+    return r.slice(0,r.length-1);
+  }
+
   /* --------------------------- updateChart() ----------------------- */
 
   private updateChart() {
@@ -398,7 +413,7 @@ class GapMinder extends views.AView {
         .classed('select-selected', (d) => d.selected)
         .classed('select-filtered', (d) => d.filtered)
         .attr('data-id', (d) => d.id)
-        .select('title').text((d) => `${d.name}\nx=${d.x}\ny=${d.y}\nsize=${d.size}\ncolor=${d.color}`);
+        .select('title').text(this.createTooltip.bind(this));
       $marks.interrupt().transition()
         .duration(100)
         .attr({
@@ -486,10 +501,10 @@ class GapMinder extends views.AView {
 
         this.$node.select('polyline.hover_line')
           .attr('points', `${x0},${y} ${x},${y} ${x},${y0}`)
-          .transition()
+          .interrupt().transition()
           .style('opacity', 1);
       } else {
-        this.$node.select('polyline.hover_line').style('opacity', 0);
+        this.$node.select('polyline.hover_line').interrupt().style('opacity', 0);
       }
       //show the hover line for this item
     }
