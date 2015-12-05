@@ -216,6 +216,8 @@ class GapMinder extends views.AView {
 
   private showUseTrails = false;
 
+  private interactive = true;
+
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private graph:prov.ProvenanceGraph) {
     super();
@@ -239,11 +241,15 @@ class GapMinder extends views.AView {
   }
 
 
+  get node() {
+    return <Element>this.$node.node();
+  }
+
   /* ----------------------------------------- */
   setInteractive(interactive:boolean) {
-
+    this.interactive = interactive;
     this.$node.selectAll('select').attr('disabled', interactive ? null : 'disabled');
-    this.$node.select('line.slider').style('pointer-events', interactive ? null : 'none');
+    this.$node.selectAll('circle.slider, rect.clearer').style('pointer-events', interactive ? null : 'none');
   }
 
   private init($elem:d3.Selection<any>) {
@@ -272,6 +278,14 @@ class GapMinder extends views.AView {
         this.setSizeAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderPopulation') || matrices[0]);
         const stratifications = <stratification.IStratification[]>list.filter((d) => d.desc.type === 'stratification');
         this.setColor(C.search(stratifications, (d) => d.desc.id === 'gapminderContinent') || stratifications[0]);
+      }
+    });
+
+    $elem.select('rect.clearer').on('click', () => {
+      var ref = this.refData;
+      if (ref) {
+        //clear selection
+        ref.rowtype.clear();
       }
     });
 
@@ -359,6 +373,9 @@ class GapMinder extends views.AView {
       const $legends = d3.select('div.color_legend').selectAll('div.legend').data(this.color_range.groups);
       const $legends_enter = $legends.enter().append('div').classed('legend', true)
         .on('click', function(d) {
+          if (!that.interactive) {
+            return;
+          }
           const isActive = d3.select(this).select('i').classed('fa-circle');
           d3.select(this).select('i').classed('fa-circle-o', isActive).classed('fa-circle', !isActive);
           that.color.idtype.select(filteredSelectionType,ranges.list(d), isActive ? idtypes.SelectOperation.ADD : idtypes.SelectOperation.REMOVE);
@@ -438,11 +455,22 @@ class GapMinder extends views.AView {
 
       //trails idea: append a new id with the time point encoded
 
+      data.forEach((d) => {
+        d.xx = scales.x(d.x);
+        d.yy = scales.y(d.y);
+        d.ssize = scales.size(d.size);
+      });
+
       const $marks = $chart.select('g.marks').selectAll('.mark').data(data, (d) => d.id + (this.showUseTrails && d.selected ? '@'+selectedTimePoint : ''));
 
 
       $marks.enter().append('circle').classed('mark', true)
-        .on('click', (d) => this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event)))
+        .on('click', (d) => {
+          if (!this.interactive) {
+            return;
+          }
+          this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event))
+        })
         .on('mouseenter', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.ADD))
         .on('mouseleave', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.REMOVE))
         .attr('data-uid',(d) =>d.id + (this.showUseTrails && d.selected ? '@'+selectedTimePoint : ''))
@@ -453,14 +481,17 @@ class GapMinder extends views.AView {
         .classed('select-filtered', (d) => d.filtered)
         .attr('data-id', (d) => d.id)
         .select('title').text(this.createTooltip.bind(this));
+
       $marks.interrupt().transition()
         .duration(100)
         .attr({
-          r: (d) => scales.size(d.size),
-          cx: (d) => scales.x(d.x),
-          cy: (d) => scales.y(d.y)
+          r: (d) => d.ssize ,
+          cx: (d) => d.xx,
+          cy: (d) => d.yy
         })
-        .style('fill', (d) => scales.color(d.color));
+        .style('fill', (d) => d.ccolor = scales.color(d.color));
+
+      this.updateSelectionTools();
 
       var $exit = $marks.exit();
       if(this.showUseTrails) {
@@ -473,6 +504,8 @@ class GapMinder extends views.AView {
         .transition()
         .style('opacity', 0)
         .remove();
+
+
     });
   }
 
@@ -519,6 +552,9 @@ class GapMinder extends views.AView {
   }
 
   showTrails(show: boolean) {
+    if (!this.interactive) {
+      return;
+    }
     this.graph.push(createToggleTrails(this.ref, show));
   }
 
@@ -543,27 +579,63 @@ class GapMinder extends views.AView {
     const $marks = this.$node.select('svg.chart g.marks').selectAll('.mark').classed('select-' + type, (d) => ids.indexOf(d.id) >= 0);
 
     if (type === idtypes.hoverSelectionType) {
-      if (ids.length > 0) {
-        let first = ids[0];
-        let $item = $marks.filter((d) => d.id === first);
-        let x = parseInt($item.attr('cx'), 10);
-        let y = parseInt($item.attr('cy'), 10);
-
-        //hack from computeScale
-        const x0 = 100;
-        const y0 = this.dim[1] - 25;
-
-        this.$node.select('polyline.hover_line')
-          .attr('points', `${x0},${y} ${x},${y} ${x},${y0}`)
-          .interrupt().transition()
-          .style('opacity', 1);
-      } else {
-        this.$node.select('polyline.hover_line').interrupt().style('opacity', 0);
-      }
-      //show the hover line for this item
-    }
-    if (type === filteredSelectionType) {
+      this.updateHoverLine(ids);
+    } else if (type === filteredSelectionType) {
       this.updateLegend();
+    } else if (type === idtypes.defaultSelectionType) {
+      this.updateSelectionLines(ids);
+    }
+  }
+
+  private updateHoverLine(ids: number[], animate = false) {
+    if (ids.length > 0) {
+      let first = ids[0];
+      //direct access to d3 bound object
+      let d = (<any>this.node.querySelector('svg.chart g.marks .mark[data-id="'+first+'"]')).__data__;
+      let x = d.xx;
+      let y = d.yy;
+
+      //hack from computeScale
+      const x0 = 100;
+      const y0 = this.dim[1] - 25;
+      var l : any = this.$node.select('polyline.hover_line');
+      if (animate) {
+        l = l.interrupt().transition()
+        .duration(100);
+      }
+      l.attr('points', `${x0},${y} ${x},${y} ${x},${y0}`).style('opacity', 1);
+    } else {
+      this.$node.select('polyline.hover_line').interrupt().style('opacity', 0);
+    }
+    //show the hover line for this item
+  }
+
+  private updateSelectionLines(ids: number[], animate = false){
+    let $lines = this.$node.select('g.select_lines').selectAll('polyline').data(ids, String);
+    $lines.enter().append('polyline').attr('class', 'select_line');
+    var l : any = $lines;
+    if (animate) {
+      l = l.interrupt().transition()
+        .duration(100);
+    }
+    l.attr('points', (id) => {
+      let d = (<any>this.node.querySelector('svg.chart g.marks .mark[data-id="'+id+'"]')).__data__;
+      let x = d.xx;
+      let y = d.yy;
+
+      //hack from computeScale
+      const x0 = 100;
+      const y0 = this.dim[1] - 25;
+      return `${x0},${y} ${x},${y} ${x},${y0}`;
+    }).style('opacity', 1);
+    $lines.exit().remove();
+  }
+
+  private updateSelectionTools() {
+    const r = this.refData;
+    if (r) {
+      this.updateHoverLine(r.rowtype.selections(idtypes.hoverSelectionType).dim(0).asList(), true);
+      this.updateSelectionLines(r.rowtype.selections().dim(0).asList(), true);
     }
   }
 
