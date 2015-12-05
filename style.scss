@@ -90,17 +90,28 @@ svg.timeline {
 main {
   position: relative;
 
+
   div.gapminder_i {
     display: block;
     position: absolute;
     width: 40em;
     z-index: 2;
+
+    div.yaxis {
+      transform: rotate(-90deg)translateX(-25em);
+      transform-origin: 0% 0%;
+    }
+  }
+
+  div.xaxis {
+    margin-right: 6em;
+    right: 0;
   }
 
   div.chart {
     position: absolute;
     top: 0;
-    left: 0px;
+    left: 0;
     div.color_legend {
       position: absolute;
       top: 1em;
