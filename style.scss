@@ -2,6 +2,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
+@import "../clue_demo/styles/vars";
+
 body, html {
   padding: 0;
   margin: 0;
@@ -24,9 +26,6 @@ body, html {
   }
 }
 
-
-$select-color: black;
-$hover-color: #ffc46b;
 
 svg {
   vector-effect : non-scaling-stroke;
@@ -64,9 +63,11 @@ svg.chart {
       //svg variant
       stroke: $select-color;
       stroke-width: 3px;
+      opacity: 1;
     }
-    &.select-hover {
+    &.select-hovered {
       //svg variant
+      opacity: 1;
       stroke: $hover-color;
       stroke-width: 3px;
     }

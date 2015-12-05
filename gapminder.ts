@@ -484,11 +484,12 @@ class GapMinder extends views.AView {
         const x0 = 100;
         const y0 = this.dim[1] - 25;
 
-        this.$node.select('polyline.hover_line').transition()
+        this.$node.select('polyline.hover_line')
           .attr('points', `${x0},${y} ${x},${y} ${x},${y0}`)
+          .transition()
           .style('opacity', 1);
       } else {
-        this.$node.select('polyline.hover_line').transition().style('opacity', 0);
+        this.$node.select('polyline.hover_line').style('opacity', 0);
       }
       //show the hover line for this item
     }
