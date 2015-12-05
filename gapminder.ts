@@ -180,7 +180,7 @@ class GapMinder extends views.AView {
   private xaxis = d3.svg.axis().orient('bottom');
   private yaxis = d3.svg.axis().orient('left');
   private timelinescale = d3.scale.linear();
-  private timelineaxis = d3.svg.axis().orient('bottom').scale(this.timelinescale).ticks(1).tickFormat(d3.format('d'));
+  private timelineaxis = d3.svg.axis().orient('bottom').scale(this.timelinescale).tickFormat(d3.format('d'));
 
   private initedListener = false;
   private timeIds:any = null;
@@ -530,7 +530,7 @@ class GapMinder extends views.AView {
 
     if (wasEmpty) {
       $slider = $timeline.append('circle').classed('slider', true)
-        .attr('r', 10)
+        .attr('r', 8)
         .attr('cy', 20);
       // using ref Data
       $slider.call(d3.behavior.drag()
@@ -545,6 +545,8 @@ class GapMinder extends views.AView {
 
     // timelinescale is linear
     this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0] - 40]).clamp(true);
+
+    this.timelineaxis.tickValues(this.timeIds.minmax);
 
     const s = this.timeIds.idtype.selections().dim(0);
     var t;

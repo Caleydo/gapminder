@@ -1,7 +1,6 @@
 /**
  * Created by Samuel Gratzl on 15.12.2014.
  */
-
 @import "../clue_demo/styles/vars";
 
 body, html {
@@ -15,20 +14,18 @@ body, html {
   -webkit-font-smoothing: subpixel-antialiased;
 }
 
-
 /* mouse over mark and ref lines*/
 .active {
   stroke: black;
   stroke-width: 5px;
-  line{
+  line {
     stroke: magenta;
     stroke-width: 3px;
   }
 }
 
-
 svg {
-  vector-effect : non-scaling-stroke;
+  vector-effect: non-scaling-stroke;
   shape-rendering: geometricPrecision;
 }
 
@@ -40,7 +37,6 @@ svg.chart .xaxis, svg.chart .yaxis, svg.timeline {
   }
 
 }
-
 
 svg.chart {
   polyline.hover_line {
@@ -83,8 +79,9 @@ svg.timeline {
   circle.slider {
     stroke-width: 2;
     stroke: black;
+    opacity: 0.8;
     cursor: ew-resize;
-    fill: black;
+    fill: yellow;
   }
 
   font-size: small;
@@ -110,7 +107,7 @@ main {
       right: 1em;
 
       i {
-       margin-right: 3px;
+        margin-right: 3px;
       }
     }
   }
@@ -123,7 +120,7 @@ main {
   svg.timeline {
     position: absolute;
     left: 0;
-    right :0;
+    right: 0;
     bottom: 2px;
   }
 
