@@ -40,6 +40,18 @@ function setAttributeScaleImpl(inputs, parameter) {
   };
 }
 
+function toggleGapMinderTrailsImpl(inputs, parameter) {
+  var gapminder:GapMinder = inputs[0].value,
+    show = parameter.show;
+
+  gapminder.showTrailsImpl(show);
+  return {
+    inverse: createToggleTrails(inputs[0], !show)
+  };
+}
+
+
+
 /**
  * compresses the given path by removing redundant set gap minder attribute calls
  * @param path
@@ -86,6 +98,14 @@ export function compressSetAttributeScale(path:prov.ActionNode[]) {
   });
 }
 
+export function compressToggleGapMinderTrails(path:prov.ActionNode[]) {
+  const l = path.filter((p) => p.f_id === 'toggleGapMinderTrails');
+
+  const good = l.length %2 === 0 ? null : l[l.length-1];
+  //remove all execpt the last if uneven number of changes
+  return path.filter((p) => p.f_id !== 'toggleGapMinderTrails' || p === good);
+}
+
 
 // externally called to recall implementation for prov graph
 // rebuild based on the --> createCmd --> maps name to a function
@@ -95,10 +115,17 @@ export function createCmd(id) {
       return setAttributeImpl;
     case 'setGapMinderAttributeScale':
       return setAttributeScaleImpl;
+    case 'toggleGapMinderTrails':
+      return toggleGapMinderTrailsImpl;
   }
   return null;
 }
 
+export function createToggleTrails($main_ref:prov.IObjectRef<GapMinder>, show: boolean) {
+  return prov.action(prov.meta((show? 'show' : 'hide') + ' trails', prov.cat.layout, prov.op.update), 'toggleGapMinderTrails', toggleGapMinderTrailsImpl, [$main_ref], {
+    show: show
+  });
+}
 
 export function setAttribute(name:string, $main_ref:prov.IObjectRef<GapMinder>, data:prov.IObjectRef<datatypes.IDataType>) {
   return prov.action(prov.meta(name + '=' + (data ? data.name : '<none>'), prov.cat.visual, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
@@ -186,6 +213,8 @@ class GapMinder extends views.AView {
 
   private initedListener = false;
   private timeIds:any = null;
+
+  private showUseTrails = false;
 
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private graph:prov.ProvenanceGraph) {
@@ -407,13 +436,16 @@ class GapMinder extends views.AView {
       $chart.select('g.xaxis').call(this.xaxis.scale(scales.x));
       $chart.select('g.yaxis').call(this.yaxis.scale(scales.y));
 
-      const $marks = $chart.select('g.marks').selectAll('.mark').data(data, (d) => d.id);
+      //trails idea: append a new id with the time point encoded
+
+      const $marks = $chart.select('g.marks').selectAll('.mark').data(data, (d) => d.id + (this.showUseTrails && d.selected ? '@'+selectedTimePoint : ''));
 
 
       $marks.enter().append('circle').classed('mark', true)
         .on('click', (d) => this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event)))
         .on('mouseenter', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.ADD))
         .on('mouseleave', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.REMOVE))
+        .attr('data-uid',(d) =>d.id + (this.showUseTrails && d.selected ? '@'+selectedTimePoint : ''))
         .append('title');
 
       $marks
@@ -430,7 +462,13 @@ class GapMinder extends views.AView {
         })
         .style('fill', (d) => scales.color(d.color));
 
-      $marks.exit()
+      var $exit = $marks.exit();
+      if(this.showUseTrails) {
+        $exit = $exit.filter((d) => {
+          return data.filter((d2) => d2.id === d.id && d2.selected).length <= 0;
+        });
+      }
+      $exit
         .style('opacity', 1)
         .transition()
         .style('opacity', 0)
@@ -478,6 +516,15 @@ class GapMinder extends views.AView {
       ref.coltype.on('select', this.onYearSelect.bind(this));
       ref.rowtype.on('select', this.onItemSelect.bind(this));
     }
+  }
+
+  showTrails(show: boolean) {
+    this.graph.push(createToggleTrails(this.ref, show));
+  }
+
+  showTrailsImpl(show: boolean) {
+    this.showUseTrails = show;
+    this.updateChart();
   }
 
   private onYearSelect(event:any, type:string, new_:ranges.Range) {

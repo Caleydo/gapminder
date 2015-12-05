@@ -27,13 +27,19 @@
           "id": "gapminder",
           "file": "gapminder",
           "factory": "createCmd",
-          "creates": "(setGapMinderAttribute|setGapMinderAttributeScale)"
+          "creates": "(setGapMinderAttribute|setGapMinderAttributeScale|toggleGapMinderTrails)"
         },
         {
           "type": "actionCompressor",
           "id": "gapminder-setGapMinderAttribute",
           "file": "gapminder",
           "factory": "compressSetAttribute"
+        },
+        {
+          "type": "actionCompressor",
+          "id": "gapminder-setGapMinderAttribute",
+          "file": "gapminder",
+          "factory": "compressToggleGapMinderTrails"
         },
         {
           "type": "actionCompressor",
