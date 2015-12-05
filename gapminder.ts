@@ -573,9 +573,13 @@ class GapMinder extends views.AView {
   private onYearSelect(event:any, type:string, new_:ranges.Range) {
     const id = new_.first;
     if (id !== null && this.timeIds) {
-      var $slider = this.$node.select('svg.timeline .slider');
+      var $slider : any = this.$node.select('svg.timeline .slider');
       const selectedTimePoint = this.timeIds.ts[this.timeIds.ids.indexOf(id)];
       const x = this.timelinescale(selectedTimePoint);
+
+      if (type === idtypes.defaultSelectionType) { //animate just for selections
+        $slider = $slider.transition().duration(this.animationDuration());
+      }
       $slider.attr('transform', 'translate(' + x + ',0)');
       this.updateChart();
     }
