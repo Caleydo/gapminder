@@ -13,6 +13,8 @@ import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
 import d3 = require('d3');
 
+const filteredSelectionType = 'filtered';
+
 function setAttributeImpl(inputs, parameter) {
   var gapminder:GapMinder = inputs[0].value,
     name = parameter.name;
@@ -290,7 +292,7 @@ class GapMinder extends views.AView {
     const c_data = this.color_range;
 
     const row_sel = this.refData.rowtype.selections();
-    //TODO const row_filter = this.refData.rowtype.selections('filter');
+    const row_filter = this.refData.rowtype.selections(filteredSelectionType);
 
     const selectecdTimeIndex = this.timeIds.ids.indexOf(selectedTimeId);
 
@@ -299,7 +301,7 @@ class GapMinder extends views.AView {
         id: item.id,
         name: item.name,
         selected: row_sel.dim(0).contains(item.id),
-        filtered: row_sel.dim(0).contains(item.id),
+        filtered: row_filter.dim(0).contains(item.id),
         x: x_data && selectecdTimeIndex >= 0 ? x_data[i][selectecdTimeIndex] : 0,
         y: y_data && selectecdTimeIndex >= 0 ? y_data[i][selectecdTimeIndex] : 0,
         size: s_data && selectecdTimeIndex >= 0 ? s_data[i][selectecdTimeIndex] : 0,
@@ -328,15 +330,20 @@ class GapMinder extends views.AView {
       const $legends = d3.select('div.color_legend').selectAll('div.legend').data(this.color_range.groups);
       const $legends_enter = $legends.enter().append('div').classed('legend', true)
         .on('click', function(d) {
-          const isActive = d3.select(this).select('i').classed('fa-circle-o');
-          d3.select(this).select('i').classed('fa-circle-o', !isActive).classed('fa-circle', isActive);
-          that.color.idtype.select('filter',ranges.list(d), isActive ? idtypes.SelectOperation.ADD : idtypes.SelectOperation.REMOVE);
+          const isActive = d3.select(this).select('i').classed('fa-circle');
+          d3.select(this).select('i').classed('fa-circle-o', isActive).classed('fa-circle', !isActive);
+          that.color.idtype.select(filteredSelectionType,ranges.list(d), isActive ? idtypes.SelectOperation.ADD : idtypes.SelectOperation.REMOVE);
         });
-      $legends_enter.append('i').attr('class', 'fa fa-circle-o');
+      $legends_enter.append('i').attr('class', 'fa fa-circle');
       $legends_enter.append('span');
 
-
-      $legends.select('i').style('color', (d) => d.color);
+      const filtered = this.color.idtype.selections(filteredSelectionType).dim(0);
+      $legends.select('i')
+        .style('color', (d) => d.color)
+        .classed('fa-circle', (d) => !filtered.contains(d.first))
+        .classed('fa-circle-o', (d) => {
+          return filtered.contains(d.first);
+        });
       $legends.select('span').text((d) => d.name);
       $legends.exit().remove();
     }
@@ -507,6 +514,9 @@ class GapMinder extends views.AView {
         this.$node.select('polyline.hover_line').interrupt().style('opacity', 0);
       }
       //show the hover line for this item
+    }
+    if (type === filteredSelectionType) {
+      this.updateLegend();
     }
   }
 

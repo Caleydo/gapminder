@@ -66,6 +66,10 @@ svg.chart {
       stroke: $hover-color;
       stroke-width: 2px;
     }
+
+    &.select-filtered {
+      opacity: 0.2;
+    }
   }
 
   select .yaxis, .xaxis {
