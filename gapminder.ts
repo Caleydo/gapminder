@@ -309,6 +309,13 @@ class GapMinder extends views.AView {
         // need to update Labels
       }
 
+       if (a.scale === 'sqrt') {
+        return d3.scale.sqrt().domain(a.data.valuetype.range);
+        // need to update Labels
+      }
+
+      //need to deal with the radius here --> cant have a linear scale
+
       return d3.scale.linear().domain(a.data.valuetype.range).clamp(true);
     }
 
@@ -316,7 +323,10 @@ class GapMinder extends views.AView {
 
     const x = to_scale(this.attrs.x).range([100, dim[0] - 25]);
     const y = to_scale(this.attrs.y).range([dim[1] - margin, 25]);
-    const s = to_scale(this.attrs.size).range([0, 200]);
+    // domain scaling needs to be reflective of total population
+    // extend to_scale() method to reflect this or use a separate scaler
+
+    const s = to_scale(this.attrs.size).range([2, 40]);
     const color = this.color ? d3.scale.ordinal<string,string>().domain(this.color.groups.map((g) => g.name)).range(this.color.groups.map((g) => g.color)) : () => 'gray';
 
     return Promise.resolve({
