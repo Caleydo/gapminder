@@ -143,9 +143,12 @@ export function setAttributeScale(name:string, $main_ref:prov.IObjectRef<GapMind
 
 class Attribute {
   data:matrix.IMatrix = null;
-  scale = 'linear';
 
   arr:number[][] = null;
+
+  constructor(public scale = 'linear') {
+
+  }
 
   get label() {
     return this.data ? this.data.desc.name : 'None';
@@ -199,7 +202,7 @@ class GapMinder extends views.AView {
   attrs = {
     x: new Attribute(),
     y: new Attribute(),
-    size: new Attribute()
+    size: new Attribute('sqrt')
   };
 
   private items:IItem[] = [];
@@ -260,7 +263,7 @@ class GapMinder extends views.AView {
     //find all gapminder datasets
     datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {
       const matrices = <matrix.IMatrix[]>list.filter((d) => d.desc.type === 'matrix');
-      ['x', 'y'].forEach((attr) => {
+      ['x', 'y','size'].forEach((attr) => {
         const $options = d3.select('select.attr-' + attr).selectAll('option').data(matrices);
         $options.enter().append('option');
         $options.attr('value', (d) => d.desc.id).text((d) => d.desc.name);
@@ -313,9 +316,6 @@ class GapMinder extends views.AView {
         return d3.scale.sqrt().domain(a.data.valuetype.range);
         // need to update Labels
       }
-
-      //need to deal with the radius here --> cant have a linear scale
-
       return d3.scale.linear().domain(a.data.valuetype.range).clamp(true);
     }
 
@@ -323,9 +323,6 @@ class GapMinder extends views.AView {
 
     const x = to_scale(this.attrs.x).range([100, dim[0] - 25]);
     const y = to_scale(this.attrs.y).range([dim[1] - margin, 25]);
-    // domain scaling needs to be reflective of total population
-    // extend to_scale() method to reflect this or use a separate scaler
-
     const s = to_scale(this.attrs.size).range([2, 40]);
     const color = this.color ? d3.scale.ordinal<string,string>().domain(this.color.groups.map((g) => g.name)).range(this.color.groups.map((g) => g.color)) : () => 'gray';
 
@@ -378,6 +375,7 @@ class GapMinder extends views.AView {
         this.$node.select('.attr-' + attr + '-scale').property('value', m.scale);
       }
     });
+
     this.$node.select('.attr-color').text(this.color ? this.color.desc.name : 'None');
 
     if (this.color_range) {
