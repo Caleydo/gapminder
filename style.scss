@@ -116,8 +116,9 @@ main {
 
   div.xaxis {
     margin-right: 6em;
-    right: 0;
+    left:0;
   }
+
 
   div.chart {
     position: absolute;
@@ -132,6 +133,13 @@ main {
         margin-right: 3px;
       }
     }
+  }
+
+  div.population_scaler{
+    position:absolute;
+    margin-right: 6em;
+    right:0;
+    bottom: 50px;
   }
 
   div.axis {
