@@ -130,7 +130,7 @@ export function createToggleTrails($main_ref:prov.IObjectRef<GapMinder>, show: b
 }
 
 export function setAttribute(name:string, $main_ref:prov.IObjectRef<GapMinder>, data:prov.IObjectRef<datatypes.IDataType>) {
-  return prov.action(prov.meta(name + '=' + (data ? data.name : '<none>'), prov.cat.visual, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
+  return prov.action(prov.meta(name + '=' + (data ? data.name : '<none>'), prov.cat.data, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
     name: name
   });
 }
