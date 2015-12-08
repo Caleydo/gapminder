@@ -314,6 +314,7 @@ class GapMinder extends views.AView {
   private computeScales():Promise<{ x: IScale; y: IScale; size: IScale; color: (s:string) => string }> {
     const margin = 25;
     const dim = this.dim;
+    const maxShift = 1.1;
 
     // need to have updateLabels() also for updating labels correctly
 
@@ -321,18 +322,16 @@ class GapMinder extends views.AView {
       if (!a.valid) {
         return d3.scale.linear().domain([0, 100]);
       }
+      const val_range = a.data.valuetype.range;
+      val_range[1] *= maxShift;
 
       if (a.scale === 'log') {
-        return d3.scale.log().domain([Math.max(1, a.data.valuetype.range[0]), a.data.valuetype.range[1]]).clamp(true);
+        return d3.scale.log().domain([Math.max(1, val_range[0]), val_range[1]]).clamp(true);
         // need to update Labels
+      } else if (a.scale === 'sqrt') {
+        return d3.scale.sqrt().domain(val_range).clamp(true);
       }
-
-       if (a.scale === 'sqrt') {
-          return d3.scale.sqrt().domain([0,1e9]).clamp(true);
-        //return d3.scale.sqrt().domain(a.data.valuetype.range);
-        // need to update Labels
-      }
-      return d3.scale.linear().domain(a.data.valuetype.range).clamp(true);
+      return d3.scale.linear().domain(val_range).clamp(true);
     }
 
     const x = to_scale(this.attrs.x).range([100, dim[0] - 35]);
