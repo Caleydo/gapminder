@@ -1,6 +1,6 @@
 [
   {
-    "name": "GDP",
+    "name": "GDP (PPP$, inflation-adjusted)",
     "path": "gdp.txt",
     "separator": "\t",
     "type": "matrix",
@@ -8,13 +8,14 @@
     "size": [173, 217],
     "rowtype": "Country",
     "coltype": "Year",
+    "formatter": ".1s",
     "value": {
       "type": "real",
       "range": [0, 182670]
     }
   },
   {
-    "name": "Child Mortality < 5 years",
+    "name": "Child Mortality (0-5 year-olds dying per 1,000 born)",
     "path": "childmortality.txt",
     "separator": "\t",
     "loadAtOnce": "true",
@@ -22,6 +23,7 @@
     "size": [173,217],
     "rowtype": "Country",
     "coltype": "Year",
+    "formatter": ".1s",
     "value": {
       "type": "real",
       "range": [0, 829100]
@@ -36,6 +38,7 @@
     "size": [173, 217],
     "rowtype": "Country",
     "coltype": "Year",
+    "formatter": "s",
     "value": {
       "type": "real",
       "range": [0, 1376050000]
@@ -50,6 +53,7 @@
     "size": [173, 217],
     "rowtype": "Country",
     "coltype": "Year",
+    "formatter": ".0f",
     "value": {
       "type": "real",
       "range": [0, 84.1]
