@@ -96,12 +96,18 @@ div.color_legend {
         top:0;
       i {
         margin-right: 3px;
+        padding: 3px;
       }
-    }
+}
+
+
 
 svg.timeline {
 
-  circle.slider {
+  fill:grey;
+
+  rect.slider {
+    stroke: #ffab00;
     cursor: ew-resize;
     fill: #ffab00;
   }
@@ -161,6 +167,7 @@ main {
   }
 
   svg.timeline {
+    fill:grey;
     align-items: flex-start;
     position: absolute;
     left: 0;
@@ -179,7 +186,7 @@ body {
   }
 
   &[data-clue='A'], &[data-clue='P'] {
-    svg.timeline circle.slider {
+    svg.timeline rect.slider {
       pointer-events: none;
     }
 
