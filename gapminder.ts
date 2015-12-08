@@ -413,31 +413,29 @@ class GapMinder extends views.AView {
       }
     }
 
-    if (this.color_range) {
-      const that = this;
-      const $legends = d3.select('div.color_legend').selectAll('div.legend').data(this.color_range.groups);
-      const $legends_enter = $legends.enter().append('div').classed('legend', true)
-        .on('click', function(d) {
-          if (!that.interactive) {
-            return;
-          }
-          const isActive = d3.select(this).select('i').classed('fa-circle');
-          d3.select(this).select('i').classed('fa-circle-o', isActive).classed('fa-circle', !isActive);
-          that.color.idtype.select(filteredSelectionType,ranges.list(d), isActive ? idtypes.SelectOperation.ADD : idtypes.SelectOperation.REMOVE);
-        });
-      $legends_enter.append('i').attr('class', 'fa fa-circle');
-      $legends_enter.append('span');
+    const that = this;
+    const $legends = d3.select('div.color_legend').selectAll('div.legend').data(this.color_range ? this.color_range.groups : []);
+    const $legends_enter = $legends.enter().append('div').classed('legend', true)
+      .on('click', function(d) {
+        if (!that.interactive) {
+          return;
+        }
+        const isActive = d3.select(this).select('i').classed('fa-circle');
+        d3.select(this).select('i').classed('fa-circle-o', isActive).classed('fa-circle', !isActive);
+        that.color.idtype.select(filteredSelectionType,ranges.list(d), isActive ? idtypes.SelectOperation.ADD : idtypes.SelectOperation.REMOVE);
+      });
+    $legends_enter.append('i').attr('class', 'fa fa-circle');
+    $legends_enter.append('span');
 
-      const filtered = this.color.idtype.selections(filteredSelectionType).dim(0);
-      $legends.select('i')
-        .style('color', (d) => d.color)
-        .classed('fa-circle', (d) => !filtered.contains(d.first))
-        .classed('fa-circle-o', (d) => {
-          return filtered.contains(d.first);
-        });
-      $legends.select('span').text((d) => d.name);
-      $legends.exit().remove();
-    }
+    const filtered = this.color.idtype.selections(filteredSelectionType).dim(0);
+    $legends.select('i')
+      .style('color', (d) => d.color)
+      .classed('fa-circle', (d) => !filtered.contains(d.first))
+      .classed('fa-circle-o', (d) => {
+        return filtered.contains(d.first);
+      });
+    $legends.select('span').text((d) => d.name);
+    $legends.exit().remove();
   }
 
   /* ---------------------- selectTimePoint() ------------------- */
