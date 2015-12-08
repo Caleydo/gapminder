@@ -226,7 +226,7 @@ class GapMinder extends views.AView {
   private yaxis = d3.svg.axis().orient('left');
   private timelinescale = d3.scale.linear();
   private timelineaxis = d3.svg.axis().orient('bottom').scale(this.timelinescale).tickFormat(d3.format('d'));
-  private popRadial = d3.svg.line.radial();
+  //private popRadial = d3.svg.line.radial();
 
   private initedListener = false;
   private timeIds:any = null;
@@ -529,7 +529,7 @@ class GapMinder extends views.AView {
       $marks
         .classed('select-selected', (d) => d.selected)
         .classed('select-filtered', (d) => d.filtered)
-        .attr('data-id', (d) => d.id)
+        .attr('data-id', (d) => d.id);
 
       $marks.interrupt().transition()
         .duration(this.animationDuration())
@@ -693,7 +693,7 @@ class GapMinder extends views.AView {
     }
   }
 
-  private updatePopulationSlider(){
+  private updatePopulationSlider() {
     d3.svg.line.radial();
 
     var $popslider = this.$node.select('svg.pop_slider');
