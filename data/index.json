@@ -65,7 +65,7 @@
   },
   {
     "name": "Continent",
-    "description": "Continent",
+    "description": "",
     "type": "stratification",
     "idtype": "Country",
     "path": "continent.txt",

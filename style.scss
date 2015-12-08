@@ -178,7 +178,7 @@ main {
     align-items: flex-start;
     position: absolute;
     left: 4em;
-    right: 100;
+    right: 100px;
     bottom: 5px;
   }
 
@@ -189,10 +189,22 @@ main {
 
 body {
   &[data-clue='E'] {
-
+    span.attr-x-label, span.attr-x-scale-label,
+    span.attr-y-label, span.attr-y-scale-label,
+    span.attr-size-label, span.attr-size-scale-label,
+    span.attr-color-label, span.attr-color-scale-label {
+      display: none;
+    }
   }
 
   &[data-clue='A'], &[data-clue='P'] {
+    select.attr-x, select.attr-x-scale,
+    select.attr-y, select.attr-y-scale,
+    select.attr-size, select.attr-size-scale,
+    select.attr-color, select.attr-x-scale {
+      display: none;
+    }
+
     svg.timeline rect.slider {
       pointer-events: none;
     }

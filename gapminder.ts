@@ -399,7 +399,8 @@ class GapMinder extends views.AView {
         const choices = $optionns.data();
         this.$node.select('.attr-' + attr).property('selectedIndex', choices.indexOf(m.data));
         this.$node.select('.attr-' + attr + '-scale').property('value', m.scale);
-        this.$node.select('.attr-' + attr+'-label').text(m.valid ? m.data.desc.description : 'None');
+        this.$node.select('.attr-' + attr+'-label').text(m.valid ? m.data.desc.name : 'None');
+        this.$node.select('.attr-' + attr+'-desc').text(m.valid ? m.data.desc.description : '');
         this.$node.select('.attr-' + attr + '-scale-label').text(m.scale);
       }
     });
@@ -409,7 +410,8 @@ class GapMinder extends views.AView {
       if (!$optionns.empty()) {
         const choices = $optionns.data();
         this.$node.select('.attr-color').property('selectedIndex', choices.indexOf(this.color));
-        this.$node.select('.attr-color-label').text(this.color != null ? (<any>this.color.desc).description : 'None');
+        this.$node.select('.attr-color-label').text(this.color != null ? (<any>this.color.desc).name : 'None');
+        this.$node.select('.attr-color-desc').text(this.color != null ? (<any>this.color.desc).description : '');
       }
     }
 
