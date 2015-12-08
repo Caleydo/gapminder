@@ -157,6 +157,17 @@ class Attribute {
   get valid() {
     return this.data !== null;
   }
+
+  get format() {
+    return d3.format(this.to_format());
+  }
+
+  to_format() {
+    if (!this.valid) {
+      return ',d';
+    }
+    return (<any>this.data.desc).formatter || ',d';
+  }
 }
 
 interface IScale {
@@ -465,8 +476,8 @@ class GapMinder extends views.AView {
       const scales = args[0]; // x y size color resolved
       const data:any[] = args[1];
 
-      $chart.select('g.xaxis').call(this.xaxis.scale(scales.x));
-      $chart.select('g.yaxis').call(this.yaxis.scale(scales.y));
+      $chart.select('g.xaxis').call(this.xaxis.scale(scales.x).tickFormat(this.attrs.x.format));
+      $chart.select('g.yaxis').call(this.yaxis.scale(scales.y).tickFormat(this.attrs.y.format));
 
       //trails idea: append a new id with the time point encoded
 
