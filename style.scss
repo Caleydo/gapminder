@@ -100,9 +100,14 @@ div.color_legend {
       }
 }
 
+
+
 svg.timeline {
 
-  circle.slider {
+  fill:grey;
+
+  rect.slider {
+    stroke: #ffab00;
     cursor: ew-resize;
     fill: #ffab00;
   }
@@ -162,6 +167,7 @@ main {
   }
 
   svg.timeline {
+    fill:grey;
     align-items: flex-start;
     position: absolute;
     left: 0;
@@ -180,7 +186,7 @@ body {
   }
 
   &[data-clue='A'], &[data-clue='P'] {
-    svg.timeline circle.slider {
+    svg.timeline rect.slider {
       pointer-events: none;
     }
 

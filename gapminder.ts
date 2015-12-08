@@ -268,7 +268,7 @@ class GapMinder extends views.AView {
   setInteractive(interactive:boolean) {
     this.interactive = interactive;
     this.$node.selectAll('select').attr('disabled', interactive ? null : 'disabled');
-    this.$node.selectAll('circle.slider, rect.clearer').style('pointer-events', interactive ? null : 'none');
+    this.$node.selectAll('rect.slider, rect.clearer').style('pointer-events', interactive ? null : 'none');
   }
 
   private init($elem:d3.Selection<any>) {
@@ -606,7 +606,7 @@ class GapMinder extends views.AView {
       if (type === idtypes.defaultSelectionType) { //animate just for selections
         $slider = $slider.transition().duration(this.animationDuration());
       }
-      $slider.attr('transform', 'translate(' + x + ',0)');
+      //$slider.attr('transform', 'translate(' + x + ',0)');
       this.updateChart();
     }
   }
@@ -725,9 +725,9 @@ class GapMinder extends views.AView {
     /* ---------------------------------------------------- */
 
     if (wasEmpty) {
-      $slider = $timeline.append('circle').classed('slider', true)
-        .attr('r', 8)
-        .attr('cy', 20);
+      $slider = $timeline.append('rect').classed('slider', true)
+        .attr('width', 15)
+        .attr('height',15);
       // using ref Data
       $slider.call(d3.behavior.drag()
         .on('drag', dragged)
@@ -742,10 +742,7 @@ class GapMinder extends views.AView {
     // timelinescale is linear
     this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0] - 40]).clamp(true);
 
-    // every 20 years interval
-
     this.timelineaxis.ticks(20).tickValues(this.timeIds.range);
-    //this.timelineaxis.tickValues(this.timeIds.minmax);
 
     const s = this.timeIds.idtype.selections().dim(0);
     var t;
