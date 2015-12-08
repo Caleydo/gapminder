@@ -740,7 +740,10 @@ class GapMinder extends views.AView {
     // timelinescale is linear
     this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0] - 40]).clamp(true);
 
-    this.timelineaxis.tickValues(this.timeIds.minmax);
+    // every 20 years interval
+
+    this.timelineaxis.ticks(20).tickValues(this.timeIds.range);
+    //this.timelineaxis.tickValues(this.timeIds.minmax);
 
     const s = this.timeIds.idtype.selections().dim(0);
     var t;
