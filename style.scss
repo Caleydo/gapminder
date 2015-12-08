@@ -92,13 +92,8 @@ svg.chart {
 div.legends {
   margin: 2px 2px 0 0;
   position: absolute;
-  right: 0;
-  top: 0;
-
-  strong {
-    width: 3em;
-    display: inline-block;
-  }
+  left: 4px;
+  top: 40px;
 
   div.color_legend {
     i {
@@ -162,7 +157,7 @@ main {
     position: absolute;
     width: 40em;
     z-index: 2;
-    left: 5px;
+    left: 125px;
 
     div.yaxis {
       -webkit-transform: rotate(-90deg)translateX(-40em);
@@ -180,7 +175,8 @@ main {
   }
 
   div.chart {
-    //position: absolute;
+    margin-left: 120px;
+    position: absolute;
     //top: 0;
     //left: 0;
 
