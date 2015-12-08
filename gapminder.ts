@@ -623,7 +623,7 @@ class GapMinder extends views.AView {
       if (type === idtypes.defaultSelectionType) { //animate just for selections
         $slider = $slider.transition().duration(this.animationDuration());
       }
-      //$slider.attr('transform', 'translate(' + x + ',0)');
+      $slider.attr('transform', 'translate(' + x + ',0)');
       this.updateChart();
     }
   }
