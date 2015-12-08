@@ -332,8 +332,11 @@ class GapMinder extends views.AView {
         //return d3.scale.sqrt().domain(a.data.valuetype.range);
         // need to update Labels
       }
+
       return d3.scale.linear().domain(a.data.valuetype.range).clamp(true);
     }
+
+    // method for colour choice
 
     const x = to_scale(this.attrs.x).range([100, dim[0] - 35]);
     const y = to_scale(this.attrs.y).range([dim[1] - margin, 35]);
@@ -606,7 +609,7 @@ class GapMinder extends views.AView {
       if (type === idtypes.defaultSelectionType) { //animate just for selections
         $slider = $slider.transition().duration(this.animationDuration());
       }
-      //$slider.attr('transform', 'translate(' + x + ',0)');
+      $slider.attr('transform', 'translate(' + x + ',0)');
       this.updateChart();
     }
   }
