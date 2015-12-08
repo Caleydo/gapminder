@@ -427,13 +427,15 @@ class GapMinder extends views.AView {
     $legends_enter.append('i').attr('class', 'fa fa-circle');
     $legends_enter.append('span');
 
-    const filtered = this.color.idtype.selections(filteredSelectionType).dim(0);
-    $legends.select('i')
-      .style('color', (d) => d.color)
-      .classed('fa-circle', (d) => !filtered.contains(d.first))
-      .classed('fa-circle-o', (d) => {
-        return filtered.contains(d.first);
-      });
+    if (this.color != null) {
+      const filtered = this.color.idtype.selections(filteredSelectionType).dim(0);
+      $legends.select('i')
+        .style('color', (d) => d.color)
+        .classed('fa-circle', (d) => !filtered.contains(d.first))
+        .classed('fa-circle-o', (d) => {
+          return filtered.contains(d.first);
+        });
+    }
     $legends.select('span').text((d) => d.name);
     $legends.exit().remove();
   }
