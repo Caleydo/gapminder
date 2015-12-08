@@ -14,7 +14,8 @@ const elems = template.create(document.body, {
   application: '/gapminder',
   id: 'clue_gapminder',
   recordSelectionTypes: 'selected,filtered',
-  animatedSelections: true
+  animatedSelections: true,
+  thumbnails: false
 });
 
 {
