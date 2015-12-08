@@ -53,7 +53,7 @@ function toggleGapMinderTrailsImpl(inputs, parameter) {
   };
 }
 
-
+/** dataset and description loaded only once --> restart server **/
 
 /**
  * compresses the given path by removing redundant set gap minder attribute calls
@@ -687,10 +687,7 @@ class GapMinder extends views.AView {
     $popslider.attr({
       width: Math.max(this.dim[0],0)/3,
       height: 80
-    })
-    .attr();
-
-
+    });
 
   }
 
@@ -729,6 +726,9 @@ class GapMinder extends views.AView {
 
     if (wasEmpty) {
       $slider = $timeline.append('rect').classed('slider', true)
+        .attr('y',10)
+        .attr('rx',3)
+        .attr('ry',3)
         .attr('width', 15)
         .attr('height',15);
       // using ref Data
@@ -743,7 +743,7 @@ class GapMinder extends views.AView {
     }
 
     // timelinescale is linear
-    this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0] - 40]).clamp(true);
+    this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0]-40]).clamp(true);
 
     this.timelineaxis.ticks(20).tickValues(this.timeIds.range);
 

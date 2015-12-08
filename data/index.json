@@ -76,22 +76,22 @@
       {
         "name": "Africa",
         "size": 50,
-        "color": "rgb(230,171,2)"
+        "color": "rgb(31,120,180)"
       },
       {
         "name": "America",
         "size": 30,
-        "color": "rgb(117, 112, 179)"
+        "color": "rgb(255,127,0)"
       },
       {
         "name": "Asia",
         "size": 47,
-        "color": "rgb(217, 95, 2)"
+        "color": "rgb(251,154,153)"
       },
       {
         "name": "Europe",
         "size": 42,
-        "color": "rgb(231, 41, 138)"
+        "color": "rgb(230,171,2)"
       }
     ]
   }
