@@ -290,12 +290,25 @@ class GapMinder extends views.AView {
           that.setAttributeScale(attr, this.value);
         });
       });
+
+      const stratifications = <stratification.IStratification[]>list.filter((d) => d.desc.type === 'stratification');
+      {
+        let $options = d3.select('select.attr-color').selectAll('option').data(stratifications);
+        $options.enter().append('option');
+        $options.attr('value', (d) => d.desc.id).text((d) => d.desc.name);
+        $options.exit().remove();
+
+        $elem.select('select.attr-color').on('change', function () {
+          that.setAttribute('color', stratifications[this.selectedIndex]);
+        });
+      }
       //select default datasets
       if (this.graph.states.length === 1) { //first one
+
         this.setXAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderGdp') || matrices[0]);
         this.setYAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderLifeExpectancy') || matrices[0]);
         this.setSizeAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderPopulation') || matrices[0]);
-        const stratifications = <stratification.IStratification[]>list.filter((d) => d.desc.type === 'stratification');
+
         this.setColor(C.search(stratifications, (d) => d.desc.id === 'gapminderContinent') || stratifications[0]);
       }
     });
@@ -386,14 +399,19 @@ class GapMinder extends views.AView {
         const choices = $optionns.data();
         this.$node.select('.attr-' + attr).property('selectedIndex', choices.indexOf(m.data));
         this.$node.select('.attr-' + attr + '-scale').property('value', m.scale);
-        this.$node.select('.attr-' + attr+'-label').text(m.valid ? m.data.desc.description : '');
+        this.$node.select('.attr-' + attr+'-label').text(m.valid ? m.data.desc.description : 'None');
         this.$node.select('.attr-' + attr + '-scale-label').text(m.scale);
       }
-
     });
 
-
-    this.$node.select('.attr-color').text(this.color ? this.color.desc.name : 'None');
+    {
+      let $optionns = this.$node.select('.attr-color').selectAll('option');
+      if (!$optionns.empty()) {
+        const choices = $optionns.data();
+        this.$node.select('.attr-color').property('selectedIndex', choices.indexOf(this.color));
+        this.$node.select('.attr-color-label').text(this.color != null ? (<any>this.color.desc).description : 'None');
+      }
+    }
 
     if (this.color_range) {
       const that = this;
