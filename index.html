@@ -11,8 +11,9 @@
 </head>
 <body>
  <div class="gapminder" style="display: none">
-  <div class="gapminder_i">
+   <div class="legends">
     <div class="color_legend">
+      <span><strong>Color:</strong>
       <select class="attr-color">
         <!--automatically generated-->
       </select>
@@ -20,7 +21,25 @@
         <option value="color" selected="selected">Color</option>
       </select>-->
         <span class="attr-color-label"></span><span class="attr-color-desc"></span>
+        </span>
     </div>
+     <div class="population_scaler">
+        <span> <strong>Size:</strong>
+        <select class="attr-size">
+          <!--automatically generated-->
+        </select>
+        <span class="attr-size-label"></span>
+        </span>
+        <select class="attr-size-scale">
+          <option value="linear">Linear</option>
+          <option value="log">Log</option>
+          <option value="sqrt" selected="selected">Sqrt</option>
+        </select>
+        <span class="attr-size-scale-label"></span>
+         <!--<svg></svg>-->
+        </div>
+   </div>
+  <div class="gapminder_i">
     <div class="axis yaxis">
       <select class="attr-y">
         <!--automatically generated-->
@@ -36,7 +55,7 @@
   </div>
   <div class="chart">
     <svg class="chart">
-      <g class="yaxis" transform="translate(100,0)"></g>
+      <g class="yaxis" transform="translate(80,0)"></g>
       <g class="xaxis"></g>
       <text class="act_year"></text>
       <g class="select_lines"></g>
@@ -61,18 +80,7 @@
   <svg class="timeline">
     <g class="axis"></g>
   </svg>
-     <div class="population_scaler">
-      <select class="attr-size">
-        <!--automatically generated-->
-      </select>
-      <span class="attr-size-label"></span>
-      <select class="attr-size-scale">
-        <option value="linear">Linear</option>
-        <option value="log">Log</option>
-        <option value="sqrt" selected="selected">Sqrt</option>
-      </select>
-    <span class="attr-size-scale-label"></span>
-      </div>
+
 </div>
 </body>
 </html>

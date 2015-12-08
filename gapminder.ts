@@ -235,7 +235,7 @@ class GapMinder extends views.AView {
 
   private interactive = true;
 
-  private totooltip = tooltip.bind(this.createTooltip.bind(this));
+  private totooltip = tooltip.bind(this.createTooltip.bind(this), 0);
 
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private graph:prov.ProvenanceGraph) {
@@ -268,7 +268,7 @@ class GapMinder extends views.AView {
   setInteractive(interactive:boolean) {
     this.interactive = interactive;
     this.$node.selectAll('select').attr('disabled', interactive ? null : 'disabled');
-    this.$node.selectAll('rect.slider, rect.clearer').style('pointer-events', interactive ? null : 'none');
+    this.$node.selectAll('.slider, rect.clearer').style('pointer-events', interactive ? null : 'none');
   }
 
   private init($elem:d3.Selection<any>) {
@@ -347,7 +347,7 @@ class GapMinder extends views.AView {
       return d3.scale.linear().domain(val_range).clamp(true);
     }
 
-    const x = to_scale(this.attrs.x).range([100, dim[0] - 35]);
+    const x = to_scale(this.attrs.x).range([80, dim[0] - 35]);
     const y = to_scale(this.attrs.y).range([dim[1] - margin, 35]);
     const s = to_scale(this.attrs.size).range([2, 40]);
     const color = this.color ? d3.scale.ordinal<string,string>().domain(this.color.groups.map((g) => g.name)).range(this.color.groups.map((g) => g.color)) : () => 'gray';
@@ -457,7 +457,7 @@ class GapMinder extends views.AView {
   }
 
   private createTooltip(d: any) {
-    var r= d.name+'<br>';
+    var r= `<strong>${d.name}</strong><br>`;
     const f = d3.format(',.0f');
     if (this.color) {
       r += this.color.desc.name+':\t' + d.color +'<br>';
@@ -625,7 +625,7 @@ class GapMinder extends views.AView {
       if (type === idtypes.defaultSelectionType) { //animate just for selections
         $slider = $slider.transition().duration(this.animationDuration());
       }
-      $slider.attr('transform', 'translate(' + x + ',0)');
+      $slider.attr('transform', 'translate(' + x + ',14)');
       this.updateChart();
     }
   }
@@ -744,9 +744,9 @@ class GapMinder extends views.AView {
     /* ---------------------------------------------------- */
 
     if (wasEmpty) {
-      $slider = $timeline.append('rect').classed('slider', true)
-        .attr('width', 15)
-        .attr('height',15);
+      $slider = $timeline.append('path').classed('slider', true)
+        .attr('d', d3.svg.symbol().type('triangle-down')(0))
+        .attr('transform', 'translate(0,14)');
       // using ref Data
       $slider.call(d3.behavior.drag()
         .on('drag', dragged)
@@ -776,7 +776,7 @@ class GapMinder extends views.AView {
     const x = this.timelinescale(t);
 
     // just visualizing where slider should be
-    $slider.attr('transform', 'translate(' + x + ',0)');
+    $slider.attr('transform', 'translate(' + x + ',14)');
 
     $timeline.select('g.axis').attr('transform', 'translate(0,20)').call(this.timelineaxis);
   } // end of updateTime()

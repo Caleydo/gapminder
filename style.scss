@@ -89,30 +89,61 @@ svg.chart {
 
 }
 
+div.legends {
+  margin: 2px 2px 0 0;
+  position: absolute;
+  right: 0;
+  top: 0;
 
-div.color_legend {
-        display:flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        top:0;
-        left:1em;
-      i {
-        margin-right: 3px;
-        padding: 3px;
-      }
+  strong {
+    width: 3em;
+    display: inline-block;
+  }
 
-  button .attr-color-scale{
-    left:6em;
+  div.color_legend {
+    i {
+      margin-right: 3px;
+      padding: 3px;
+      opacity: 0.5;
+    }
+
+    > * {
+      display: block;
+    }
+    select {
+      width: 8em;
+    }
+
+    button .attr-color-scale {
+      left: 6em;
+    }
+
+    div.legend {
+      margin-left: 3em;
+    }
+  }
+
+  div.population_scaler {
+    margin-top: 1em;
+    > * {
+      display: block;
+      margin-left: 3em;
+    }
+    span:first-of-type {
+      margin-left: 0em;
+    }
+    select {
+      width: 8em;
+    }
   }
 }
-
 
 
 svg.timeline {
 
   fill:grey;
 
-  rect.slider {
+  path.slider {
     stroke: #ffab00;
     cursor: ew-resize;
     fill: #ffab00;
@@ -131,6 +162,7 @@ main {
     position: absolute;
     width: 40em;
     z-index: 2;
+    left: 5px;
 
     div.yaxis {
       -webkit-transform: rotate(-90deg)translateX(-40em);
@@ -148,19 +180,14 @@ main {
   }
 
   div.chart {
-    position: absolute;
-    top: 0;
-    left: 0;
+    //position: absolute;
+    //top: 0;
+    //left: 0;
 
   }
 
 
-  div.population_scaler{
-    position:absolute;
-    margin-right: 6em;
-    right:0;
-    bottom: 50px;
-  }
+
 
 
   div.axis {
