@@ -1,6 +1,7 @@
 [
   {
-    "name": "GDP (PPP$, inflation-adjusted)",
+    "name": "GDP",
+    "description": "(PPP$, inflation-adjusted)",
     "path": "gdp.txt",
     "separator": "\t",
     "type": "matrix",
@@ -15,7 +16,8 @@
     }
   },
   {
-    "name": "Child Mortality (0-5 year-olds dying per 1,000 born)",
+    "name": "Child Mortality",
+    "description": "(0-5 year-olds dying per 1,000 born)",
     "path": "childmortality.txt",
     "separator": "\t",
     "loadAtOnce": "true",
@@ -31,6 +33,7 @@
   },
   {
     "name": "Population",
+    "description": "",
     "path": "totalPop_interpolated.txt",
     "separator": "\t",
     "loadAtOnce": "true",
@@ -46,6 +49,7 @@
   },
   {
     "name": "Life Expectancy",
+    "description": "at Birth",
     "path": "lifeexpectancy.txt",
     "separator": "\t",
     "loadAtOnce": "true",
@@ -61,6 +65,7 @@
   },
   {
     "name": "Continent",
+    "description": "Continent",
     "type": "stratification",
     "idtype": "Country",
     "path": "continent.txt",
