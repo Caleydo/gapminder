@@ -387,7 +387,7 @@ class GapMinder extends views.AView {
         const choices = $optionns.data();
         this.$node.select('.attr-' + attr).property('selectedIndex', choices.indexOf(m.data));
         this.$node.select('.attr-' + attr + '-scale').property('value', m.scale);
-        this.$node.select('.attr-' + attr+'-label').text(m.data.desc.description);
+        this.$node.select('.attr-' + attr+'-label').text(m.valid ? m.data.desc.description : '');
         this.$node.select('.attr-' + attr + '-scale-label').text(m.scale);
       }
 
