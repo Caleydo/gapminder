@@ -9,10 +9,12 @@
     <link rel="stylesheet" href="style.css">
     <script src="/caleydo_web.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 </head>
 <body>
  <div class="gapminder" style="display: none">
   <div class="gapminder_i">
+    <div class="color_legend"></div>
     <div class="axis yaxis">
       <select class="attr-y">
         <!--automatically generated-->
@@ -33,7 +35,6 @@
       <polyline class="hover_line" style="opacity: 0" points="0,0 0,0 0,0"></polyline>
       <g class="marks"></g>
     </svg>
-    <div class="color_legend"></div>
   </div>
   <div class="axis xaxis" style="margin-left: 3em">
     <select class="attr-x">
