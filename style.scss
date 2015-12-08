@@ -14,6 +14,9 @@ body, html {
   -webkit-font-smoothing: subpixel-antialiased;
 }
 
+// tooltip styling
+.tooltip{}
+
 /* mouse over mark and ref lines*/
 .active {
   stroke: black;
@@ -83,7 +86,18 @@ svg.chart {
   select .yaxis, .xaxis {
     background-color: #00b3ee;
   }
+
 }
+
+div.color_legend {
+        display:flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        top:0;
+      i {
+        margin-right: 3px;
+      }
+    }
 
 svg.timeline {
 
@@ -115,25 +129,19 @@ main {
   }
 
   div.xaxis {
-    margin-right: 6em;
-    left:0;
+    margin-right: 2em;
+    position: absolute;
+    left: 0;
+    right:0;
   }
-
 
   div.chart {
     position: absolute;
     top: 0;
-    left: 0;
-    div.color_legend {
-      position: absolute;
-      top: 1em;
-      right: 1em;
+    left: 10em;
 
-      i {
-        margin-right: 3px;
-      }
-    }
   }
+
 
   div.population_scaler{
     position:absolute;
@@ -142,15 +150,21 @@ main {
     bottom: 50px;
   }
 
+
   div.axis {
     position: absolute;
     bottom: 50px;
   }
 
+  svg.pop_slider{
+    position:absolute;
+  }
+
   svg.timeline {
+    align-items: flex-start;
     position: absolute;
     left: 0;
-    right: 0;
+    right:0;
     bottom: 2px;
   }
 
@@ -170,6 +184,7 @@ body {
     }
 
     svg.chart {
+
       polyline.hover_line {
         stroke: $hover-color !important;
       }

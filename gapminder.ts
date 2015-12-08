@@ -179,7 +179,6 @@ interface IItem {
   name: string;
 }
 
-
 function createTimeIds(names:string[], ids:ranges.Range, idtype:idtypes.IDType) {
   const ts = names.map((d) => parseInt(d, 10));
   const ids_l = ids.dim(0).asList();
@@ -226,6 +225,7 @@ class GapMinder extends views.AView {
   private yaxis = d3.svg.axis().orient('left');
   private timelinescale = d3.scale.linear();
   private timelineaxis = d3.svg.axis().orient('bottom').scale(this.timelinescale).tickFormat(d3.format('d'));
+  private popRadial = d3.svg.line.radial();
 
   private initedListener = false;
   private timeIds:any = null;
@@ -290,7 +290,7 @@ class GapMinder extends views.AView {
       //select default datasets
       if (this.graph.states.length === 1) { //first one
         this.setXAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderGdp') || matrices[0]);
-        this.setYAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderChildMortality5Years') || matrices[0]);
+        this.setYAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderLifeExpectancy') || matrices[0]);
         this.setSizeAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderPopulation') || matrices[0]);
         const stratifications = <stratification.IStratification[]>list.filter((d) => d.desc.type === 'stratification');
         this.setColor(C.search(stratifications, (d) => d.desc.id === 'gapminderContinent') || stratifications[0]);
@@ -312,6 +312,7 @@ class GapMinder extends views.AView {
     const margin = 25;
     const dim = this.dim;
 
+    // need to have updateLabels() also for updating labels correctly
 
     function to_scale(a:Attribute) {
       if (!a.valid) {
@@ -324,16 +325,15 @@ class GapMinder extends views.AView {
       }
 
        if (a.scale === 'sqrt') {
-        return d3.scale.sqrt().domain(a.data.valuetype.range);
+          return d3.scale.sqrt().domain([0,1e9]).clamp(true);
+        //return d3.scale.sqrt().domain(a.data.valuetype.range);
         // need to update Labels
       }
       return d3.scale.linear().domain(a.data.valuetype.range).clamp(true);
     }
 
-    // rewrite to_scale to take value of .property instead
-
-    const x = to_scale(this.attrs.x).range([100, dim[0] - 25]);
-    const y = to_scale(this.attrs.y).range([dim[1] - margin, 25]);
+    const x = to_scale(this.attrs.x).range([100, dim[0] - 35]);
+    const y = to_scale(this.attrs.y).range([dim[1] - margin, 35]);
     const s = to_scale(this.attrs.size).range([2, 40]);
     const color = this.color ? d3.scale.ordinal<string,string>().domain(this.color.groups.map((g) => g.name)).range(this.color.groups.map((g) => g.color)) : () => 'gray';
 
@@ -387,7 +387,9 @@ class GapMinder extends views.AView {
         this.$node.select('.attr-' + attr+'-label').text(m.data.desc.description);
         this.$node.select('.attr-' + attr + '-scale-label').text(m.scale);
       }
+
     });
+
 
     this.$node.select('.attr-color').text(this.color ? this.color.desc.name : 'None');
 
@@ -481,8 +483,8 @@ class GapMinder extends views.AView {
       $chart.select('g.xaxis').call(this.xaxis.scale(scales.x).tickFormat(this.attrs.x.format));
       $chart.select('g.yaxis').call(this.yaxis.scale(scales.y).tickFormat(this.attrs.y.format));
 
-      //trails idea: append a new id with the time point encoded
 
+      //trails idea: append a new id with the time point encoded
       data.forEach((d) => {
         d.xx = scales.x(d.x);
         d.yy = scales.y(d.y);
@@ -569,6 +571,7 @@ class GapMinder extends views.AView {
     this.updateLegend();
     this.updateTimeLine();
     this.updateChart();
+    this.updatePopulationSlider();
 
     const ref = this.refData;
 
@@ -671,12 +674,27 @@ class GapMinder extends views.AView {
     }
   }
 
+  private updatePopulationSlider(){
+    d3.svg.line.radial();
+
+    var $popslider = this.$node.select('svg.pop_slider');
+
+    $popslider.attr({
+      width: Math.max(this.dim[0],0)/3,
+      height: 80
+    })
+    .attr();
+
+
+
+  }
+
   /* ------------------------- updateTimeLine() ------------------------------- */
   private updateTimeLine() {
     var $timeline = this.$node.select('svg.timeline');
 
     $timeline.attr({
-      width: Math.max(this.dim[0], 0),
+      width: Math.max(this.dim[0],0),
       height: 40
     });
 
@@ -761,11 +779,6 @@ class GapMinder extends views.AView {
   relayout() {
     //nothing to do
   }
-
-  /*  cleanData(m:matrix.IMatrix){
-   //var ccd = m.filter(function (d) { return d.id > 0;});
-   return cdd;
-   }*/
 
 
   setXAttribute(m:matrix.IMatrix) {
