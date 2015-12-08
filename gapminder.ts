@@ -105,7 +105,7 @@ export function compressToggleGapMinderTrails(path:prov.ActionNode[]) {
   const l = path.filter((p) => p.f_id === 'toggleGapMinderTrails');
 
   const good = l.length %2 === 0 ? null : l[l.length-1];
-  //remove all execpt the last if uneven number of changes
+  //remove all except the last if uneven number of changes
   return path.filter((p) => p.f_id !== 'toggleGapMinderTrails' || p === good);
 }
 
@@ -335,7 +335,7 @@ class GapMinder extends views.AView {
       if (!a.valid) {
         return d3.scale.linear().domain([0, 100]);
       }
-      const val_range = a.data.valuetype.range;
+      const val_range = a.data.valuetype.range.slice();
       val_range[1] *= maxShift;
 
       if (a.scale === 'log') {
@@ -759,7 +759,7 @@ class GapMinder extends views.AView {
     // timelinescale is linear
     this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0] - 40]).clamp(true);
 
-    this.timelineaxis.ticks(20).tickValues(this.timeIds.range);
+    this.timelineaxis.ticks(20); //.tickValues(this.timeIds.range);
 
     const s = this.timeIds.idtype.selections().dim(0);
     var t;
