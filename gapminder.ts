@@ -130,7 +130,7 @@ export function createToggleTrails($main_ref:prov.IObjectRef<GapMinder>, show: b
 }
 
 export function setAttribute(name:string, $main_ref:prov.IObjectRef<GapMinder>, data:prov.IObjectRef<datatypes.IDataType>) {
-  return prov.action(prov.meta(name + '=' + (data ? data.name : '<none>'), prov.cat.visual, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
+  return prov.action(prov.meta(name + '=' + (data ? data.name : '<none>'), prov.cat.data, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
     name: name
   });
 }
@@ -156,6 +156,17 @@ class Attribute {
 
   get valid() {
     return this.data !== null;
+  }
+
+  get format() {
+    return d3.format(this.to_format());
+  }
+
+  to_format() {
+    if (!this.valid) {
+      return ',d';
+    }
+    return (<any>this.data.desc).formatter || ',d';
   }
 }
 
@@ -373,6 +384,8 @@ class GapMinder extends views.AView {
         const choices = $optionns.data();
         this.$node.select('.attr-' + attr).property('selectedIndex', choices.indexOf(m.data));
         this.$node.select('.attr-' + attr + '-scale').property('value', m.scale);
+        this.$node.select('.attr-' + attr+'-label').text(m.data.desc.description);
+        this.$node.select('.attr-' + attr + '-scale-label').text(m.scale);
       }
 
     });
@@ -467,8 +480,8 @@ class GapMinder extends views.AView {
       const scales = args[0]; // x y size color resolved
       const data:any[] = args[1];
 
-      $chart.select('g.xaxis').call(this.xaxis.scale(scales.x));
-      $chart.select('g.yaxis').call(this.yaxis.scale(scales.y));
+      $chart.select('g.xaxis').call(this.xaxis.scale(scales.x).tickFormat(this.attrs.x.format));
+      $chart.select('g.yaxis').call(this.yaxis.scale(scales.y).tickFormat(this.attrs.y.format));
 
 
       //trails idea: append a new id with the time point encoded
