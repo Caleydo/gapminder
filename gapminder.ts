@@ -53,7 +53,7 @@ function toggleGapMinderTrailsImpl(inputs, parameter) {
   };
 }
 
-/** dataset and description loaded only once --> restart server **/
+
 
 /**
  * compresses the given path by removing redundant set gap minder attribute calls
@@ -226,7 +226,7 @@ class GapMinder extends views.AView {
   private yaxis = d3.svg.axis().orient('left');
   private timelinescale = d3.scale.linear();
   private timelineaxis = d3.svg.axis().orient('bottom').scale(this.timelinescale).tickFormat(d3.format('d'));
-  private popRadial = d3.svg.line.radial();
+  //private popRadial = d3.svg.line.radial();
 
   private initedListener = false;
   private timeIds:any = null;
@@ -290,12 +290,25 @@ class GapMinder extends views.AView {
           that.setAttributeScale(attr, this.value);
         });
       });
+
+      const stratifications = <stratification.IStratification[]>list.filter((d) => d.desc.type === 'stratification');
+      {
+        let $options = d3.select('select.attr-color').selectAll('option').data(stratifications);
+        $options.enter().append('option');
+        $options.attr('value', (d) => d.desc.id).text((d) => d.desc.name);
+        $options.exit().remove();
+
+        $elem.select('select.attr-color').on('change', function () {
+          that.setAttribute('color', stratifications[this.selectedIndex]);
+        });
+      }
       //select default datasets
       if (this.graph.states.length === 1) { //first one
+
         this.setXAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderGdp') || matrices[0]);
         this.setYAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderLifeExpectancy') || matrices[0]);
         this.setSizeAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderPopulation') || matrices[0]);
-        const stratifications = <stratification.IStratification[]>list.filter((d) => d.desc.type === 'stratification');
+
         this.setColor(C.search(stratifications, (d) => d.desc.id === 'gapminderContinent') || stratifications[0]);
       }
     });
@@ -314,6 +327,7 @@ class GapMinder extends views.AView {
   private computeScales():Promise<{ x: IScale; y: IScale; size: IScale; color: (s:string) => string }> {
     const margin = 25;
     const dim = this.dim;
+    const maxShift = 1.1;
 
     // need to have updateLabels() also for updating labels correctly
 
@@ -321,22 +335,17 @@ class GapMinder extends views.AView {
       if (!a.valid) {
         return d3.scale.linear().domain([0, 100]);
       }
+      const val_range = a.data.valuetype.range;
+      val_range[1] *= maxShift;
 
       if (a.scale === 'log') {
-        return d3.scale.log().domain([Math.max(1, a.data.valuetype.range[0]), a.data.valuetype.range[1]]).clamp(true);
+        return d3.scale.log().domain([Math.max(1, val_range[0]), val_range[1]]).clamp(true);
         // need to update Labels
+      } else if (a.scale === 'sqrt') {
+        return d3.scale.sqrt().domain(val_range).clamp(true);
       }
-
-       if (a.scale === 'sqrt') {
-          return d3.scale.sqrt().domain([0,1e9]).clamp(true);
-        //return d3.scale.sqrt().domain(a.data.valuetype.range);
-        // need to update Labels
-      }
-
-      return d3.scale.linear().domain(a.data.valuetype.range).clamp(true);
+      return d3.scale.linear().domain(val_range).clamp(true);
     }
-
-    // method for colour choice
 
     const x = to_scale(this.attrs.x).range([100, dim[0] - 35]);
     const y = to_scale(this.attrs.y).range([dim[1] - margin, 35]);
@@ -390,30 +399,35 @@ class GapMinder extends views.AView {
         const choices = $optionns.data();
         this.$node.select('.attr-' + attr).property('selectedIndex', choices.indexOf(m.data));
         this.$node.select('.attr-' + attr + '-scale').property('value', m.scale);
-        this.$node.select('.attr-' + attr+'-label').text(m.valid ? m.data.desc.description : '');
+        this.$node.select('.attr-' + attr+'-label').text(m.valid ? m.data.desc.description : 'None');
         this.$node.select('.attr-' + attr + '-scale-label').text(m.scale);
       }
-
     });
 
+    {
+      let $optionns = this.$node.select('.attr-color').selectAll('option');
+      if (!$optionns.empty()) {
+        const choices = $optionns.data();
+        this.$node.select('.attr-color').property('selectedIndex', choices.indexOf(this.color));
+        this.$node.select('.attr-color-label').text(this.color != null ? (<any>this.color.desc).description : 'None');
+      }
+    }
 
-    this.$node.select('.attr-color').text(this.color ? this.color.desc.name : 'None');
+    const that = this;
+    const $legends = d3.select('div.color_legend').selectAll('div.legend').data(this.color_range ? this.color_range.groups : []);
+    const $legends_enter = $legends.enter().append('div').classed('legend', true)
+      .on('click', function(d) {
+        if (!that.interactive) {
+          return;
+        }
+        const isActive = d3.select(this).select('i').classed('fa-circle');
+        d3.select(this).select('i').classed('fa-circle-o', isActive).classed('fa-circle', !isActive);
+        that.color.idtype.select(filteredSelectionType,ranges.list(d), isActive ? idtypes.SelectOperation.ADD : idtypes.SelectOperation.REMOVE);
+      });
+    $legends_enter.append('i').attr('class', 'fa fa-circle');
+    $legends_enter.append('span');
 
-    if (this.color_range) {
-      const that = this;
-      const $legends = d3.select('div.color_legend').selectAll('div.legend').data(this.color_range.groups);
-      const $legends_enter = $legends.enter().append('div').classed('legend', true)
-        .on('click', function(d) {
-          if (!that.interactive) {
-            return;
-          }
-          const isActive = d3.select(this).select('i').classed('fa-circle');
-          d3.select(this).select('i').classed('fa-circle-o', isActive).classed('fa-circle', !isActive);
-          that.color.idtype.select(filteredSelectionType,ranges.list(d), isActive ? idtypes.SelectOperation.ADD : idtypes.SelectOperation.REMOVE);
-        });
-      $legends_enter.append('i').attr('class', 'fa fa-circle');
-      $legends_enter.append('span');
-
+    if (this.color != null) {
       const filtered = this.color.idtype.selections(filteredSelectionType).dim(0);
       $legends.select('i')
         .style('color', (d) => d.color)
@@ -421,9 +435,9 @@ class GapMinder extends views.AView {
         .classed('fa-circle-o', (d) => {
           return filtered.contains(d.first);
         });
-      $legends.select('span').text((d) => d.name);
-      $legends.exit().remove();
     }
+    $legends.select('span').text((d) => d.name);
+    $legends.exit().remove();
   }
 
   /* ---------------------- selectTimePoint() ------------------- */
@@ -515,7 +529,7 @@ class GapMinder extends views.AView {
       $marks
         .classed('select-selected', (d) => d.selected)
         .classed('select-filtered', (d) => d.filtered)
-        .attr('data-id', (d) => d.id)
+        .attr('data-id', (d) => d.id);
 
       $marks.interrupt().transition()
         .duration(this.animationDuration())
@@ -609,7 +623,7 @@ class GapMinder extends views.AView {
       if (type === idtypes.defaultSelectionType) { //animate just for selections
         $slider = $slider.transition().duration(this.animationDuration());
       }
-      $slider.attr('transform', 'translate(' + x + ',0)');
+      //$slider.attr('transform', 'translate(' + x + ',0)');
       this.updateChart();
     }
   }
@@ -679,7 +693,7 @@ class GapMinder extends views.AView {
     }
   }
 
-  private updatePopulationSlider(){
+  private updatePopulationSlider() {
     d3.svg.line.radial();
 
     var $popslider = this.$node.select('svg.pop_slider');
@@ -687,7 +701,10 @@ class GapMinder extends views.AView {
     $popslider.attr({
       width: Math.max(this.dim[0],0)/3,
       height: 80
-    });
+    })
+    .attr();
+
+
 
   }
 
@@ -726,9 +743,6 @@ class GapMinder extends views.AView {
 
     if (wasEmpty) {
       $slider = $timeline.append('rect').classed('slider', true)
-        .attr('y',10)
-        .attr('rx',3)
-        .attr('ry',3)
         .attr('width', 15)
         .attr('height',15);
       // using ref Data
@@ -743,7 +757,7 @@ class GapMinder extends views.AView {
     }
 
     // timelinescale is linear
-    this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0]-40]).clamp(true);
+    this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0] - 40]).clamp(true);
 
     this.timelineaxis.ticks(20).tickValues(this.timeIds.range);
 

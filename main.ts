@@ -2,7 +2,7 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 import C = require('../caleydo_core/main');
-import template = require('../clue_demo/template');
+import template = require('../clue/template');
 import cmode = require('../caleydo_provenance/mode');
 import gapminder = require('./gapminder');
 
@@ -14,7 +14,8 @@ const elems = template.create(document.body, {
   application: '/gapminder',
   id: 'clue_gapminder',
   recordSelectionTypes: 'selected,filtered',
-  animatedSelections: true
+  animatedSelections: true,
+  thumbnails: false
 });
 
 {
