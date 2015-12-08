@@ -11,6 +11,7 @@ import prov = require('../caleydo_provenance/main');
 import idtypes = require('../caleydo_core/idtype');
 import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
+import tooltip = require('../caleydo_tooltip/main');
 import d3 = require('d3');
 
 const filteredSelectionType = 'filtered';
@@ -234,6 +235,8 @@ class GapMinder extends views.AView {
 
   private interactive = true;
 
+  private totooltip = tooltip.bind(this.createTooltip.bind(this));
+
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private graph:prov.ProvenanceGraph) {
     super();
@@ -384,7 +387,7 @@ class GapMinder extends views.AView {
         const choices = $optionns.data();
         this.$node.select('.attr-' + attr).property('selectedIndex', choices.indexOf(m.data));
         this.$node.select('.attr-' + attr + '-scale').property('value', m.scale);
-        this.$node.select('.attr-' + attr+'-label').text(m.data.desc.description);
+        this.$node.select('.attr-' + attr+'-label').text(m.valid ? m.data.desc.description : '');
         this.$node.select('.attr-' + attr + '-scale-label').text(m.scale);
       }
 
@@ -435,15 +438,15 @@ class GapMinder extends views.AView {
   }
 
   private createTooltip(d: any) {
-    var r= d.name+'\n';
+    var r= d.name+'<br>';
     const f = d3.format(',.0f');
     if (this.color) {
-      r += this.color.desc.name+':\t' + d.color +'\n';
+      r += this.color.desc.name+':\t' + d.color +'<br>';
     }
     Object.keys(this.attrs).forEach((attr) => {
       const a = this.attrs[attr];
       if (a.valid) {
-        r += a.data.desc.name+':\t' + f(d[attr]) +'\n';
+        r += a.data.desc.name+':\t' + f(d[attr]) +'<br>';
       }
     });
     return r.slice(0,r.length-1);
@@ -501,16 +504,15 @@ class GapMinder extends views.AView {
           }
           this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event));
         })
-        .on('mouseenter', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.ADD))
-        .on('mouseleave', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.REMOVE))
-        .attr('data-uid',(d) =>d.id + (this.showUseTrails && d.selected ? '@'+selectedTimePoint : ''))
-        .append('title');
+        .on('mouseenter.select', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.ADD))
+        .on('mouseleave.select', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.REMOVE))
+        .call(this.totooltip)
+        .attr('data-uid',(d) =>d.id + (this.showUseTrails && d.selected ? '@'+selectedTimePoint : ''));
 
       $marks
         .classed('select-selected', (d) => d.selected)
         .classed('select-filtered', (d) => d.filtered)
         .attr('data-id', (d) => d.id)
-        .select('title').text(this.createTooltip.bind(this));
 
       $marks.interrupt().transition()
         .duration(this.animationDuration())

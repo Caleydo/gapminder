@@ -11,6 +11,7 @@
     "caleydo_vis": "*",
     "caleydo_d3": "*",
     "wrapper_bootstrap_fontawesome": "*",
+    "caleydo_tooltip": "*",
     "clue_demo": "*"
   },
   "caleydo": {
@@ -52,21 +53,6 @@
           "name": "GapMinder"
         }
       ]
-    },
-    "dependencies": {
-      "web": {
-        "d3-lasso-plugin": "https://github.com/thinkh/D3-Lasso-Plugin.git"
-      }
-    },
-    "requirejs-config": {
-      "paths": {
-        "d3-lasso-plugin": "${baseUrl}/d3-lasso-plugin/lasso"
-      },
-      "shim": {
-        "d3-lasso-plugin": [
-          "d3"
-        ]
-      }
     }
   },
   "publishConfig": {
