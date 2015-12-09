@@ -124,19 +124,23 @@ export function createCmd(id) {
   return null;
 }
 
+function capitalize(s: string) {
+  return s.split(' ').map((d) => d[0].toUpperCase()+d.slice(1)).join(' ');
+}
+
 export function createToggleTrails($main_ref:prov.IObjectRef<GapMinder>, show: boolean) {
-  return prov.action(prov.meta((show? 'show' : 'hide') + ' trails', prov.cat.layout, prov.op.update), 'toggleGapMinderTrails', toggleGapMinderTrailsImpl, [$main_ref], {
+  return prov.action(prov.meta((show? 'Show' : 'Hide') + ' trails', prov.cat.layout, prov.op.update), 'toggleGapMinderTrails', toggleGapMinderTrailsImpl, [$main_ref], {
     show: show
   });
 }
 
 export function setAttribute(name:string, $main_ref:prov.IObjectRef<GapMinder>, data:prov.IObjectRef<datatypes.IDataType>) {
-  return prov.action(prov.meta(name + '=' + (data ? data.name : '<none>'), prov.cat.data, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
+  return prov.action(prov.meta(capitalize(name) + '=' + (data ? data.name : '<none>'), prov.cat.data, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$main_ref, data], {
     name: name
   });
 }
 export function setAttributeScale(name:string, $main_ref:prov.IObjectRef<GapMinder>, scale:string) {
-  return prov.action(prov.meta(name + '_scale=' + scale, prov.cat.visual, prov.op.update), 'setGapMinderAttributeScale', setAttributeScaleImpl, [$main_ref], {
+  return prov.action(prov.meta('scale('+capitalize(name) + ')=' + capitalize(scale), prov.cat.visual, prov.op.update), 'setGapMinderAttributeScale', setAttributeScaleImpl, [$main_ref], {
     scale: scale,
     name: name
   });
