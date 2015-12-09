@@ -703,8 +703,7 @@ class GapMinder extends views.AView {
     $popslider.attr({
       width: Math.max(this.dim[0],0)/3,
       height: 80
-    })
-    .attr();
+    });
 
 
 
