@@ -32,7 +32,7 @@ elems.graph.then((graph) => {
 
   function updateBounds() {
     var bounds = C.bounds(document.querySelector('main'));
-    app.setBounds(bounds.x, bounds.y, bounds.w - 130, bounds.h - 70);
+    app.setBounds(bounds.x, bounds.y, bounds.w - 200, bounds.h - 80);
   }
 
   //d3.select(elems.header.options).append('label').html(`<input type="checkbox">Show Trails`).select('input').on('change', function () {

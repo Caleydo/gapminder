@@ -706,21 +706,22 @@ class GapMinder extends views.AView {
       $popslider.selectAll('*').remove();
       return;
     }
-    const t = scale.ticks(5);
+    const t = scale.ticks(7);
 
     const data = t.slice(1, t.length-3).reverse().map((v) => ({ v : v, s : scale(v) }));
     const $circles = $popslider.selectAll('g.size').data(data);
     $circles.enter().append('g').classed('size', true).html('<circle></circle><text></text>');
+    $circles.exit().remove();
+
     $circles.attr('transform', (d, i) => 'translate(0,'+(d3.sum(data.slice(0,i),(d2) => Math.max(d2.s*2,10)+2))+')');
     $circles.select('circle')
       .attr('r', (d) => d.s)
-      .attr('cx', data[0].s)
+      .attr('cx', data.length > 0 ? data[0].s: 0)
       .attr('cy', (d) => d.s);
     $circles.select('text').text((d) => this.attrs.size.format(d.v))
-      .attr('x', data[0].s*2+5)
+      .attr('x', data.length > 0 ? data[0].s*2+5 : 0)
       .attr('y', (d) => d.s+5);
 
-    $circles.exit().remove();
   }
 
   /* ------------------------- updateTimeLine() ------------------------------- */
@@ -741,6 +742,11 @@ class GapMinder extends views.AView {
 
     // returns true if no timeline and false if theres a timeline
     var wasEmpty = $slider.empty();
+
+     // timelinescale is linear
+    this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0] - 40]).clamp(true);
+    $timeline.select('g.axis').attr('transform', 'translate(0,20)').call(this.timelineaxis);
+
 
     if (!$slider.empty()) { //already there
       return;
@@ -774,7 +780,7 @@ class GapMinder extends views.AView {
     // timelinescale is linear
     this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0] - 40]).clamp(true);
 
-    this.timelineaxis.ticks(20); //.tickValues(this.timeIds.range);
+    //this.timelineaxis.ticks(20); //.tickValues(this.timeIds.range);
 
     const s = this.timeIds.idtype.selections().dim(0);
     var t;

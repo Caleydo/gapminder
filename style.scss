@@ -97,43 +97,40 @@ svg.chart {
 div.legends {
   margin: 2px 2px 0 0;
   position: absolute;
-  left: 4px;
-  top: 40px;
+  left: 42px;
+  top: 0;
+  bottom: 0;
+  display: inline;
+  //background-color: green;
+  width: 140px;
 
+  padding-top: 30px;
+  padding-left: 4px;
+
+  span.title {
+    font-weight: bold;
+    position: absolute;
+    left: -40px;
+  }
+
+  > div > * {
+    display: block;
+  }
+  select {
+    width: 100%;
+  }
   div.color_legend {
     i {
       margin-right: 3px;
       padding: 3px;
       opacity: 0.5;
     }
-
-    > * {
-      display: block;
-    }
-    select {
-      width: 8em;
-    }
-
-    button .attr-color-scale {
-      left: 6em;
-    }
-
-    div.legend {
-      margin-left: 3em;
-    }
   }
-
   div.population_scaler {
     margin-top: 1em;
-    > * {
-      display: block;
-      margin-left: 3em;
-    }
-    span:first-of-type {
-      margin-left: 0em;
-    }
-    select {
-      width: 8em;
+
+    svg {
+      margin-top: 5px;
     }
   }
 }
@@ -168,7 +165,7 @@ main {
     position: absolute;
     width: 40em;
     z-index: 2;
-    left: 125px;
+    left: 200px;
 
     div.yaxis {
       -webkit-transform: rotate(-90deg)translateX(-40em);
@@ -192,7 +189,7 @@ main {
   }
 
   div.chart {
-    margin-left: 120px;
+    margin-left: 190px;
     position: absolute;
     //top: 0;
     //left: 0;
@@ -208,8 +205,7 @@ main {
     fill:grey;
     align-items: flex-start;
     position: absolute;
-    left: 4em;
-    right: 100px;
+    left: 200px;
     bottom: 5px;
   }
 
@@ -236,8 +232,10 @@ body {
       display: none;
     }
 
-    svg.timeline rect.slider {
+    svg.timeline .slider {
       pointer-events: none;
+      fill: #a3a3a3;
+      stroke: #a3a3a3;
     }
 
     svg.chart {
