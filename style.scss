@@ -156,6 +156,12 @@ svg.timeline {
 main {
   position: relative;
 
+  svg.size_legend {
+    circle {
+      fill: #cecece;
+    }
+  }
+
 
   div.gapminder_i {
     display: block;

@@ -177,6 +177,7 @@ class Attribute {
 
 interface IScale {
   (x:number): number;
+  ticks?(count: number): number[];
 }
 
 interface IItem {
@@ -560,6 +561,7 @@ class GapMinder extends views.AView {
         .style('opacity', 0)
         .remove();
 
+      this.updatePopulationSlider(scales.size);
 
     });
   }
@@ -596,7 +598,6 @@ class GapMinder extends views.AView {
     this.updateLegend();
     this.updateTimeLine();
     this.updateChart();
-    this.updatePopulationSlider();
 
     const ref = this.refData;
 
@@ -699,18 +700,27 @@ class GapMinder extends views.AView {
     }
   }
 
-  private updatePopulationSlider() {
-    d3.svg.line.radial();
+  private updatePopulationSlider(scale: IScale) {
+    var $popslider = this.$node.select('svg.size_legend');
+    if (!this.attrs.size.valid) {
+      $popslider.selectAll('*').remove();
+      return;
+    }
+    const t = scale.ticks(5);
 
-    var $popslider = this.$node.select('svg.pop_slider');
+    const data = t.slice(1, t.length-3).reverse().map((v) => ({ v : v, s : scale(v) }));
+    const $circles = $popslider.selectAll('g.size').data(data);
+    $circles.enter().append('g').classed('size', true).html('<circle></circle><text></text>');
+    $circles.attr('transform', (d, i) => 'translate(0,'+(d3.sum(data.slice(0,i),(d2) => Math.max(d2.s*2,10)+2))+')');
+    $circles.select('circle')
+      .attr('r', (d) => d.s)
+      .attr('cx', data[0].s)
+      .attr('cy', (d) => d.s);
+    $circles.select('text').text((d) => this.attrs.size.format(d.v))
+      .attr('x', data[0].s*2+5)
+      .attr('y', (d) => d.s+5);
 
-    $popslider.attr({
-      width: Math.max(this.dim[0],0)/3,
-      height: 80
-    });
-
-
-
+    $circles.exit().remove();
   }
 
   /* ------------------------- updateTimeLine() ------------------------------- */
