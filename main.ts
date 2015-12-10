@@ -35,9 +35,9 @@ elems.graph.then((graph) => {
     app.setBounds(bounds.x, bounds.y, bounds.w - 130, bounds.h - 70);
   }
 
-  d3.select(elems.header.options).append('label').html(`<input type="checkbox">Show Trails`).select('input').on('change', function () {
-      app.showTrails(this.checked);
-    });
+  //d3.select(elems.header.options).append('label').html(`<input type="checkbox">Show Trails`).select('input').on('change', function () {
+  //    app.showTrails(this.checked);
+  //  });
 
   elems.on('modeChanged', function (event, new_) {
     app.setInteractive(new_.exploration >= 0.8);
