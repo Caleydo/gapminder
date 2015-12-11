@@ -508,13 +508,19 @@ class GapMinder extends views.AView {
       const data:any[] = args[1];
 
       this.xaxis.scale(scales.x).tickFormat(this.attrs.x.format);
-      if (this.attrs.x.scale === 'log') {
-        this.xaxis.ticks(5);
-      }
       this.yaxis.scale(scales.y).tickFormat(this.attrs.y.format);
-      if (this.attrs.y.scale === 'log') {
-        this.yaxis.ticks(5);
-      }
+
+      ['x', 'y'].forEach((attr) => {
+        var ticks = scales[attr].ticks();
+        const axis = attr === 'x' ? this.xaxis : this.yaxis;
+        if (this.attrs[attr].scale === 'log' && ticks.length > 30) {
+          //remove every second one
+          ticks = ticks.slice(0,11).concat(d3.range(11,21,2).map((i => ticks[i])), d3.range(21,ticks.length,3).map((i => ticks[i])));
+          axis.tickValues(ticks);
+        } else {
+          axis.tickValues(null);
+        }
+      });
 
       $chart.select('g.xaxis').call(this.xaxis);
       $chart.select('g.yaxis').call(this.yaxis);
