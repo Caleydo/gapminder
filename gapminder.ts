@@ -491,7 +491,11 @@ class GapMinder extends views.AView {
     });
     $chart.select('g.xaxis').attr('transform', `translate(0,${this.dim[1] - 25})`);
 
-    const selectedTimePoint = this.selectTimePoint();
+    var selectedTimePoint = this.selectTimePoint();
+    if (selectedTimePoint == null) {
+      //HACK just use the first one
+      selectedTimePoint = 0;
+    }
     //$chart.select('text.act_year').attr({
     //  x: this.dim[0] * 0.5,
     //  y: this.dim[1] * 0.5
