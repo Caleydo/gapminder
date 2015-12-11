@@ -657,7 +657,7 @@ class GapMinder extends views.AView {
       let y = d.yy;
 
       //hack from computeScale
-      const x0 = 100;
+      const x0 = 80;
       const y0 = this.dim[1] - 25;
       var l : any = this.$node.select('polyline.hover_line');
       if (animate) {
@@ -685,7 +685,7 @@ class GapMinder extends views.AView {
       let y = d.yy;
 
       //hack from computeScale
-      const x0 = 100;
+      const x0 = 80;
       const y0 = this.dim[1] - 25;
       return `${x0},${y} ${x},${y} ${x},${y0}`;
     }).style('opacity', 1);
