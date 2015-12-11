@@ -168,9 +168,9 @@ main {
     left: 200px;
 
     div.yaxis {
-      -webkit-transform: rotate(-90deg)translateX(-40em);
+      -webkit-transform: rotate(-90deg) translateX(-60vh);
       -webkit-transform-origin: 0% 0%;
-      transform: rotate(-90deg)translateX(-40em);
+      transform: rotate(-90deg) translateX(-60vh);
       transform-origin: 0% 0%;
     }
   }
