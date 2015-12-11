@@ -492,10 +492,10 @@ class GapMinder extends views.AView {
     $chart.select('g.xaxis').attr('transform', `translate(0,${this.dim[1] - 25})`);
 
     const selectedTimePoint = this.selectTimePoint();
-    $chart.select('text.act_year').attr({
-      x: this.dim[0] * 0.5,
-      y: this.dim[1] * 0.5
-    });
+    //$chart.select('text.act_year').attr({
+    //  x: this.dim[0] * 0.5,
+    //  y: this.dim[1] * 0.5
+    //});
 
     // setting year label based on the selectedTimePoint
     if (this.timeIds && selectedTimePoint != null) {
@@ -507,8 +507,17 @@ class GapMinder extends views.AView {
       const scales = args[0]; // x y size color resolved
       const data:any[] = args[1];
 
-      $chart.select('g.xaxis').call(this.xaxis.scale(scales.x).tickFormat(this.attrs.x.format));
-      $chart.select('g.yaxis').call(this.yaxis.scale(scales.y).tickFormat(this.attrs.y.format));
+      this.xaxis.scale(scales.x).tickFormat(this.attrs.x.format);
+      if (this.attrs.x.scale === 'log') {
+        this.xaxis.ticks(5);
+      }
+      this.yaxis.scale(scales.y).tickFormat(this.attrs.y.format);
+      if (this.attrs.y.scale === 'log') {
+        this.yaxis.ticks(5);
+      }
+
+      $chart.select('g.xaxis').call(this.xaxis);
+      $chart.select('g.yaxis').call(this.yaxis);
 
 
       //trails idea: append a new id with the time point encoded
@@ -708,7 +717,11 @@ class GapMinder extends views.AView {
     }
     const t = scale.ticks(7);
 
-    const data = t.slice(1, t.length-3).reverse().map((v) => ({ v : v, s : scale(v) }));
+    var base = t.slice(1, t.length-3).reverse();
+    if (this.attrs.size.scale === 'sqrt') {
+      base.push(base[base.length-1]/2);
+    }
+    const data = base.map((v) => ({ v : v, s : scale(v) }));
     const $circles = $popslider.selectAll('g.size').data(data);
     $circles.enter().append('g').classed('size', true).html('<circle></circle><text></text>');
     $circles.exit().remove();
