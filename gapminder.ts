@@ -388,6 +388,7 @@ class GapMinder extends views.AView {
         x: x_data && selectecdTimeIndex >= 0 ? x_data[i][selectecdTimeIndex] : 0,
         y: y_data && selectecdTimeIndex >= 0 ? y_data[i][selectecdTimeIndex] : 0,
         size: s_data && selectecdTimeIndex >= 0 ? s_data[i][selectecdTimeIndex] : 0,
+        //not the id ... local range
         color: c_data ? C.search(c_data.groups, (g) => g.contains(item.id)).name : null
       };
     });
@@ -878,7 +879,7 @@ class GapMinder extends views.AView {
     if (attr === 'color') {
       this.color = <stratification.IStratification>m;
 
-      return (this.color ? this.color.range() : Promise.resolve(null)).then((arr) => {
+      return (this.color ? this.color.idRange() : Promise.resolve(null)).then((arr) => {
         this.color_range = arr;
         this.fire('ready');
 
