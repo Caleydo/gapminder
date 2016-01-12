@@ -269,6 +269,10 @@ class GapMinder extends views.AView {
     return <Element>this.$node.node();
   }
 
+  get stateTokens():string[] {
+    return ["Gapminder Plugin"];
+  }
+
   /* ----------------------------------------- */
   setInteractive(interactive:boolean) {
     this.interactive = interactive;
@@ -645,8 +649,9 @@ class GapMinder extends views.AView {
     if (id !== null && this.timeIds) {
       var $slider : any = this.$node.select('svg.timeline .slider');
       const selectedTimePoint = this.timeIds.ts[this.timeIds.ids.indexOf(id)];
+      console.log(selectedTimePoint);
       const x = this.timelinescale(selectedTimePoint);
-
+      
       if (type === idtypes.defaultSelectionType) { //animate just for selections
         $slider = $slider.transition().duration(this.animationDuration());
       }
