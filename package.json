@@ -53,7 +53,14 @@
           "name": "GapMinder"
         }
       ]
-    }
+    },
+    "products": [
+      {
+        "name": "GapMinder",
+        "type": "python",
+        "app": "gapminder"
+      }
+    ]
   },
   "publishConfig": {
     "registry": "http://registry.caleydo.org/"
