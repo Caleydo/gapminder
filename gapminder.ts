@@ -13,6 +13,7 @@ import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
 import tooltip = require('../caleydo_tooltip/main');
 import d3 = require('d3');
+import {StateToken} from "../caleydo_provenance/main";
 
 const filteredSelectionType = 'filtered';
 
@@ -267,11 +268,27 @@ class GapMinder extends views.AView {
 
   get node() {
     return <Element>this.$node.node();
+
   }
 
-  get stateTokens():string[] {
-    return ["Gapminder Plugin"];
-  }
+ get stateTokens():StateToken[] {
+   var scale = {
+     name: "Scaling",
+     value: "scale" + this.attrs.size.scale,
+     importance: 2
+   }
+   var xAxis = {
+     name: "X-Axis",
+     value: "x" + this.attrs.x.label,
+     importance: 2
+   }
+   var yAxis = {
+     name: "y-Axis",
+     value: "y" + this.attrs.y.label,
+     importance: 2
+   }
+   return [scale,xAxis,yAxis];
+ }
 
   /* ----------------------------------------- */
   setInteractive(interactive:boolean) {
@@ -651,7 +668,7 @@ class GapMinder extends views.AView {
       const selectedTimePoint = this.timeIds.ts[this.timeIds.ids.indexOf(id)];
       console.log(selectedTimePoint);
       const x = this.timelinescale(selectedTimePoint);
-      
+
       if (type === idtypes.defaultSelectionType) { //animate just for selections
         $slider = $slider.transition().duration(this.animationDuration());
       }
