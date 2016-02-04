@@ -13,8 +13,9 @@ import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
 import tooltip = require('../caleydo_tooltip/main');
 import d3 = require('d3');
-import {StateToken} from "../caleydo_provenance/main";
+import {StateToken} from "../caleydo_core/statetoken";
 import {isUndefined} from "../caleydo_core/main";
+
 
 const filteredSelectionType = 'filtered';
 
