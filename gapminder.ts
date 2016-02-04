@@ -551,6 +551,7 @@ class GapMinder extends views.AView {
         .on('mouseenter.select', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.ADD))
         .on('mouseleave.select', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.REMOVE))
         .call(this.totooltip)
+        .attr('data-anchor', (d) => d.id)
         .attr('data-uid',(d) =>d.id + (this.showUseTrails && d.selected ? '@'+selectedTimePoint : ''));
 
       $marks
