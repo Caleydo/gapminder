@@ -14,6 +14,7 @@ import ranges = require('../caleydo_core/range');
 import tooltip = require('../caleydo_tooltip/main');
 import d3 = require('d3');
 import {StateToken} from "../caleydo_provenance/main";
+import {isUndefined} from "../caleydo_core/main";
 
 const filteredSelectionType = 'filtered';
 
@@ -250,7 +251,6 @@ class GapMinder extends views.AView {
     this.ref = graph.findOrAddObject(this, 'GapMinder', 'visual');
 
     this.noneRef = graph.findOrAddObject('', 'None', 'data');
-
     this.init(this.$node);
   }
 
@@ -271,24 +271,41 @@ class GapMinder extends views.AView {
 
   }
 
- get stateTokens():StateToken[] {
-   var scale = {
-     name: "Scaling",
-     value: "scale" + this.attrs.size.scale,
-     importance: 2
-   }
-   var xAxis = {
-     name: "X-Axis",
-     value: "x" + this.attrs.x.label,
-     importance: 2
-   }
-   var yAxis = {
-     name: "y-Axis",
-     value: "y" + this.attrs.y.label,
-     importance: 2
-   }
-   return [scale,xAxis,yAxis];
- }
+  get stateTokens():StateToken[] {
+    var tokens: StateToken[]  = []
+    tokens = tokens.concat([
+      {
+       name: "X-Axis",
+       value: "x" + this.attrs.x.label,
+       repIDType: false,
+       importance: 2
+     }, {
+       name: "y-Axis",
+       value: "y" + this.attrs.y.label,
+       repIDType: false,
+       importance: 2
+     },{
+       name: "Scaling",
+       value: "scale" + this.attrs.size.scale,
+       repIDType: false,
+       importance: 2
+     }])
+    if (! isUndefined(this.attrs.x.data)) {
+       tokens = tokens.concat({
+                    name: "Col IDType",
+                    value: this.attrs.x.data.coltype,
+                    repIDType: true,
+                    importance: 4
+                  },{
+                    name: "Row IDType",
+                    value: this.attrs.x.data.rowtype,
+                    repIDType: true,
+                    importance: 4
+                  })
+    }
+    return tokens;
+  }
+
 
   /* ----------------------------------------- */
   setInteractive(interactive:boolean) {
