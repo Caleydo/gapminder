@@ -546,7 +546,7 @@ class GapMinder extends views.AView {
           if (!this.interactive) {
             return;
           }
-          this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event));
+          this.refData.rowtype.select([<number>d.id], idtypes.toSelectOperation(d3.event));
         })
         .on('mouseenter.select', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.ADD))
         .on('mouseleave.select', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.REMOVE))
