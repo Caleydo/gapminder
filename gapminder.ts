@@ -13,7 +13,7 @@ import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
 import tooltip = require('../caleydo_tooltip/main');
 import d3 = require('d3');
-import {StateToken} from "../caleydo_core/statetoken";
+import statetoken = require('../caleydo_core/statetoken')
 import {isUndefined} from "../caleydo_core/main";
 
 
@@ -272,35 +272,35 @@ class GapMinder extends views.AView {
 
   }
 
-  get stateTokens():StateToken[] {
-    var tokens: StateToken[]  = []
+  get stateTokens(): statetoken.IStateToken[] {
+    var tokens: statetoken.IStateToken[]  = []
     tokens = tokens.concat([
       {
        name: "X-Axis",
        value: "x" + this.attrs.x.label,
-       repIDType: false,
+       type: statetoken.TokenType.string,
        importance: 2
      }, {
        name: "y-Axis",
        value: "y" + this.attrs.y.label,
-       repIDType: false,
+       type: statetoken.TokenType.string,
        importance: 2
      },{
        name: "Scaling",
        value: "scale" + this.attrs.size.scale,
-       repIDType: false,
+       type: statetoken.TokenType.string,
        importance: 2
      }])
     if (! isUndefined(this.attrs.x.data)) {
        tokens = tokens.concat({
                     name: "Col IDType",
                     value: this.attrs.x.data.coltype,
-                    repIDType: true,
+                    type: statetoken.TokenType.idtype,
                     importance: 4
                   },{
                     name: "Row IDType",
                     value: this.attrs.x.data.rowtype,
-                    repIDType: true,
+                    type: statetoken.TokenType.idtype,
                     importance: 4
                   })
     }
