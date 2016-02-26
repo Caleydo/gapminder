@@ -9,7 +9,7 @@
     "caleydo_core": "*",
     "caleydo_vis": "*",
     "caleydo_d3": "*",
-    "wrapper_bootstrap_fontawesome": "*",
+    "caleydo_bootstrap_fontawesome": "*",
     "clue": "*"
   },
   "caleydo": {
