@@ -2,8 +2,8 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 import C = require('../caleydo_core/main');
-import template = require('../clue/template');
-import cmode = require('../clue/mode');
+import template = require('../caleydo_clue/template');
+import cmode = require('../caleydo_clue/mode');
 import gapminder = require('./gapminder');
 
 //scoping let --> function level scope in js vs java global, local

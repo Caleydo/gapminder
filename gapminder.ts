@@ -7,7 +7,7 @@ import datas = require('../caleydo_core/data');
 import datatypes = require('../caleydo_core/datatype');
 import matrix = require('../caleydo_core/matrix');
 import stratification = require('../caleydo_core/stratification');
-import prov = require('../clue/prov');
+import prov = require('../caleydo_clue/prov');
 import idtypes = require('../caleydo_core/idtype');
 import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
@@ -555,8 +555,8 @@ class GapMinder extends views.AView {
         .attr('data-uid',(d) =>d.id + (this.showUseTrails && d.selected ? '@'+selectedTimePoint : ''));
 
       $marks
-        .classed('select-selected', (d) => d.selected)
-        .classed('select-filtered', (d) => d.filtered)
+        .classed('caleydo-select-selected', (d) => d.selected)
+        .classed('caleydo-select-filtered', (d) => d.filtered)
         .attr('data-id', (d) => d.id);
 
       $marks.interrupt().transition()
@@ -658,7 +658,7 @@ class GapMinder extends views.AView {
 
   private onItemSelect(event:any, type:string, new_:ranges.Range) {
     const ids = new_.dim(0).asList();
-    this.$node.select('svg.chart g.marks').selectAll('.mark').classed('select-' + type, (d) => ids.indexOf(d.id) >= 0);
+    this.$node.select('svg.chart g.marks').selectAll('.mark').classed('caleydo-select-' + type, (d) => ids.indexOf(d.id) >= 0);
 
     if (type === idtypes.hoverSelectionType) {
       this.updateHoverLine(ids);
