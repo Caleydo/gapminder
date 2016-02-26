@@ -11,7 +11,7 @@ import prov = require('../clue/prov');
 import idtypes = require('../caleydo_core/idtype');
 import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
-import tooltip = require('../caleydo_tooltip/main');
+import tooltip = require('../caleydo_d3/tooltip');
 import d3 = require('d3');
 
 const filteredSelectionType = 'filtered';
