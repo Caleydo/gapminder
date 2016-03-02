@@ -11,7 +11,7 @@ import prov = require('../caleydo_clue/prov');
 import idtypes = require('../caleydo_core/idtype');
 import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
-import tooltip = require('../caleydo_tooltip/main');
+import tooltip = require('../caleydo_d3/tooltip');
 import d3 = require('d3');
 import statetoken = require('../caleydo_core/statetoken')
 import {isUndefined} from "../caleydo_core/main";
@@ -252,6 +252,7 @@ class GapMinder extends views.AView {
     this.ref = graph.findOrAddObject(this, 'GapMinder', 'visual');
 
     this.noneRef = graph.findOrAddObject('', 'None', 'data');
+
     this.init(this.$node);
   }
 
@@ -584,16 +585,17 @@ class GapMinder extends views.AView {
           if (!this.interactive) {
             return;
           }
-          this.refData.rowtype.select([d.id], idtypes.toSelectOperation(d3.event));
+          this.refData.rowtype.select([<number>d.id], idtypes.toSelectOperation(d3.event));
         })
         .on('mouseenter.select', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.ADD))
         .on('mouseleave.select', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.REMOVE))
         .call(this.totooltip)
+        .attr('data-anchor', (d) => d.id)
         .attr('data-uid',(d) =>d.id + (this.showUseTrails && d.selected ? '@'+selectedTimePoint : ''));
 
       $marks
-        .classed('select-selected', (d) => d.selected)
-        .classed('select-filtered', (d) => d.filtered)
+        .classed('caleydo-select-selected', (d) => d.selected)
+        .classed('caleydo-select-filtered', (d) => d.filtered)
         .attr('data-id', (d) => d.id);
 
       $marks.interrupt().transition()
@@ -683,7 +685,6 @@ class GapMinder extends views.AView {
     if (id !== null && this.timeIds) {
       var $slider : any = this.$node.select('svg.timeline .slider');
       const selectedTimePoint = this.timeIds.ts[this.timeIds.ids.indexOf(id)];
-      console.log(selectedTimePoint);
       const x = this.timelinescale(selectedTimePoint);
 
       if (type === idtypes.defaultSelectionType) { //animate just for selections
@@ -696,7 +697,7 @@ class GapMinder extends views.AView {
 
   private onItemSelect(event:any, type:string, new_:ranges.Range) {
     const ids = new_.dim(0).asList();
-    this.$node.select('svg.chart g.marks').selectAll('.mark').classed('select-' + type, (d) => ids.indexOf(d.id) >= 0);
+    this.$node.select('svg.chart g.marks').selectAll('.mark').classed('caleydo-select-' + type, (d) => ids.indexOf(d.id) >= 0);
 
     if (type === idtypes.hoverSelectionType) {
       this.updateHoverLine(ids);
