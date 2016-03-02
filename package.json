@@ -7,12 +7,10 @@
   },
   "peerDependencies": {
     "caleydo_core": "*",
-    "caleydo_provenance": "*",
     "caleydo_vis": "*",
     "caleydo_d3": "*",
-    "wrapper_bootstrap_fontawesome": "*",
-    "caleydo_tooltip": "*",
-    "clue": "*"
+    "caleydo_bootstrap_fontawesome": "*",
+    "caleydo_clue": "*"
   },
   "caleydo": {
     "plugins": {
@@ -53,7 +51,14 @@
           "name": "GapMinder"
         }
       ]
-    }
+    },
+    "products": [
+      {
+        "name": "GapMinder",
+        "type": "python",
+        "app": "gapminder"
+      }
+    ]
   },
   "publishConfig": {
     "registry": "http://registry.caleydo.org/"

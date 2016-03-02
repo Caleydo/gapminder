@@ -1,7 +1,7 @@
 /**
  * Created by Samuel Gratzl on 15.12.2014.
  */
-@import "../clue/styles/vars";
+@import "../caleydo_clue/styles/vars";
 
 body, html {
   padding: 0;
@@ -70,20 +70,20 @@ svg.chart {
     stroke: none;
     opacity:0.5;
 
-    &.select-selected {
+    &.caleydo-select-selected {
       //svg variant
       stroke: $select-color;
       stroke-width: 2px;
       opacity: 1;
     }
-    &.select-hovered {
+    &.caleydo-select-hovered {
       //svg variant
       opacity: 1;
       stroke: $hover-color;
       stroke-width: 2px;
     }
 
-    &.select-filtered {
+    &.caleydo-select-filtered {
       opacity: 0.1;
     }
   }
@@ -243,7 +243,7 @@ body {
       polyline.hover_line {
         stroke: $hover-color !important;
       }
-      .mark.select-hovered {
+      .mark.caleydo-select-hovered {
         stroke: $hover-color !important;
       }
     }

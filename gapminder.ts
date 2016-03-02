@@ -269,7 +269,6 @@ class GapMinder extends views.AView {
 
   get node() {
     return <Element>this.$node.node();
-
   }
 
   get stateTokens(): statetoken.IStateToken[] {
