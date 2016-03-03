@@ -773,9 +773,6 @@ class GapMinder extends views.AView {
     $timeline.select('g.axis').attr('transform', 'translate(0,20)').call(this.timelineaxis);
 
 
-    if (!$slider.empty()) { //already there
-      return;
-    }
     /* ---------------- dragged() ------------------------- */
 
     var dragged = () => {
@@ -802,9 +799,6 @@ class GapMinder extends views.AView {
         }));
     }
 
-    // timelinescale is linear
-    this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0] - 40]).clamp(true);
-
     //this.timelineaxis.ticks(20); //.tickValues(this.timeIds.range);
 
     const s = this.timeIds.idtype.selections().dim(0);
@@ -821,8 +815,6 @@ class GapMinder extends views.AView {
 
     // just visualizing where slider should be
     $slider.attr('transform', 'translate(' + x + ',14)');
-
-    $timeline.select('g.axis').attr('transform', 'translate(0,20)').call(this.timelineaxis);
   } // end of updateTime()
 
   /* ------------------- reset() ------------------------------------- */
