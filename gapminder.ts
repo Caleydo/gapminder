@@ -294,8 +294,8 @@ class GapMinder extends views.AView {
     if (! isUndefined(this.attrs.x.data)) {
        tokens = tokens.concat({
                     name: "Col IDType",
-                    value: this.attrs.x.data.coltype,
-                    type: statetoken.TokenType.idtype,
+                    value: [this.attrs.x.data.coltype,0,215],
+                    type: statetoken.TokenType.ordinalIDType,
                     importance: 4
                   },{
                     name: "Row IDType",
