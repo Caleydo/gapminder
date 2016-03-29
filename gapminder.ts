@@ -303,10 +303,14 @@ class GapMinder extends views.AView {
        value: "y-scale" + axisScale["y"],
        type: statetoken.TokenType.string,
        importance: 1
-     },
-      {
-       name: "Scaling",
-       value: "scale" + this.attrs.size.scale,
+     },{
+       name: "size",
+       value: "size" + this.attrs.size.label,
+       type: statetoken.TokenType.string,
+       importance: 1
+     }, {
+       name: "size-scale",
+       value: "size-scale" + this.attrs.size.scale,
        type: statetoken.TokenType.string,
        importance: 1
      }])
