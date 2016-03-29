@@ -19,6 +19,10 @@ import {isUndefined} from "../caleydo_core/main";
 
 const filteredSelectionType = 'filtered';
 
+
+let axisScale = {x: "linear", y:"linear"};
+
+
 function setAttributeImpl(inputs, parameter, graph, within) {
   var gapminder:GapMinder = inputs[0].value,
     name = parameter.name;
@@ -38,6 +42,7 @@ function setAttributeImpl(inputs, parameter, graph, within) {
 function setAttributeScaleImpl(inputs, parameter, graph, within) {
   var gapminder:GapMinder = inputs[0].value,
     name = parameter.name;
+  axisScale[parameter.name] = parameter.scale
 
   const old = gapminder.setAttributeScaleImpl(name, parameter.scale);
   return {
@@ -142,7 +147,10 @@ export function setAttribute(name:string, $main_ref:prov.IObjectRef<GapMinder>, 
     name: name
   });
 }
+
 export function setAttributeScale(name:string, $main_ref:prov.IObjectRef<GapMinder>, scale:string) {
+
+
   return prov.action(prov.meta('scale('+capitalize(name) + ')=' + capitalize(scale), prov.cat.visual, prov.op.update), 'setGapMinderAttributeScale', setAttributeScaleImpl, [$main_ref], {
     scale: scale,
     name: name
@@ -279,17 +287,28 @@ class GapMinder extends views.AView {
        name: "X-Axis",
        value: "x" + this.attrs.x.label,
        type: statetoken.TokenType.string,
-       importance: 2
+       importance: 1
+     },{
+       name: "x-Axis-scale",
+       value: "x-scale" + axisScale["x"],
+       type: statetoken.TokenType.string,
+       importance: 1
      }, {
        name: "y-Axis",
        value: "y" + this.attrs.y.label,
        type: statetoken.TokenType.string,
-       importance: 2
+       importance: 1
      },{
+       name: "y-Axis-Scale",
+       value: "y-scale" + axisScale["y"],
+       type: statetoken.TokenType.string,
+       importance: 1
+     },
+      {
        name: "Scaling",
        value: "scale" + this.attrs.size.scale,
        type: statetoken.TokenType.string,
-       importance: 2
+       importance: 1
      }])
     if (! isUndefined(this.attrs.x.data)) {
        tokens = tokens.concat({
