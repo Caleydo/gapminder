@@ -284,48 +284,56 @@ class GapMinder extends views.AView {
     var tokens: statetoken.IStateToken[]  = []
     tokens = tokens.concat([
       {
-       name: "X-Axis",
-       value: "x" + this.attrs.x.label,
-       type: statetoken.TokenType.string,
-       importance: 1
-     },{
-       name: "x-Axis-scale",
-       value: "x-scale" + axisScale["x"],
-       type: statetoken.TokenType.string,
-       importance: 1
+        name: "X-Axis",
+        value: "x" + this.attrs.x.label,
+        type: statetoken.TokenType.string,
+        importance: 1,
+        childs : []
+      },{
+        name: "x-Axis-scale",
+        value: "x-scale" + axisScale["x"],
+        type: statetoken.TokenType.string,
+        importance: 1,
+        childs : []
+      }, {
+        name: "y-Axis",
+        value: "y" + this.attrs.y.label,
+        type: statetoken.TokenType.string,
+        importance: 1,
+        childs : []
+      },{
+        name: "y-Axis-Scale",
+        value: "y-scale" + axisScale["y"],
+        type: statetoken.TokenType.string,
+        importance: 1,
+        childs : []
+      },{
+        name: "size",
+        value: "size" + this.attrs.size.label,
+        type: statetoken.TokenType.string,
+        importance: 1,
+        childs : []
      }, {
-       name: "y-Axis",
-       value: "y" + this.attrs.y.label,
-       type: statetoken.TokenType.string,
-       importance: 1
-     },{
-       name: "y-Axis-Scale",
-       value: "y-scale" + axisScale["y"],
-       type: statetoken.TokenType.string,
-       importance: 1
-     },{
-       name: "size",
-       value: "size" + this.attrs.size.label,
-       type: statetoken.TokenType.string,
-       importance: 1
-     }, {
-       name: "size-scale",
-       value: "size-scale" + this.attrs.size.scale,
-       type: statetoken.TokenType.string,
-       importance: 1
+        name: "size-scale",
+        value: "size-scale" + this.attrs.size.scale,
+        type: statetoken.TokenType.string,
+        importance: 1,
+        childs : []
      }])
     if (! isUndefined(this.attrs.x.data)) {
-       tokens = tokens.concat({
-                    name: "Col IDType",
-                    value: [this.attrs.x.data.coltype,0,215],
-                    type: statetoken.TokenType.ordinalIDType,
-                    importance: 4
-                  },{
-                    name: "Row IDType",
-                    value: this.attrs.x.data.rowtype,
-                    type: statetoken.TokenType.idtype,
-                    importance: 4
-                  })
+       tokens = tokens.concat([{
+         name: "Col IDType",
+         value: [this.attrs.x.data.coltype,0,215],
+         type: statetoken.TokenType.ordinalIDType,
+         importance: 4,
+         childs: []
+       },{
+         name: "Row IDType",
+         value: this.attrs.x.data.rowtype,
+         type: statetoken.TokenType.idtype,
+         importance: 4,
+         childs : []
+       }])
     }
     return tokens;
   }
