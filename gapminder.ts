@@ -288,37 +288,43 @@ class GapMinder extends views.AView {
         value: "x" + this.attrs.x.label,
         type: statetoken.TokenType.string,
         importance: 1,
-        childs : []
+        childs : [],
+        category: "data"
       },{
         name: "x-Axis-scale",
         value: "x-scale" + axisScale["x"],
         type: statetoken.TokenType.string,
         importance: 1,
-        childs : []
+        childs : [],
+        category: "visual"
       }, {
         name: "y-Axis",
         value: "y" + this.attrs.y.label,
         type: statetoken.TokenType.string,
         importance: 1,
-        childs : []
+        childs : [],
+        category: "data"
       },{
         name: "y-Axis-Scale",
         value: "y-scale" + axisScale["y"],
         type: statetoken.TokenType.string,
         importance: 1,
-        childs : []
+        childs : [],
+        category: "visual"
       },{
         name: "size",
         value: "size" + this.attrs.size.label,
         type: statetoken.TokenType.string,
         importance: 1,
-        childs : []
+        childs : [],
+        category: "data"
      }, {
         name: "size-scale",
         value: "size-scale" + this.attrs.size.scale,
         type: statetoken.TokenType.string,
         importance: 1,
-        childs : []
+        childs : [],
+        category: "visual"
      }])
     if (! isUndefined(this.attrs.x.data)) {
        tokens = tokens.concat([{
@@ -326,13 +332,15 @@ class GapMinder extends views.AView {
          value: [this.attrs.x.data.coltype,0,215],
          type: statetoken.TokenType.ordinalIDType,
          importance: 4,
-         childs: []
+         childs: [],
+        category: "selection"
        },{
          name: "Row IDType",
          value: this.attrs.x.data.rowtype,
          type: statetoken.TokenType.idtype,
          importance: 4,
-         childs : []
+         childs : [],
+        category: "selection"
        }])
     }
     return tokens;
