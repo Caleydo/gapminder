@@ -326,7 +326,7 @@ class GapMinder extends views.AView {
         childs : [],
         category: "visual"
      }])
-    if (! isUndefined(this.attrs.x.data)) {
+    if (! isUndefined(this.attrs.x.data) && this.attrs.x.data != null) {
        tokens = tokens.concat([{
          name: "Col IDType",
          value: [this.attrs.x.data.coltype,0,215],
