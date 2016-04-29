@@ -15,6 +15,7 @@ import tooltip = require('../caleydo_d3/tooltip');
 import d3 = require('d3');
 import statetoken = require('../caleydo_core/statetoken')
 import {isUndefined} from "../caleydo_core/main";
+import {StateTokenLeaf, StateTokenNode, IStateToken} from "../caleydo_core/statetoken";
 
 
 const filteredSelectionType = 'filtered';
@@ -280,68 +281,97 @@ class GapMinder extends views.AView {
     return <Element>this.$node.node();
   }
 
-  get stateTokens(): statetoken.IStateToken[] {
-    var tokens: statetoken.IStateToken[]  = []
-    tokens = tokens.concat([
-      {
-        name: "X-Axis",
-        value: "x" + this.attrs.x.label,
-        type: statetoken.TokenType.string,
-        importance: 1,
-        childs : [],
-        category: "data"
-      },{
-        name: "x-Axis-scale",
-        value: "x-scale" + axisScale["x"],
-        type: statetoken.TokenType.string,
-        importance: 1,
-        childs : [],
-        category: "visual"
-      }, {
-        name: "y-Axis",
-        value: "y" + this.attrs.y.label,
-        type: statetoken.TokenType.string,
-        importance: 1,
-        childs : [],
-        category: "data"
-      },{
-        name: "y-Axis-Scale",
-        value: "y-scale" + axisScale["y"],
-        type: statetoken.TokenType.string,
-        importance: 1,
-        childs : [],
-        category: "visual"
-      },{
-        name: "size",
-        value: "size" + this.attrs.size.label,
-        type: statetoken.TokenType.string,
-        importance: 1,
-        childs : [],
-        category: "data"
-     }, {
-        name: "size-scale",
-        value: "size-scale" + this.attrs.size.scale,
-        type: statetoken.TokenType.string,
-        importance: 1,
-        childs : [],
-        category: "visual"
-     }])
+  get stateTokens(): IStateToken[] {
+    var tokens: IStateToken[]  = []
+    tokens = tokens.concat(
+      new StateTokenNode(
+        "X-Axis",
+        1,
+        [
+          new StateTokenLeaf(
+            "Data used for the X-Axis",
+            1,
+            statetoken.TokenType.string,
+            "x" + this.attrs.x.label,
+            "data"
+          ),
+          new StateTokenLeaf(
+            "Scaling used for the X-Axis",
+            1,
+            statetoken.TokenType.string,
+            "x-scale" + axisScale["x"],
+            "visual"
+          )
+        ]
+      )
+    )
+    tokens = tokens.concat(
+      new StateTokenNode(
+        "Y-Axis",
+        1,
+        [
+          new StateTokenLeaf(
+            "Data used for the Y-Axis",
+            1,
+            statetoken.TokenType.string,
+            "y" + this.attrs.y.label,
+            "data"
+          ),
+          new StateTokenLeaf(
+            "Scaling used for the Y-Axis",
+            1,
+            statetoken.TokenType.string,
+            "y-scale" + axisScale["y"],
+            "visual"
+          )
+        ]
+      )
+    );
+    tokens = tokens.concat(
+      new StateTokenNode(
+        "Size-Axis",
+        1,
+        [
+          new StateTokenLeaf(
+            "Data used for bubble size",
+            1,
+            statetoken.TokenType.string,
+            "x" + this.attrs.size.label,
+            "data"
+          ),
+          new StateTokenLeaf(
+            "Scaling used for bubble size",
+            1,
+            statetoken.TokenType.string,
+            "size-scale" + this.attrs.size.scale,
+            "visual"
+          )
+        ]
+      )
+    );
     if (! isUndefined(this.attrs.x.data) && this.attrs.x.data != null) {
-       tokens = tokens.concat([{
-         name: "Col IDType",
-         value: [this.attrs.x.data.coltype,0,215],
-         type: statetoken.TokenType.ordinalIDType,
-         importance: 4,
-         childs: [],
-        category: "selection"
-       },{
-         name: "Row IDType",
-         value: this.attrs.x.data.rowtype,
-         type: statetoken.TokenType.idtype,
-         importance: 4,
-         childs : [],
-        category: "selection"
-       }])
+       tokens = tokens.concat(
+         new StateTokenNode(
+           "Selections",
+           2,
+           [
+             new StateTokenLeaf(
+               "Year",
+               2,
+               statetoken.TokenType.ordinalIDType,
+               [this.attrs.x.data.coltype,0,215],
+               "selection"
+             ),
+             new StateTokenLeaf(
+               "Countries",
+               2,
+               statetoken.TokenType.idtype,
+               this.attrs.x.data.rowtype,
+               "selection"
+             )
+           ]
+         )
+       )
     }
     return tokens;
   }
