@@ -13,9 +13,8 @@ import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
 import tooltip = require('../caleydo_d3/tooltip');
 import d3 = require('d3');
-import statetoken = require('../caleydo_core/statetoken')
 import {isUndefined} from "../caleydo_core/main";
-import {StateTokenLeaf, StateTokenNode, IStateToken} from "../caleydo_core/statetoken";
+import {StateTokenLeaf, StateTokenNode, IStateToken, TokenType} from "../caleydo_clue/statetoken";
 
 
 const filteredSelectionType = 'filtered';
@@ -291,14 +290,14 @@ class GapMinder extends views.AView {
           new StateTokenLeaf(
             "Data used for the X-Axis",
             1,
-            statetoken.TokenType.string,
+            TokenType.string,
             "x" + this.attrs.x.label,
             "data"
           ),
           new StateTokenLeaf(
             "Scaling used for the X-Axis",
             1,
-            statetoken.TokenType.string,
+            TokenType.string,
             "x-scale" + axisScale["x"],
             "visual"
           )
@@ -313,14 +312,14 @@ class GapMinder extends views.AView {
           new StateTokenLeaf(
             "Data used for the Y-Axis",
             1,
-            statetoken.TokenType.string,
+            TokenType.string,
             "y" + this.attrs.y.label,
             "data"
           ),
           new StateTokenLeaf(
             "Scaling used for the Y-Axis",
             1,
-            statetoken.TokenType.string,
+            TokenType.string,
             "y-scale" + axisScale["y"],
             "visual"
           )
@@ -335,14 +334,14 @@ class GapMinder extends views.AView {
           new StateTokenLeaf(
             "Data used for bubble size",
             1,
-            statetoken.TokenType.string,
+            TokenType.string,
             "x" + this.attrs.size.label,
             "data"
           ),
           new StateTokenLeaf(
             "Scaling used for bubble size",
             1,
-            statetoken.TokenType.string,
+            TokenType.string,
             "size-scale" + this.attrs.size.scale,
             "visual"
           )
@@ -358,14 +357,14 @@ class GapMinder extends views.AView {
              new StateTokenLeaf(
                "Year",
                2,
-               statetoken.TokenType.ordinalIDType,
+               TokenType.ordinalIDType,
                [this.attrs.x.data.coltype,0,215],
                "selection"
              ),
              new StateTokenLeaf(
                "Countries",
                2,
-               statetoken.TokenType.idtype,
+               TokenType.idtype,
                this.attrs.x.data.rowtype,
                "selection"
              )
