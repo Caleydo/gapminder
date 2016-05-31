@@ -32,19 +32,22 @@
           "type": "actionCompressor",
           "id": "gapminder-setGapMinderAttribute",
           "file": "gapminder",
-          "factory": "compressSetAttribute"
+          "factory": "compressSetAttribute",
+          "matches": "setGapMinderAttribute"
         },
         {
           "type": "actionCompressor",
           "id": "gapminder-setGapMinderAttribute",
           "file": "gapminder",
-          "factory": "compressToggleGapMinderTrails"
+          "factory": "compressToggleGapMinderTrails",
+          "matches": "toggleGapMinderTrails"
         },
         {
           "type": "actionCompressor",
           "id": "gapminder-setGapMinderAttributeScale",
           "file": "gapminder",
-          "factory": "compressSetAttributeScale"
+          "factory": "compressSetAttributeScale",
+          "matches": "setGapMinderAttributeScale"
         },
         {
           "type": "app",
