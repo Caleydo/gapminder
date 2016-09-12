@@ -7,7 +7,7 @@ import datas = require('../caleydo_core/data');
 import datatypes = require('../caleydo_core/datatype');
 import matrix = require('../caleydo_core/matrix');
 import stratification = require('../caleydo_core/stratification');
-import prov = require('../caleydo_clue/prov');
+import prov = require('../caleydo_core/provenance');
 import idtypes = require('../caleydo_core/idtype');
 import views = require('../caleydo_core/layout_view');
 import ranges = require('../caleydo_core/range');
@@ -880,9 +880,6 @@ class GapMinder extends views.AView {
     $timeline.select('g.axis').attr('transform', 'translate(0,20)').call(this.timelineaxis);
 
 
-    if (!$slider.empty()) { //already there
-      return;
-    }
     /* ---------------- dragged() ------------------------- */
 
     var dragged = () => {
@@ -909,9 +906,6 @@ class GapMinder extends views.AView {
         }));
     }
 
-    // timelinescale is linear
-    this.timelinescale.domain(this.timeIds.minmax).range([40, this.dim[0] - 40]).clamp(true);
-
     //this.timelineaxis.ticks(20); //.tickValues(this.timeIds.range);
 
     const s = this.timeIds.idtype.selections().dim(0);
@@ -928,8 +922,6 @@ class GapMinder extends views.AView {
 
     // just visualizing where slider should be
     $slider.attr('transform', 'translate(' + x + ',14)');
-
-    $timeline.select('g.axis').attr('transform', 'translate(0,20)').call(this.timelineaxis);
   } // end of updateTime()
 
   /* ------------------- reset() ------------------------------------- */
