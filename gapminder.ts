@@ -350,26 +350,22 @@ class GapMinder extends views.AView {
     );
     if (! isUndefined(this.attrs.x.data) && this.attrs.x.data != null) {
        tokens = tokens.concat(
-         new StateTokenNode(
-           "Selections",
-           2,
-           [
-             new StateTokenLeaf(
+         new StateTokenLeaf(
                "Year",
                2,
                TokenType.ordinalIDType,
                [this.attrs.x.data.coltype,0,215],
                "selection"
-             ),
-             new StateTokenLeaf(
-               "Countries",
+             )
+       )
+         tokens = tokens.concat(
+           new StateTokenLeaf(
+             "Countries",
                2,
                TokenType.idtype,
                this.attrs.x.data.rowtype,
                "selection"
              )
-           ]
-         )
        )
     }
     return tokens;
