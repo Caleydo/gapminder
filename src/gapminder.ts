@@ -2,17 +2,17 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-import C = require('../caleydo_core/main');
-import datas = require('../caleydo_core/data');
-import datatypes = require('../caleydo_core/datatype');
-import matrix = require('../caleydo_core/matrix');
-import stratification = require('../caleydo_core/stratification');
-import prov = require('../caleydo_core/provenance');
-import idtypes = require('../caleydo_core/idtype');
-import views = require('../caleydo_core/layout_view');
-import ranges = require('../caleydo_core/range');
-import tooltip = require('../caleydo_d3/tooltip');
-import d3 = require('d3');
+import * as C from 'phovea_core/src/index';
+import * as datas from 'phovea_core/src/data';
+import * as datatypes from 'phovea_core/src/datatype';
+import * as matrix from 'phovea_core/src/matrix';
+import * as stratification from 'phovea_core/src/stratification';
+import * as prov from 'phovea_core/src/provenance';
+import * as idtypes from 'phovea_core/src/idtype';
+import * as views from 'phovea_core/src/layout_view';
+import * as ranges from 'phovea_core/src/range';
+import * as tooltip from 'phovea_d3/src/tooltip';
+import * as d3 from 'd3';
 
 const filteredSelectionType = 'filtered';
 

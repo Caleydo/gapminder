@@ -8,14 +8,14 @@
 /// <amd-dependency path="css!/bower_components/bootstrap/dist/css/bootstrap" />
 
 /// <amd-dependency path="font-awesome" />
-/// <amd-dependency path="css!../caleydo_bootstrap_fontawesome/style.css" />
+/// <amd-dependency path="css!phovea_bootstrap_fontawesome/style.css" /src/>
 /// <amd-dependency path="css!./style.css"/>
 
 
-import C = require('../caleydo_core/main');
-import template = require('../caleydo_clue/template');
-import cmode = require('../caleydo_clue/mode');
-import gapminder = require('./gapminder');
+import * as C from 'phovea_core/src/index';
+import * as template from 'phovea_clue/src/template';
+import * as cmode from 'phovea_clue/src/mode';
+import * as gapminder from './gapminder';
 
 //scoping let --> function level scope in js vs java global, local
 let helper = document.querySelector('div.gapminder');
