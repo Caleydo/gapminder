@@ -11,7 +11,7 @@ import * as prov from 'phovea_core/src/provenance';
 import * as idtypes from 'phovea_core/src/idtype';
 import * as views from 'phovea_core/src/layout_view';
 import * as ranges from 'phovea_core/src/range';
-import * as tooltip from 'phovea_d3/src/tooltip';
+import tooltipBind from 'phovea_d3/src/tooltip';
 import * as d3 from 'd3';
 
 const filteredSelectionType = 'filtered';
@@ -240,7 +240,7 @@ class GapMinder extends views.AView {
 
   private interactive = true;
 
-  private totooltip = tooltip.bind(this.createTooltip.bind(this), 0);
+  private totooltip = tooltipBind(this.createTooltip.bind(this), 0);
 
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private graph:prov.ProvenanceGraph) {
@@ -555,8 +555,8 @@ class GapMinder extends views.AView {
         .attr('data-uid',(d) =>d.id + (this.showUseTrails && d.selected ? '@'+selectedTimePoint : ''));
 
       $marks
-        .classed('caleydo-select-selected', (d) => d.selected)
-        .classed('caleydo-select-filtered', (d) => d.filtered)
+        .classed('phovea-select-selected', (d) => d.selected)
+        .classed('phovea-select-filtered', (d) => d.filtered)
         .attr('data-id', (d) => d.id);
 
       $marks.interrupt().transition()
@@ -658,7 +658,7 @@ class GapMinder extends views.AView {
 
   private onItemSelect(event:any, type:string, new_:ranges.Range) {
     const ids = new_.dim(0).asList();
-    this.$node.select('svg.chart g.marks').selectAll('.mark').classed('caleydo-select-' + type, (d) => ids.indexOf(d.id) >= 0);
+    this.$node.select('svg.chart g.marks').selectAll('.mark').classed('phovea-select-' + type, (d) => ids.indexOf(d.id) >= 0);
 
     if (type === idtypes.hoverSelectionType) {
       this.updateHoverLine(ids);

@@ -3,7 +3,7 @@
  */
 
 // use original CLUE styles as foundation
-@import "../caleydo_clue/style.scss";
+@import "~phovea_clue/src/style.scss";
 
 body, html {
   padding: 0;
@@ -72,20 +72,20 @@ svg.chart {
     stroke: none;
     opacity:0.5;
 
-    &.caleydo-select-selected {
+    &.phovea-select-selected {
       //svg variant
       stroke: $select-color;
       stroke-width: 2px;
       opacity: 1;
     }
-    &.caleydo-select-hovered {
+    &.phovea-select-hovered {
       //svg variant
       opacity: 1;
       stroke: $hover-color;
       stroke-width: 2px;
     }
 
-    &.caleydo-select-filtered {
+    &.phovea-select-filtered {
       opacity: 0.1;
     }
   }
@@ -245,7 +245,7 @@ body {
       polyline.hover_line {
         stroke: $hover-color !important;
       }
-      .mark.caleydo-select-hovered {
+      .mark.phovea-select-hovered {
         stroke: $hover-color !important;
       }
     }

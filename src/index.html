@@ -3,11 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Caleydo GapMinder</title>
+    <title>Phovea GapMinder</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="style.css">
-    <script src="/caleydo_web.js"></script>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
 </head>
 <body>
  <div class="gapminder" style="display: none">
@@ -83,5 +82,17 @@
   </svg>
 
 </div>
+
+<script>
+  (function() {
+    var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    if (!isChrome) {
+      alert('This application was designed to be used in Google Chrome.\nRunning the application in other browsers might result in performance issues or other misbehavior.');
+    }
+  })();
+</script>
+<script src="./common.js"></script>
+<script src="./app.js"></script>
+
 </body>
 </html>
