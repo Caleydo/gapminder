@@ -56,7 +56,7 @@ elems.graph.then((graph) => {
     setTimeout(updateBounds, 300);
   });
 
-  $(window).on('resize', updateBounds);
+  window.addEventListener('resize', updateBounds);
   setTimeout(updateBounds, 500);
 
   app.setInteractive(cmode.getMode().exploration >= 0.8);
