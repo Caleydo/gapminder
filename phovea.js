@@ -32,7 +32,7 @@ module.exports = function(registry) {
   'matches': 'setGapMinderAttributeScale'
  });
 
-  registry.push('app', 'gapminder', function() { return System.import('./src/'); }, {
+  registry.push('app', 'gapminder', null, {
   'name': 'GapMinder'
  });
   // generator-phovea:end
