@@ -14,7 +14,7 @@ Installation
 ------------
 
 ```
-git clone https://github.com/phovea/gapminder.git
+git clone https://github.com/caleydo/gapminder.git
 cd gapminder
 npm install
 ```
@@ -45,7 +45,7 @@ This repository is part of **[Phovea](http://phovea.caleydo.org/)**, a platform 
 [phovea-url]: https://phovea.caleydo.org
 [npm-image]: https://badge.fury.io/js/gapminder.svg
 [npm-url]: https://npmjs.org/package/gapminder
-[travis-image]: https://travis-ci.org/phovea/gapminder.svg?branch=master
-[travis-url]: https://travis-ci.org/phovea/gapminder
-[daviddm-image]: https://david-dm.org/phovea/gapminder.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/phovea/gapminder
+[travis-image]: https://travis-ci.org/caleydo/gapminder.svg?branch=master
+[travis-url]: https://travis-ci.org/caleydo/gapminder
+[daviddm-image]: https://david-dm.org/caleydo/gapminder.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/caleydo/gapminder
