@@ -2,17 +2,17 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-import C = require('../caleydo_core/main');
-import datas = require('../caleydo_core/data');
-import datatypes = require('../caleydo_core/datatype');
-import matrix = require('../caleydo_core/matrix');
-import stratification = require('../caleydo_core/stratification');
-import prov = require('../caleydo_core/provenance');
-import idtypes = require('../caleydo_core/idtype');
-import views = require('../caleydo_core/layout_view');
-import ranges = require('../caleydo_core/range');
-import tooltip = require('../caleydo_d3/tooltip');
-import d3 = require('d3');
+import * as C from 'phovea_core/src/index';
+import * as datas from 'phovea_core/src/data';
+import * as datatypes from 'phovea_core/src/datatype';
+import * as matrix from 'phovea_core/src/matrix';
+import * as stratification from 'phovea_core/src/stratification';
+import * as prov from 'phovea_core/src/provenance';
+import * as idtypes from 'phovea_core/src/idtype';
+import * as views from 'phovea_core/src/layout_view';
+import * as ranges from 'phovea_core/src/range';
+import tooltipBind from 'phovea_d3/src/tooltip';
+import * as d3 from 'd3';
 import {isUndefined} from "../caleydo_core/main";
 import {StateTokenLeaf, StateTokenNode, IStateToken, TokenType} from "../caleydo_clue/statetoken";
 
@@ -251,7 +251,7 @@ class GapMinder extends views.AView {
 
   private interactive = true;
 
-  private totooltip = tooltip.bind(this.createTooltip.bind(this), 0);
+  private totooltip = tooltipBind(this.createTooltip.bind(this), 0);
 
   // for colorScale domain is continent groups mapped to the range which is colorPalette
   constructor(private elem:Element, private graph:prov.ProvenanceGraph) {
@@ -658,8 +658,8 @@ class GapMinder extends views.AView {
         .attr('data-uid',(d) =>d.id + (this.showUseTrails && d.selected ? '@'+selectedTimePoint : ''));
 
       $marks
-        .classed('caleydo-select-selected', (d) => d.selected)
-        .classed('caleydo-select-filtered', (d) => d.filtered)
+        .classed('phovea-select-selected', (d) => d.selected)
+        .classed('phovea-select-filtered', (d) => d.filtered)
         .attr('data-id', (d) => d.id);
 
       $marks.interrupt().transition()
@@ -761,7 +761,7 @@ class GapMinder extends views.AView {
 
   private onItemSelect(event:any, type:string, new_:ranges.Range) {
     const ids = new_.dim(0).asList();
-    this.$node.select('svg.chart g.marks').selectAll('.mark').classed('caleydo-select-' + type, (d) => ids.indexOf(d.id) >= 0);
+    this.$node.select('svg.chart g.marks').selectAll('.mark').classed('phovea-select-' + type, (d) => ids.indexOf(d.id) >= 0);
 
     if (type === idtypes.hoverSelectionType) {
       this.updateHoverLine(ids);

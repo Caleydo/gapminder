@@ -1,0 +1,93 @@
+{
+  "generator-phovea": {
+    "type": "app",
+    "name": "gapminder",
+    "author": "The Caleydo Team",
+    "githubAccount": "caleydo",
+    "modules": [
+      "phovea_core",
+      "phovea_vis",
+      "phovea_d3",
+      "phovea_bootstrap_fontawesome",
+      "phovea_clue"
+    ],
+    "extensions": [
+      {
+        "type": "view",
+        "id": "gapminder",
+        "module": "gapminder",
+        "extras": {
+          "location": "gapminder"
+        }
+      },
+      {
+        "type": "actionFactory",
+        "id": "gapminder",
+        "module": "gapminder",
+        "extras": {
+          "factory": "createCmd",
+          "creates": "(setGapMinderAttribute|setGapMinderAttributeScale|toggleGapMinderTrails)"
+        }
+      },
+      {
+        "type": "actionCompressor",
+        "id": "gapminder-setGapMinderAttribute",
+        "module": "gapminder",
+        "extras": {
+          "factory": "compressSetAttribute",
+          "matches": "setGapMinderAttribute"
+        }
+      },
+      {
+        "type": "actionCompressor",
+        "id": "gapminder-setGapMinderAttribute",
+        "module": "gapminder",
+        "extras": {
+          "factory": "compressToggleGapMinderTrails",
+          "matches": "toggleGapMinderTrails"
+        }
+      },
+      {
+        "type": "actionCompressor",
+        "id": "gapminder-setGapMinderAttributeScale",
+        "module": "gapminder",
+        "extras": {
+          "factory": "compressSetAttributeScale",
+          "matches": "setGapMinderAttributeScale"
+        }
+      },
+      {
+        "type": "app",
+        "id": "gapminder",
+        "module": "",
+        "extras": {
+          "name": "GapMinder"
+        }
+      }
+    ],
+    "sextensions": [],
+    "libraries": [],
+    "unknown": {
+      "requirements": [],
+      "debianPackages": [],
+      "redhatPackages": []
+    },
+    "app": "",
+    "entries": {
+      "app": "./src/index.ts"
+    },
+    "libraryAliases": {
+      "d3": "d3/d3"
+    },
+    "libraryExternals": [
+      "d3",
+      "d3",
+      "jquery",
+      "font-awesome",
+      "marked",
+      "marked"
+    ],
+    "ignores": [],
+    "today": "Tue, 08 Nov 2016 09:41:26 GMT"
+  }
+}
