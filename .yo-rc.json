@@ -81,10 +81,8 @@
     },
     "libraryExternals": [
       "d3",
-      "d3",
       "jquery",
       "font-awesome",
-      "marked",
       "marked"
     ],
     "ignores": [],
