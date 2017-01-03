@@ -66,13 +66,13 @@
     "phovea_core": "github:phovea/phovea_core",
     "phovea_vis": "github:phovea/phovea_vis",
     "phovea_d3": "github:phovea/phovea_d3",
-    "phovea_bootstrap_fontawesome": "github:phovea/phovea_bootstrap_fontawesome",
+    "phovea_ui": "github:phovea/phovea_ui",
     "phovea_clue": "github:phovea/phovea_clue"
   },
   "name": "gapminder",
   "description": "",
   "homepage": "https://phovea.caleydo.org",
-  "version": "0.0.1",
+  "version": "0.0.1-SNAPSHOT",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
