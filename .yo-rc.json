@@ -8,7 +8,7 @@
       "phovea_core",
       "phovea_vis",
       "phovea_d3",
-      "phovea_bootstrap_fontawesome",
+      "phovea_ui",
       "phovea_clue"
     ],
     "extensions": [
@@ -86,6 +86,7 @@
       "marked"
     ],
     "ignores": [],
-    "today": "Tue, 08 Nov 2016 09:41:26 GMT"
+    "today": "Tue, 08 Nov 2016 09:41:26 GMT",
+    "clientOnly": false
   }
 }
