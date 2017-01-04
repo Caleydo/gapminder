@@ -42,7 +42,7 @@ elems.graph.then((graph) => {
   app.on('ready', elems.header.ready.bind(elems.header));
 
   function updateBounds() {
-    var bounds = C.bounds(document.querySelector('main'));
+    const bounds = C.bounds(document.querySelector('main'));
     app.setBounds(bounds.x, bounds.y, bounds.w - 200, bounds.h - 80);
   }
 

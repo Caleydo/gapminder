@@ -11,13 +11,14 @@ import * as prov from 'phovea_core/src/provenance';
 import * as idtypes from 'phovea_core/src/idtype';
 import * as views from 'phovea_core/src/layout_view';
 import * as ranges from 'phovea_core/src/range';
+import {Rect} from 'phovea_core/src/geom';
 import tooltipBind from 'phovea_d3/src/tooltip';
 import * as d3 from 'd3';
 
 const filteredSelectionType = 'filtered';
 
 function setAttributeImpl(inputs, parameter, graph, within) {
-  var gapminder:GapMinder = inputs[0].value,
+  const gapminder:GapMinder = inputs[0].value,
     name = parameter.name;
 
   return inputs[1].v.then((data) => {
@@ -33,7 +34,7 @@ function setAttributeImpl(inputs, parameter, graph, within) {
   });
 }
 function setAttributeScaleImpl(inputs, parameter, graph, within) {
-  var gapminder:GapMinder = inputs[0].value,
+  const gapminder:GapMinder = inputs[0].value,
     name = parameter.name;
 
   const old = gapminder.setAttributeScaleImpl(name, parameter.scale);
@@ -44,7 +45,7 @@ function setAttributeScaleImpl(inputs, parameter, graph, within) {
 }
 
 function toggleGapMinderTrailsImpl(inputs, parameter) {
-  var gapminder:GapMinder = inputs[0].value,
+  const gapminder:GapMinder = inputs[0].value,
     show = parameter.show;
 
   gapminder.showTrailsImpl(show);
@@ -147,7 +148,7 @@ export function setAttributeScale(name:string, $main_ref:prov.IObjectRef<GapMind
 }
 
 class Attribute {
-  data:matrix.IMatrix = null;
+  data:matrix.INumericalMatrix = null;
 
   arr:number[][] = null;
 
@@ -221,6 +222,8 @@ class GapMinder extends views.AView {
     size: new Attribute('sqrt')
   };
 
+  private bounds = new Rect(0,0,0,0);
+
   private items:IItem[] = [];
 
   private color:stratification.IStratification = null;
@@ -253,8 +256,16 @@ class GapMinder extends views.AView {
     this.init(this.$node);
   }
 
+  get data() {
+    return [this.attrs.x.data, this.attrs.y.data, this.attrs.size.data, this.color].filter((d) => !!d);
+  }
+
+  get idtypes() {
+    return Array.from(new Set([].concat(...this.data.map((d) => d.idtypes))));
+  }
+
   /* ------------------ REF DATA ---------------------- */
-  private get refData():matrix.IMatrix {
+  private get refData():matrix.INumericalMatrix {
     if (this.attrs.x.valid) {
       return this.attrs.x.data;
     }
@@ -281,7 +292,7 @@ class GapMinder extends views.AView {
 
     //find all gapminder datasets
     datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {
-      const matrices = <matrix.IMatrix[]>list.filter((d) => d.desc.type === 'matrix');
+      const matrices = <matrix.INumericalMatrix[]>list.filter((d) => d.desc.type === 'matrix');
       ['x', 'y','size'].forEach((attr) => {
         const $options = d3.select('select.attr-' + attr).selectAll('option').data(matrices);
         $options.enter().append('option');
@@ -826,8 +837,12 @@ class GapMinder extends views.AView {
     this.update();
   }
 
+  getBounds() {
+    return this.bounds;
+  }
+
   setBounds(x, y, w, h) {
-    super.setBounds(x, y, w, h);
+    this.bounds = new Rect(x,y,w,h);
     this.dim = [w, h];
     this.relayout();
     this.update();
@@ -838,16 +853,16 @@ class GapMinder extends views.AView {
   }
 
 
-  setXAttribute(m:matrix.IMatrix) {
+  setXAttribute(m:matrix.INumericalMatrix) {
     // cleanData(m);
     return this.setAttribute('x', m);
   }
 
-  setYAttribute(m:matrix.IMatrix) {
+  setYAttribute(m:matrix.INumericalMatrix) {
     return this.setAttribute('y', m);
   }
 
-  setSizeAttribute(m:matrix.IMatrix) {
+  setSizeAttribute(m:matrix.INumericalMatrix) {
     return this.setAttribute('size', m);
   }
 
@@ -881,7 +896,7 @@ class GapMinder extends views.AView {
         return old === null ? this.noneRef : this.graph.findObject(old);
       });
     } else {
-      let matrix = <matrix.IMatrix>m;
+      let matrix = <matrix.INumericalMatrix>m;
       let att = this.attrs[attr];
       att.data = matrix;
 
