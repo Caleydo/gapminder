@@ -18,7 +18,7 @@ import * as cmode from 'phovea_clue/src/mode';
 import * as gapminder from './gapminder';
 
 //scoping let --> function level scope in js vs java global, local
-let helper = document.querySelector('div.gapminder');
+const helper = document.querySelector('div.gapminder');
 
 const elems = template.create(document.body, {
   app: 'GapMinder',
@@ -50,8 +50,8 @@ elems.graph.then((graph) => {
   //    app.showTrails(this.checked);
   //  });
 
-  elems.on('modeChanged', function (event, new_) {
-    app.setInteractive(new_.exploration >= 0.8);
+  elems.on('modeChanged', function (event, newMode) {
+    app.setInteractive(newMode.exploration >= 0.8);
     //for the animations to end
     setTimeout(updateBounds, 300);
   });
