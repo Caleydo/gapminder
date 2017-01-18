@@ -65,11 +65,11 @@
     "extract-loader": "0.1.0"
   },
   "dependencies": {
-    "phovea_core": "github:phovea/phovea_core#feature_update_dependencies",
-    "phovea_vis": "github:phovea/phovea_vis#feature_update_dependencies",
-    "phovea_d3": "github:phovea/phovea_d3#feature_update_dependencies",
-    "phovea_ui": "github:phovea/phovea_ui#feature_update_dependencies",
-    "phovea_clue": "github:phovea/phovea_clue#feature_update_dependencies"
+    "phovea_core": "github:phovea/phovea_core#develop",
+    "phovea_vis": "github:phovea/phovea_vis#develop",
+    "phovea_d3": "github:phovea/phovea_d3#develop",
+    "phovea_ui": "github:phovea/phovea_ui#develop",
+    "phovea_clue": "github:phovea/phovea_clue#develop"
   },
   "name": "gapminder",
   "description": "",
