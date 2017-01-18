@@ -15,7 +15,8 @@ import {Rect} from 'phovea_core/src/geom';
 import tooltipBind from 'phovea_d3/src/tooltip';
 import * as d3 from 'd3';
 import {isUndefined} from 'phovea_core/src/index';
-import {StateTokenLeaf, StateTokenNode, IStateToken, TokenType} from 'phovea_clue/src/statetoken';
+import {StateTokenLeaf, StateTokenNode, IStateToken, TokenType} from 'phovea_core/src/provenance/token/StateToken';
+import {cat} from '../../phovea_core/src/provenance/ObjectNode';
 
 
 const filteredSelectionType = 'filtered';
@@ -292,7 +293,7 @@ class GapMinder extends views.AView {
   }
 
   get stateTokens(): IStateToken[] {
-    var tokens: IStateToken[]  = [];
+    let tokens: IStateToken[]  = [];
     tokens = tokens.concat(
       new StateTokenNode(
         'X-Axis',
@@ -303,14 +304,14 @@ class GapMinder extends views.AView {
             1,
             TokenType.string,
             'x' + this.attrs.x.label,
-            'data'
+            cat.data
           ),
           new StateTokenLeaf(
             'Scaling used for the X-Axis',
             1,
             TokenType.string,
             'x-scale' + axisScale.x,
-            'visual'
+            cat.visual
           )
         ]
       )
@@ -325,14 +326,14 @@ class GapMinder extends views.AView {
             1,
             TokenType.string,
             'y' + this.attrs.y.label,
-            'data'
+            cat.data
           ),
           new StateTokenLeaf(
             'Scaling used for the Y-Axis',
             1,
             TokenType.string,
             'y-scale' + axisScale.y,
-            'visual'
+            cat.visual
           )
         ]
       )
@@ -347,26 +348,26 @@ class GapMinder extends views.AView {
             1,
             TokenType.string,
             'x' + this.attrs.size.label,
-            'data'
+            cat.data
           ),
           new StateTokenLeaf(
             'Scaling used for bubble size',
             1,
             TokenType.string,
             'size-scale' + this.attrs.size.scale,
-            'visual'
+            cat.visual
           )
         ]
       )
     );
-    if (! isUndefined(this.attrs.x.data) && this.attrs.x.data != null) {
+    if (this.attrs.x.data !== undefined && this.attrs.x.data != null) {
       tokens = tokens.concat(
         new StateTokenLeaf(
           'Year',
           2,
           TokenType.ordinalIDType,
-          [this.attrs.x.data.coltype,0,215],
-          'selection'
+          <any>[this.attrs.x.data.coltype, 0, 215], // TODO avoid typing any
+          cat.selection
          )
       );
       tokens = tokens.concat(
@@ -375,7 +376,7 @@ class GapMinder extends views.AView {
           2,
           TokenType.idtype,
           this.attrs.x.data.rowtype,
-          'selection'
+          cat.selection
         )
       );
     }
