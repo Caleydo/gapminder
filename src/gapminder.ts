@@ -21,7 +21,7 @@ import {StateTokenLeaf, StateTokenNode, IStateToken, TokenType} from 'phovea_clu
 const filteredSelectionType = 'filtered';
 
 
-let axisScale = {x: 'linear', y:'linear'};
+const axisScale = {x: 'linear', y:'linear'};
 
 
 function setAttributeImpl(inputs, parameter, graph, within) {
@@ -289,7 +289,7 @@ class GapMinder extends views.AView {
   }
 
   get stateTokens(): IStateToken[] {
-    var tokens: IStateToken[]  = [];
+    let tokens: IStateToken[]  = [];
     tokens = tokens.concat(
       new StateTokenNode(
         'X-Axis',
