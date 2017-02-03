@@ -4,21 +4,21 @@
 
 // Determine the order of css files manually
 
-// HACK! because <amd-dependency path="bootstrap" /> is loaded after all the other stylesheets and not before (as declared)
-/// <amd-dependency path="css!/bower_components/bootstrap/dist/css/bootstrap" />
+import 'file-loader?name=index.html!extract-loader!html-loader!./index.html';
+import 'file-loader?name=404.html!./404.html';
+import 'file-loader?name=robots.txt!./robots.txt';
+import 'phovea_ui/src/_bootstrap';
+import 'phovea_ui/src/_font-awesome';
+import './style.scss';
 
-/// <amd-dependency path="font-awesome" />
-/// <amd-dependency path="css!../caleydo_bootstrap_fontawesome/style.css" />
-/// <amd-dependency path="css!./style.css"/>
 
-
-import C = require('../caleydo_core/main');
-import template = require('../caleydo_clue/template');
-import cmode = require('../caleydo_clue/mode');
-import gapminder = require('./gapminder');
+import * as C from 'phovea_core/src/index';
+import * as template from 'phovea_clue/src/template';
+import * as cmode from 'phovea_clue/src/mode';
+import * as gapminder from './gapminder';
 
 //scoping let --> function level scope in js vs java global, local
-let helper = document.querySelector('div.gapminder');
+const helper = document.querySelector('div.gapminder');
 
 const elems = template.create(document.body, {
   app: 'GapMinder',
@@ -42,7 +42,7 @@ elems.graph.then((graph) => {
   app.on('ready', elems.header.ready.bind(elems.header));
 
   function updateBounds() {
-    var bounds = C.bounds(document.querySelector('main'));
+    const bounds = C.bounds(document.querySelector('main'));
     app.setBounds(bounds.x, bounds.y, bounds.w - 200, bounds.h - 80);
   }
 
@@ -50,13 +50,13 @@ elems.graph.then((graph) => {
   //    app.showTrails(this.checked);
   //  });
 
-  elems.on('modeChanged', function (event, new_) {
-    app.setInteractive(new_.exploration >= 0.8);
+  elems.on('modeChanged', function (event, newMode) {
+    app.setInteractive(newMode.exploration >= 0.8);
     //for the animations to end
     setTimeout(updateBounds, 300);
   });
 
-  $(window).on('resize', updateBounds);
+  window.addEventListener('resize', updateBounds);
   setTimeout(updateBounds, 500);
 
   app.setInteractive(cmode.getMode().exploration >= 0.8);
