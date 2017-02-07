@@ -5,10 +5,6 @@
     "author": "The Caleydo Team",
     "githubAccount": "caleydo",
     "modules": [
-      "phovea_core",
-      "phovea_vis",
-      "phovea_d3",
-      "phovea_ui",
       "phovea_clue"
     ],
     "extensions": [
