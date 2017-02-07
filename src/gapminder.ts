@@ -14,9 +14,8 @@ import * as ranges from 'phovea_core/src/range';
 import {Rect} from 'phovea_core/src/geom';
 import tooltipBind from 'phovea_d3/src/tooltip';
 import * as d3 from 'd3';
-import {isUndefined} from 'phovea_core/src/index';
 import {StateTokenLeaf, StateTokenNode, IStateToken, TokenType} from 'phovea_core/src/provenance/token/StateToken';
-import {cat} from '../../phovea_core/src/provenance/ObjectNode';
+import {cat} from 'phovea_core/src/provenance/ObjectNode';
 
 
 const filteredSelectionType = 'filtered';
