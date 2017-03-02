@@ -64,6 +64,22 @@
     }
   },
   {
+    "name": "Children per woman",
+    "description": "total fertility",
+    "path": "fertility.txt",
+    "separator": "\t",
+    "loadAtOnce": "true",
+    "type": "matrix",
+    "size": [173, 217],
+    "rowtype": "Country",
+    "coltype": "Year",
+    "formatter": ".0f",
+    "value": {
+      "type": "real",
+      "range": [0, 7.5]
+    }
+  },
+  {
     "name": "Continent",
     "description": "",
     "type": "stratification",
@@ -92,6 +108,39 @@
         "name": "Europe",
         "size": 42,
         "color": "rgb(106, 61, 154)"
+      }
+    ]
+  },
+  {
+    "name": "Main Religion",
+    "description": "",
+    "type": "stratification",
+    "idtype": "Country",
+    "path": "main_religions.txt",
+    "separator": "\t",
+    "size": [ 173 ],
+    "ngroups": 4,
+    "groups": [
+      {
+        "name": "Christian",
+        "size": 106,
+        "color": "#3ff4ff"
+      },
+      {
+        "name": "Eastern religions",
+        "size": 11,
+        "color": "#ff2f2f"
+      },
+      {
+        "name": "Muslim",
+        "size": 43,
+        "color": "#bfff2f"
+      },
+      {
+        "name": "Not Categorized",
+		"value": "", 
+        "size": 13,
+        "color": "f8f8ff"
       }
     ]
   }
