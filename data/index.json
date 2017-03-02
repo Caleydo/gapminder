@@ -124,23 +124,23 @@
       {
         "name": "Christian",
         "size": 106,
-        "color": "#3ff4ff"
+        "color": "rgb(55, 126, 184)"
       },
       {
         "name": "Eastern religions",
         "size": 11,
-        "color": "#ff2f2f"
+        "color": "rgb(228, 26, 28)"
       },
       {
         "name": "Muslim",
         "size": 43,
-        "color": "#bfff2f"
+        "color": "rgb(77, 175, 74)"
       },
       {
-        "name": "Not Categorized",
-		"value": "", 
+        "name": "",
+        "label": "Not Categorized",
         "size": 13,
-        "color": "f8f8ff"
+        "color": "rgb(153, 153, 153)"
       }
     ]
   }
