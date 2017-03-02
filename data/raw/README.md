@@ -5,6 +5,7 @@ https://docs.google.com/spreadsheets/d/1oq3r8W7ajenKFgoAYoOf2MXeTWWNPpudR-Fo5m2-
 https://docs.google.com/spreadsheets/d/1CDqPn-tRyR3-78KwihhE6toRPtGm8pyvbKBAGw9caec/pub#
 
 Aggregation of religions were as follows:	
+```csv
 non-religious	ATHEIST
 non-religious	AGNOSTIC
 eastern	BUDDHIST
@@ -23,3 +24,4 @@ other	NEO-RELIGIOUS
 other	ZOROASTR
 christians	CHRISTIAN
 muslims	MUSLIMS
+```
