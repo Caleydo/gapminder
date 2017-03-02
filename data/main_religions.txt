@@ -16,10 +16,10 @@ Barbados	Christian
 Belarus	Christian
 Belgium	Christian
 Belize	Christian
-Benin	
+Benin	Not Categorized
 Bhutan	Eastern religions
 Bolivia	Christian
-Bosnia and Herzegovina	
+Bosnia and Herzegovina	Not Categorized
 Botswana	Christian
 Brazil	Christian
 Brunei	Muslim
@@ -38,7 +38,7 @@ Comoros	Muslim
 Congo, Dem. Rep.	Christian
 Congo, Rep.	Christian
 Costa Rica	Christian
-Cote d'Ivoire	
+Cote d'Ivoire	Not Categorized
 Croatia	Christian
 Cuba	Christian
 Cyprus	Christian
@@ -63,7 +63,7 @@ Greece	Christian
 Grenada	Christian
 Guatemala	Christian
 Guinea	Muslim
-Guinea-Bissau	
+Guinea-Bissau	Not Categorized
 Guyana	Christian
 Haiti	Christian
 Honduras	Christian
@@ -74,7 +74,7 @@ Indonesia	Muslim
 Iran	Muslim
 Iraq	Muslim
 Ireland	Christian
-Israel	
+Israel	Not Categorized
 Italy	Christian
 Jamaica	Christian
 Japan	Eastern religions
@@ -84,25 +84,25 @@ Kenya	Christian
 Kiribati	Christian
 Kuwait	Muslim
 Latvia	Christian
-Lebanon	
+Lebanon	Not Categorized
 Lesotho	Christian
-Liberia	
+Liberia	Not Categorized
 Libya	Muslim
 Lithuania	Christian
 Luxembourg	Christian
 Macedonia, FYR	Christian
-Madagascar	
+Madagascar	Not Categorized
 Malawi	Christian
 Malaysia	Muslim
 Maldives	Muslim
 Mali	Muslim
 Malta	Christian
 Mauritania	Muslim
-Mauritius	
+Mauritius	Not Categorized
 Mexico	Christian
 Micronesia, Fed. Sts.	Christian
 Moldova	Christian
-Mongolia	
+Mongolia	Not Categorized
 Montenegro	Christian
 Morocco	Muslim
 Mozambique	Christian
@@ -113,7 +113,7 @@ Netherlands	Christian
 New Zealand	Christian
 Nicaragua	Christian
 Niger	Muslim
-Nigeria	
+Nigeria	Not Categorized
 Norway	Christian
 Oman	Muslim
 Pakistan	Muslim
@@ -134,7 +134,7 @@ Saudi Arabia	Muslim
 Senegal	Muslim
 Serbia	Christian
 Seychelles	Christian
-Sierra Leone	
+Sierra Leone	Not Categorized
 Singapore	Eastern religions
 Slovak Republic	Christian
 Slovenia	Christian
@@ -153,7 +153,7 @@ Tajikistan	Muslim
 Tanzania	Christian
 Thailand	Eastern religions
 Timor-Leste	Christian
-Togo	
+Togo	Not Categorized
 Tonga	Christian
 Trinidad and Tobago	Christian
 Tunisia	Muslim

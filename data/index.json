@@ -137,8 +137,7 @@
         "color": "rgb(77, 175, 74)"
       },
       {
-        "name": "",
-        "label": "Not Categorized",
+        "name": "Not Categorized",
         "size": 13,
         "color": "rgb(153, 153, 153)"
       }
