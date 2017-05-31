@@ -281,6 +281,27 @@ class GapMinder extends views.AView {
   }
 
   /* ----------------------------------------- */
+
+  get visStateAttrs():string[] {
+    const attrs = [
+      this.attrs.x.label,
+      this.attrs.x.scale,
+      this.attrs.y.label,
+      this.attrs.y.scale,
+      this.attrs.size.label,
+      this.attrs.size.scale
+    ];
+
+    if(this.attrs.x.data) {
+      const selection = this.attrs.x.data.rowtype.selections().dim(0).toString();
+      const year = this.attrs.x.data.coltype.selections().dim(0).toString();
+      attrs.push(selection, year);
+    }
+
+    return attrs;
+  }
+
+  /* ----------------------------------------- */
   setInteractive(interactive:boolean) {
     this.interactive = interactive;
     this.$node.selectAll('select').attr('disabled', interactive ? null : 'disabled');
