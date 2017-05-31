@@ -66,11 +66,11 @@
     "tslib": "1.5.0"
   },
   "dependencies": {
-    "phovea_core": "github:phovea/phovea_core#develop",
-    "phovea_vis": "github:phovea/phovea_vis#develop",
-    "phovea_d3": "github:phovea/phovea_d3#develop",
-    "phovea_ui": "github:phovea/phovea_ui#develop",
-    "phovea_clue": "github:phovea/phovea_clue#develop"
+    "phovea_core": "github:phovea/phovea_core#thinkh/provenance_retrieval",
+    "phovea_vis": "github:phovea/phovea_vis#thinkh/provenance_retrieval",
+    "phovea_d3": "github:phovea/phovea_d3#thinkh/provenance_retrieval",
+    "phovea_ui": "github:phovea/phovea_ui#thinkh/provenance_retrieval",
+    "phovea_clue": "github:phovea/phovea_clue#thinkh/provenance_retrieval"
   },
   "name": "gapminder",
   "description": "",
