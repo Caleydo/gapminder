@@ -14,6 +14,8 @@ import * as ranges from 'phovea_core/src/range';
 import {Rect} from 'phovea_core/src/geom';
 import tooltipBind from 'phovea_d3/src/tooltip';
 import * as d3 from 'd3';
+import {ISelect2Data} from 'phovea_clue/src/prov-retrieval/Select2';
+import {IVisStateApp} from 'phovea_clue/src/prov-retrieval/IVisStateApp';
 
 const filteredSelectionType = 'filtered';
 
@@ -210,7 +212,7 @@ function createItems(names:string[], ids:ranges.Range, idtype:idtypes.IDType):II
   });
 }
 
-class GapMinder extends views.AView {
+class GapMinder extends views.AView implements IVisStateApp {
 
   private dim:[number, number] = [100, 100];
   ref:prov.IObjectRef<GapMinder>;
@@ -282,7 +284,11 @@ class GapMinder extends views.AView {
 
   /* ----------------------------------------- */
 
-  get currVisState():string[] {
+  getVisStateAttrs():ISelect2Data[] {
+    return [{ text: 'test' }];
+  }
+
+  getCurrVisState():string[] {
     const attrs = [
       this.attrs.x.label,
       this.attrs.x.scale,

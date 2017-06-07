@@ -38,6 +38,8 @@ const elems = template.create(document.body, {
 elems.graph.then((graph) => {
   const app = gapminder.create(<Element>elems.$main.node(), graph);
 
+  elems.setApplication(app); // set application to enable provenance retrieval
+
   app.on('wait', elems.header.wait.bind(elems.header));
   app.on('ready', elems.header.ready.bind(elems.header));
 
