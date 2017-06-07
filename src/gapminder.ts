@@ -475,11 +475,11 @@ class GapMinder extends views.AView implements IVisStateApp {
     const attributes = {
       text: 'Attributes',
       children: [
-        {id: 'gdp', text: 'GDP'},
-        {id: 'population', text: 'Population'},
-        {id: 'child_mortality', text: 'Child Mortality'},
-        {id: 'children_per_woman', text: 'Children per Woman'},
-        {id: 'life_expectancy', text: 'Life Expectancy'},
+        {id: 'GDP', text: 'GDP'},
+        {id: 'Population', text: 'Population'},
+        {id: 'Child Mortality', text: 'Child Mortality'},
+        {id: 'Children per woman', text: 'Children per woman'},
+        {id: 'Life Expectancy', text: 'Life Expectancy'},
       ]
     };
 
