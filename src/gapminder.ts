@@ -14,8 +14,7 @@ import * as ranges from 'phovea_core/src/range';
 import {Rect} from 'phovea_core/src/geom';
 import tooltipBind from 'phovea_d3/src/tooltip';
 import * as d3 from 'd3';
-import {ISelect2Data} from 'phovea_clue/src/prov-retrieval/Select2';
-import {IVisStateApp} from 'phovea_clue/src/prov-retrieval/IVisStateApp';
+import {IVisStateCategory, IVisStateApp} from 'phovea_clue/src/prov-retrieval/IVisState';
 
 const filteredSelectionType = 'filtered';
 
@@ -284,7 +283,7 @@ class GapMinder extends views.AView implements IVisStateApp {
 
   /* ----------------------------------------- */
 
-  getVisStateAttrs():ISelect2Data[] {
+  getVisStateAttrs():IVisStateCategory[] {
     const scales = {
       text: 'Scales',
       children: [
