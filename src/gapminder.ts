@@ -282,7 +282,7 @@ class GapMinder extends views.AView {
 
   /* ----------------------------------------- */
 
-  get visStateAttrs():string[] {
+  get currVisState():string[] {
     const attrs = [
       this.attrs.x.label,
       this.attrs.x.scale,
