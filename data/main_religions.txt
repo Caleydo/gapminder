@@ -1,0 +1,174 @@
+Entity	Group
+Afghanistan	Muslim
+Albania	Muslim
+Algeria	Muslim
+Angola	Christian
+Antigua and Barbuda	Christian
+Argentina	Christian
+Armenia	Christian
+Australia	Christian
+Austria	Christian
+Azerbaijan	Muslim
+Bahamas	Christian
+Bahrain	Muslim
+Bangladesh	Muslim
+Barbados	Christian
+Belarus	Christian
+Belgium	Christian
+Belize	Christian
+Benin	Not Categorized
+Bhutan	Eastern religions
+Bolivia	Christian
+Bosnia and Herzegovina	Not Categorized
+Botswana	Christian
+Brazil	Christian
+Brunei	Muslim
+Bulgaria	Christian
+Burkina Faso	Muslim
+Burundi	Christian
+Cambodia	Eastern religions
+Cameroon	Christian
+Canada	Christian
+Cape Verde	Christian
+Chad	Muslim
+Chile	Christian
+China	Eastern religions
+Colombia	Christian
+Comoros	Muslim
+Congo, Dem. Rep.	Christian
+Congo, Rep.	Christian
+Costa Rica	Christian
+Cote d'Ivoire	Not Categorized
+Croatia	Christian
+Cuba	Christian
+Cyprus	Christian
+Denmark	Christian
+Djibouti	Muslim
+Ecuador	Christian
+Egypt	Muslim
+El Salvador	Christian
+Equatorial Guinea	Christian
+Eritrea	Muslim
+Estonia	Christian
+Ethiopia	Christian
+Fiji	Christian
+Finland	Christian
+France	Christian
+Gabon	Christian
+Gambia	Muslim
+Georgia	Christian
+Germany	Christian
+Ghana	Christian
+Greece	Christian
+Grenada	Christian
+Guatemala	Christian
+Guinea	Muslim
+Guinea-Bissau	Not Categorized
+Guyana	Christian
+Haiti	Christian
+Honduras	Christian
+Hungary	Christian
+Iceland	Christian
+India	Eastern religions
+Indonesia	Muslim
+Iran	Muslim
+Iraq	Muslim
+Ireland	Christian
+Israel	Not Categorized
+Italy	Christian
+Jamaica	Christian
+Japan	Eastern religions
+Jordan	Muslim
+Kazakhstan	Muslim
+Kenya	Christian
+Kiribati	Christian
+Kuwait	Muslim
+Latvia	Christian
+Lebanon	Not Categorized
+Lesotho	Christian
+Liberia	Not Categorized
+Libya	Muslim
+Lithuania	Christian
+Luxembourg	Christian
+Macedonia, FYR	Christian
+Madagascar	Not Categorized
+Malawi	Christian
+Malaysia	Muslim
+Maldives	Muslim
+Mali	Muslim
+Malta	Christian
+Mauritania	Muslim
+Mauritius	Not Categorized
+Mexico	Christian
+Micronesia, Fed. Sts.	Christian
+Moldova	Christian
+Mongolia	Not Categorized
+Montenegro	Christian
+Morocco	Muslim
+Mozambique	Christian
+Myanmar	Eastern religions
+Namibia	Christian
+Nepal	Eastern religions
+Netherlands	Christian
+New Zealand	Christian
+Nicaragua	Christian
+Niger	Muslim
+Nigeria	Not Categorized
+Norway	Christian
+Oman	Muslim
+Pakistan	Muslim
+Panama	Christian
+Papua New Guinea	Christian
+Paraguay	Christian
+Peru	Christian
+Philippines	Christian
+Poland	Christian
+Portugal	Christian
+Qatar	Muslim
+Romania	Christian
+Russia	Christian
+Rwanda	Christian
+Samoa	Christian
+Sao Tome and Principe	Christian
+Saudi Arabia	Muslim
+Senegal	Muslim
+Serbia	Christian
+Seychelles	Christian
+Sierra Leone	Not Categorized
+Singapore	Eastern religions
+Slovak Republic	Christian
+Slovenia	Christian
+Solomon Islands	Christian
+Somalia	Muslim
+South Africa	Christian
+Spain	Christian
+Sri Lanka	Eastern religions
+Sudan	Muslim
+Suriname	Christian
+Swaziland	Christian
+Sweden	Christian
+Switzerland	Christian
+Syria	Muslim
+Tajikistan	Muslim
+Tanzania	Christian
+Thailand	Eastern religions
+Timor-Leste	Christian
+Togo	Not Categorized
+Tonga	Christian
+Trinidad and Tobago	Christian
+Tunisia	Muslim
+Turkey	Muslim
+Turkmenistan	Muslim
+Uganda	Christian
+Ukraine	Christian
+United Arab Emirates	Muslim
+United Kingdom	Christian
+United States	Christian
+Uruguay	Christian
+Uzbekistan	Muslim
+Vanuatu	Christian
+Venezuela	Christian
+Vietnam	Eastern religions
+West Bank and Gaza	Muslim
+Zambia	Christian
+Zimbabwe	Christian
