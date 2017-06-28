@@ -3,12 +3,14 @@ gapminder [![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-
 
 [Gapminder](https://www.gapminder.org/) port for Phovea using the Caleydo CLUE framework for provenance tracking and story telling.
 
+![screenshot](media/screenshot.png?raw=true "Screenshot")
+
 Further resources:
 * [Vistories.org](http://vistories.org)
 * [Project Homepage](http://clue.caleydo.org/)
 * Examples using CLUE: [StratomeX](http://vistories.org/v/stratomex) and [Gapminder](http://vistories.org/v/gapminder)
 
-A [demonstration](http://gapminder.caleydoapp.org) is available in the caleydoapp.org.
+A [demonstration](https://gapminder.caleydoapp.org) is available in the caleydoapp.org.
 
 Installation
 ------------
