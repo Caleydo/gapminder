@@ -14,7 +14,11 @@ import * as ranges from 'phovea_core/src/range';
 import {Rect} from 'phovea_core/src/geom';
 import tooltipBind from 'phovea_d3/src/tooltip';
 import * as d3 from 'd3';
-import {IVisStateCategory, IVisStateApp} from 'phovea_clue/src/prov-retrieval/IVisState';
+import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
+import {
+  categoricalProperty, IProperty, numericalProperty,
+  setProperty
+} from 'phovea_clue/src/provenance_retrieval/VisStateProperty';
 
 const filteredSelectionType = 'filtered';
 
@@ -283,240 +287,70 @@ class GapMinder extends views.AView implements IVisStateApp {
 
   /* ----------------------------------------- */
 
-  getVisStateAttrs():IVisStateCategory[] {
-    const scales = {
-      text: 'Scales',
-      children: [
-        {id: 'log', text: 'log'},
-        {id: 'linear', text: 'linear'},
-        {id: 'sqrt', text: 'sqrt'},
-      ]
-    };
+  getVisStateProps():Promise<IProperty[]> {
+    const scales = categoricalProperty('Scales', [
+      'log',
+      'linear',
+      'sqrt'
+    ]);
 
-    const countries = {
-      text: 'Countries',
-      children: [
-        {id: 'Afghanistan', text: 'Afghanistan'},
-        {id: 'Albania', text: 'Albania'},
-        {id: 'Algeria', text: 'Algeria'},
-        {id: 'Angola', text: 'Angola'},
-        {id: 'Antigua and Barbuda', text: 'Antigua and Barbuda'},
-        {id: 'Argentina', text: 'Argentina'},
-        {id: 'Armenia', text: 'Armenia'},
-        {id: 'Australia', text: 'Australia'},
-        {id: 'Austria', text: 'Austria'},
-        {id: 'Azerbaijan', text: 'Azerbaijan'},
-        {id: 'Bahamas', text: 'Bahamas'},
-        {id: 'Bahrain', text: 'Bahrain'},
-        {id: 'Bangladesh', text: 'Bangladesh'},
-        {id: 'Barbados', text: 'Barbados'},
-        {id: 'Belarus', text: 'Belarus'},
-        {id: 'Belgium', text: 'Belgium'},
-        {id: 'Belize', text: 'Belize'},
-        {id: 'Benin', text: 'Benin'},
-        {id: 'Bhutan', text: 'Bhutan'},
-        {id: 'Bolivia', text: 'Bolivia'},
-        {id: 'Bosnia and Herzegovina', text: 'Bosnia and Herzegovina'},
-        {id: 'Botswana', text: 'Botswana'},
-        {id: 'Brazil', text: 'Brazil'},
-        {id: 'Brunei', text: 'Brunei'},
-        {id: 'Bulgaria', text: 'Bulgaria'},
-        {id: 'Burkina Faso', text: 'Burkina Faso'},
-        {id: 'Burundi', text: 'Burundi'},
-        {id: 'Cambodia', text: 'Cambodia'},
-        {id: 'Cameroon', text: 'Cameroon'},
-        {id: 'Canada', text: 'Canada'},
-        {id: 'Cape Verde', text: 'Cape Verde'},
-        {id: 'Chad', text: 'Chad'},
-        {id: 'Chile', text: 'Chile'},
-        {id: 'China', text: 'China'},
-        {id: 'Colombia', text: 'Colombia'},
-        {id: 'Comoros', text: 'Comoros'},
-        {id: 'Congo, Dem. Rep.', text: 'Congo, Dem. Rep.'},
-        {id: 'Congo, Rep.', text: 'Congo, Rep.'},
-        {id: 'Costa Rica', text: 'Costa Rica'},
-        {id: 'Cote d\'Ivoire', text: 'Cote d\'Ivoire'},
-        {id: 'Croatia', text: 'Croatia'},
-        {id: 'Cuba', text: 'Cuba'},
-        {id: 'Cyprus', text: 'Cyprus'},
-        {id: 'Denmark', text: 'Denmark'},
-        {id: 'Djibouti', text: 'Djibouti'},
-        {id: 'Ecuador', text: 'Ecuador'},
-        {id: 'Egypt', text: 'Egypt'},
-        {id: 'El Salvador', text: 'El Salvador'},
-        {id: 'Equatorial Guinea', text: 'Equatorial Guinea'},
-        {id: 'Eritrea', text: 'Eritrea'},
-        {id: 'Estonia', text: 'Estonia'},
-        {id: 'Ethiopia', text: 'Ethiopia'},
-        {id: 'Fiji', text: 'Fiji'},
-        {id: 'Finland', text: 'Finland'},
-        {id: 'France', text: 'France'},
-        {id: 'Gabon', text: 'Gabon'},
-        {id: 'Gambia', text: 'Gambia'},
-        {id: 'Georgia', text: 'Georgia'},
-        {id: 'Germany', text: 'Germany'},
-        {id: 'Ghana', text: 'Ghana'},
-        {id: 'Greece', text: 'Greece'},
-        {id: 'Grenada', text: 'Grenada'},
-        {id: 'Guatemala', text: 'Guatemala'},
-        {id: 'Guinea', text: 'Guinea'},
-        {id: 'Guinea-Bissau', text: 'Guinea-Bissau'},
-        {id: 'Guyana', text: 'Guyana'},
-        {id: 'Haiti', text: 'Haiti'},
-        {id: 'Honduras', text: 'Honduras'},
-        {id: 'Hungary', text: 'Hungary'},
-        {id: 'Iceland', text: 'Iceland'},
-        {id: 'India', text: 'India'},
-        {id: 'Indonesia', text: 'Indonesia'},
-        {id: 'Iran', text: 'Iran'},
-        {id: 'Iraq', text: 'Iraq'},
-        {id: 'Ireland', text: 'Ireland'},
-        {id: 'Israel', text: 'Israel'},
-        {id: 'Italy', text: 'Italy'},
-        {id: 'Jamaica', text: 'Jamaica'},
-        {id: 'Japan', text: 'Japan'},
-        {id: 'Jordan', text: 'Jordan'},
-        {id: 'Kazakhstan', text: 'Kazakhstan'},
-        {id: 'Kenya', text: 'Kenya'},
-        {id: 'Kiribati', text: 'Kiribati'},
-        {id: 'Kuwait', text: 'Kuwait'},
-        {id: 'Latvia', text: 'Latvia'},
-        {id: 'Lebanon', text: 'Lebanon'},
-        {id: 'Lesotho', text: 'Lesotho'},
-        {id: 'Liberia', text: 'Liberia'},
-        {id: 'Libya', text: 'Libya'},
-        {id: 'Lithuania', text: 'Lithuania'},
-        {id: 'Luxembourg', text: 'Luxembourg'},
-        {id: 'Macedonia, FYR', text: 'Macedonia, FYR'},
-        {id: 'Madagascar', text: 'Madagascar'},
-        {id: 'Malawi', text: 'Malawi'},
-        {id: 'Malaysia', text: 'Malaysia'},
-        {id: 'Maldives', text: 'Maldives'},
-        {id: 'Mali', text: 'Mali'},
-        {id: 'Malta', text: 'Malta'},
-        {id: 'Mauritania', text: 'Mauritania'},
-        {id: 'Mauritius', text: 'Mauritius'},
-        {id: 'Mexico', text: 'Mexico'},
-        {id: 'Micronesia, Fed. Sts.', text: 'Micronesia, Fed. Sts.'},
-        {id: 'Moldova', text: 'Moldova'},
-        {id: 'Mongolia', text: 'Mongolia'},
-        {id: 'Montenegro', text: 'Montenegro'},
-        {id: 'Morocco', text: 'Morocco'},
-        {id: 'Mozambique', text: 'Mozambique'},
-        {id: 'Myanmar', text: 'Myanmar'},
-        {id: 'Namibia', text: 'Namibia'},
-        {id: 'Nepal', text: 'Nepal'},
-        {id: 'Netherlands', text: 'Netherlands'},
-        {id: 'New Zealand', text: 'New Zealand'},
-        {id: 'Nicaragua', text: 'Nicaragua'},
-        {id: 'Niger', text: 'Niger'},
-        {id: 'Nigeria', text: 'Nigeria'},
-        {id: 'Norway', text: 'Norway'},
-        {id: 'Oman', text: 'Oman'},
-        {id: 'Pakistan', text: 'Pakistan'},
-        {id: 'Panama', text: 'Panama'},
-        {id: 'Papua New Guinea', text: 'Papua New Guinea'},
-        {id: 'Paraguay', text: 'Paraguay'},
-        {id: 'Peru', text: 'Peru'},
-        {id: 'Philippines', text: 'Philippines'},
-        {id: 'Poland', text: 'Poland'},
-        {id: 'Portugal', text: 'Portugal'},
-        {id: 'Qatar', text: 'Qatar'},
-        {id: 'Romania', text: 'Romania'},
-        {id: 'Russia', text: 'Russia'},
-        {id: 'Rwanda', text: 'Rwanda'},
-        {id: 'Samoa', text: 'Samoa'},
-        {id: 'Sao Tome and Principe', text: 'Sao Tome and Principe'},
-        {id: 'Saudi Arabia', text: 'Saudi Arabia'},
-        {id: 'Senegal', text: 'Senegal'},
-        {id: 'Serbia', text: 'Serbia'},
-        {id: 'Seychelles', text: 'Seychelles'},
-        {id: 'Sierra Leone', text: 'Sierra Leone'},
-        {id: 'Singapore', text: 'Singapore'},
-        {id: 'Slovak Republic', text: 'Slovak Republic'},
-        {id: 'Slovenia', text: 'Slovenia'},
-        {id: 'Solomon Islands', text: 'Solomon Islands'},
-        {id: 'Somalia', text: 'Somalia'},
-        {id: 'South Africa', text: 'South Africa'},
-        {id: 'Spain', text: 'Spain'},
-        {id: 'Sri Lanka', text: 'Sri Lanka'},
-        {id: 'Sudan', text: 'Sudan'},
-        {id: 'Suriname', text: 'Suriname'},
-        {id: 'Swaziland', text: 'Swaziland'},
-        {id: 'Sweden', text: 'Sweden'},
-        {id: 'Switzerland', text: 'Switzerland'},
-        {id: 'Syria', text: 'Syria'},
-        {id: 'Tajikistan', text: 'Tajikistan'},
-        {id: 'Tanzania', text: 'Tanzania'},
-        {id: 'Thailand', text: 'Thailand'},
-        {id: 'Timor-Leste', text: 'Timor-Leste'},
-        {id: 'Togo', text: 'Togo'},
-        {id: 'Tonga', text: 'Tonga'},
-        {id: 'Trinidad and Tobago', text: 'Trinidad and Tobago'},
-        {id: 'Tunisia', text: 'Tunisia'},
-        {id: 'Turkey', text: 'Turkey'},
-        {id: 'Turkmenistan', text: 'Turkmenistan'},
-        {id: 'Uganda', text: 'Uganda'},
-        {id: 'Ukraine', text: 'Ukraine'},
-        {id: 'United Arab Emirates', text: 'United Arab Emirates'},
-        {id: 'United Kingdom', text: 'United Kingdom'},
-        {id: 'United States', text: 'United States'},
-        {id: 'Uruguay', text: 'Uruguay'},
-        {id: 'Uzbekistan', text: 'Uzbekistan'},
-        {id: 'Vanuatu', text: 'Vanuatu'},
-        {id: 'Venezuela', text: 'Venezuela'},
-        {id: 'Vietnam', text: 'Vietnam'},
-        {id: 'West Bank and Gaza', text: 'West Bank and Gaza'},
-        {id: 'Zambia', text: 'Zambia'},
-        {id: 'Zimbabwe', text: 'Zimbabwe'},
-      ]
-    };
+    const attributes = categoricalProperty('Attributes', [
+      'GDP',
+      'Population',
+      'Child Mortality',
+      'Children per woman',
+      'Life Expectancy'
+    ]);
 
-    const attributes = {
-      text: 'Attributes',
-      children: [
-        {id: 'GDP', text: 'GDP'},
-        {id: 'Population', text: 'Population'},
-        {id: 'Child Mortality', text: 'Child Mortality'},
-        {id: 'Children per woman', text: 'Children per woman'},
-        {id: 'Life Expectancy', text: 'Life Expectancy'},
-      ]
-    };
+    const dataStatistics = categoricalProperty('Data Statistics', [
+      {id: 'spearmans_correlation', text: 'Spearman\'s Correlation'},
+      {id: 'binomial_distribution', text: 'Binomial Distribution'},
+      {id: 'normal_distribution', text: 'Normal Distribution'},
+      {id: 'uniform_distribution', text: 'Uniform Distribution'},
+      {id: 'lognormal_distribution', text: 'Lognormal Distribution'},
+      {id: 'exponential_distribution', text: 'Exponential Distribution'},
+    ]);
 
-    const dataStatistics = {
-      text: 'Data Statistics',
-      children: [
-        {id: 'spearmans_orrelation', text: 'Spearman\'s Correlation'},
-        {id: 'binomial_distribution', text: 'Binomial Distribution'},
-        {id: 'normal_distribution', text: 'Normal Distribution'},
-        {id: 'uniform_distribution', text: 'Uniform Distribution'},
-        {id: 'lognormal_distribution', text: 'Lognormal Distribution'},
-        {id: 'exponential_distribution', text: 'Exponential Distribution'},
-      ]
-    };
+    const scatterplotStatistics = numericalProperty('Scatterplot Statistics', [
+      'outlying',
+      'skewed',
+      'clumpy',
+      'sparse',
+      'striated',
+      'convex',
+      'skinny',
+      'stringy',
+      'monotonic'
+    ]);
 
-    const scatterplotStatistics = {
-      text: 'Scatterplot Statistics',
-      children: [
-        {id: 'outlying', text: 'outlying = <i>&lt;number&gt;</i>', param: true},
-        {id: 'skewed', text: 'skewed = <i>&lt;number&gt;</i>', param: true},
-        {id: 'clumpy', text: 'clumpy = <i>&lt;number&gt;</i>', param: true},
-        {id: 'sparse', text: 'sparse = <i>&lt;number&gt;</i>', param: true},
-        {id: 'striated', text: 'striated = <i>&lt;number&gt;</i>', param: true},
-        {id: 'convex', text: 'convex = <i>&lt;number&gt;</i>', param: true},
-        {id: 'skinny', text: 'skinny = <i>&lt;number&gt;</i>', param: true},
-        {id: 'stringy', text: 'stringy = <i>&lt;number&gt;</i>', param: true},
-        {id: 'monotonic', text: 'monotonic = <i>&lt;number&gt;</i>', param: true},
-      ]
-    };
+    // wait for async property values
+    return new Promise((resolve, reject) => {
+      const onReady = () => {
+        this.off('ready', onReady); // unregister to execute only once
 
-    return [
-      attributes,
-      countries,
-      dataStatistics,
-      scatterplotStatistics,
-      scales,
-    ];
+        // convert countries
+        const countries = setProperty('Selected Countries', this.items.map((d) => {
+          return {id: d.id, text: d.name};
+        }));
+
+        // convert years to categorical prop, since the year should be an exact match
+        const years = categoricalProperty('Selected Year', this.timeIds.ids.map((id, i) => {
+          return {id: `${this.timeIds.idtype.id}:${id}`, text: this.timeIds.names[i]};
+        }));
+
+        const properties = [
+          attributes,
+          scales,
+          countries,
+          years,
+          //dataStatistics,
+          scatterplotStatistics,
+        ];
+
+        resolve(properties);
+      };
+      this.on('ready', onReady.bind(this));
+    });
   }
 
   getCurrVisState():string[] {
