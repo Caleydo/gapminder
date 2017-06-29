@@ -18,7 +18,7 @@ import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
 import {
   categoricalProperty, createPropertyValue, IProperty, IPropertyValue, numericalProperty, PropertyType,
   setProperty
-} from 'phovea_clue/src/provenance_retrieval/VisStateProperty';
+} from 'phovea_core/src/provenance/retrieval/VisStateProperty';
 
 const filteredSelectionType = 'filtered';
 
