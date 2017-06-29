@@ -16,7 +16,7 @@ import tooltipBind from 'phovea_d3/src/tooltip';
 import * as d3 from 'd3';
 import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
 import {
-  categoricalProperty, IProperty, numericalProperty,
+  categoricalProperty, createPropertyValue, IProperty, IPropertyValue, numericalProperty, PropertyType,
   setProperty
 } from 'phovea_clue/src/provenance_retrieval/VisStateProperty';
 
@@ -287,6 +287,18 @@ class GapMinder extends views.AView implements IVisStateApp {
 
   /* ----------------------------------------- */
 
+  private scatterplotStatistics = [
+    'outlying',
+    'skewed',
+    'clumpy',
+    'sparse',
+    'striated',
+    'convex',
+    'skinny',
+    'stringy',
+    'monotonic'
+  ];
+
   getVisStateProps():Promise<IProperty[]> {
     const scales = categoricalProperty('Scales', [
       'log',
@@ -311,17 +323,7 @@ class GapMinder extends views.AView implements IVisStateApp {
       {id: 'exponential_distribution', text: 'Exponential Distribution'},
     ]);
 
-    const scatterplotStatistics = numericalProperty('Scatterplot Statistics', [
-      'outlying',
-      'skewed',
-      'clumpy',
-      'sparse',
-      'striated',
-      'convex',
-      'skinny',
-      'stringy',
-      'monotonic'
-    ]);
+    const scatterplotStatistics = numericalProperty('Scatterplot Statistics', this.scatterplotStatistics);
 
     // wait for async property values
     return new Promise((resolve, reject) => {
@@ -353,20 +355,42 @@ class GapMinder extends views.AView implements IVisStateApp {
     });
   }
 
-  getCurrVisState():string[] {
-    const attrs = [
-      this.attrs.x.label,
-      this.attrs.x.scale,
-      this.attrs.y.label,
-      this.attrs.y.scale,
-      this.attrs.size.label,
-      this.attrs.size.scale
+  getCurrVisState():IPropertyValue[] {
+    const attrs:IPropertyValue[] = [
+      createPropertyValue(PropertyType.CATEGORICAL, this.attrs.x.label),
+      createPropertyValue(PropertyType.CATEGORICAL, this.attrs.x.scale),
+      createPropertyValue(PropertyType.CATEGORICAL, this.attrs.y.label),
+      createPropertyValue(PropertyType.CATEGORICAL, this.attrs.y.scale),
+      createPropertyValue(PropertyType.CATEGORICAL, this.attrs.size.label),
+      createPropertyValue(PropertyType.CATEGORICAL, this.attrs.size.scale),
+      ...this.scatterplotStatistics.map((d) => {
+        return createPropertyValue(PropertyType.NUMERICAL, {
+          text: d,
+          payload: {
+            numVal: Math.random()
+          }
+        });
+      })
     ];
 
     if(this.attrs.x.data) {
-      const selection = this.attrs.x.data.rowtype.selections().dim(0).toString();
-      const year = this.attrs.x.data.coltype.selections().dim(0).toString();
-      attrs.push(selection, year);
+      const selectionIdType = this.attrs.x.data.rowtype;
+      const selections = selectionIdType.selections().dim(0).asList().map((id) => {
+        return createPropertyValue(PropertyType.SET, {
+          id,
+          text: this.items[id].name
+        });
+      });
+
+      const yearIdType = this.attrs.x.data.coltype;
+      const yearId = yearIdType.selections().dim(0).asList()[0]; // only 1 year can be selected
+      const yearName = this.timeIds.names[this.timeIds.ids.indexOf(yearId)];
+      const year = createPropertyValue(PropertyType.CATEGORICAL, {
+        id: `${yearIdType.id}:${yearId}`,
+        text: yearName
+      });
+
+      attrs.push(year, ...selections);
     }
 
     return attrs;
