@@ -365,7 +365,7 @@ class GapMinder extends views.AView implements IVisStateApp {
       createPropertyValue(PropertyType.CATEGORICAL, this.attrs.size.scale),
       ...this.scatterplotStatistics.map((d) => {
         return createPropertyValue(PropertyType.NUMERICAL, {
-          text: d,
+          id: d,
           payload: {
             numVal: Math.random()
           }
