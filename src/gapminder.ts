@@ -378,7 +378,7 @@ class GapMinder extends views.AView implements IVisStateApp {
       const selections = selectionIdType.selections().dim(0).asList().map((id) => {
         return createPropertyValue(PropertyType.SET, {
           id,
-          text: this.items[id].name
+          text: this.items.find((d) => d.id === id).name
         });
       });
 
