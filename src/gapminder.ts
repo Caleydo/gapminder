@@ -323,7 +323,7 @@ class GapMinder extends views.AView implements IVisStateApp {
       {id: 'exponential_distribution', text: 'Exponential Distribution'},
     ]);
 
-    const scatterplotStatistics = numericalProperty('Scatterplot Statistics', this.scatterplotStatistics);
+    const scatterplotStatistics = numericalProperty('Scatterplot Statistics', this.scatterplotStatistics, true);
 
     // wait for async property values
     return new Promise((resolve, reject) => {
@@ -335,9 +335,8 @@ class GapMinder extends views.AView implements IVisStateApp {
           return {id: d.id, text: d.name};
         }));
 
-        // convert years to categorical prop, since the year should be an exact match
-        const years = categoricalProperty('Selected Year', this.timeIds.ids.map((id, i) => {
-          return {id: `${this.timeIds.idtype.id}:${id}`, text: this.timeIds.names[i]};
+        const years = numericalProperty('Selected Year', this.timeIds.ids.map((id, i) => {
+          return {id: this.timeIds.idtype.id, text: this.timeIds.names[i], payload: {numVal: this.timeIds.names[i]}};
         }));
 
         const properties = [
@@ -385,9 +384,12 @@ class GapMinder extends views.AView implements IVisStateApp {
       const yearIdType = this.attrs.x.data.coltype;
       const yearId = yearIdType.selections().dim(0).asList()[0]; // only 1 year can be selected
       const yearName = this.timeIds.names[this.timeIds.ids.indexOf(yearId)];
-      const year = createPropertyValue(PropertyType.CATEGORICAL, {
-        id: `${yearIdType.id}:${yearId}`,
-        text: yearName
+      const year = createPropertyValue(PropertyType.NUMERICAL, {
+        id: yearIdType.id,
+        text: yearName,
+        payload: {
+          numVal: yearName
+        }
       });
 
       attrs.push(year, ...selections);
