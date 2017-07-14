@@ -26,7 +26,7 @@ const elems = template.create(document.body, {
   id: 'clue_gapminder',
   recordSelectionTypes: 'selected,filtered',
   animatedSelections: true,
-  thumbnails: false
+  thumbnails: true
 });
 
 {
