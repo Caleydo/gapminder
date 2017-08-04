@@ -387,7 +387,7 @@ class GapMinder extends views.AView implements IVisStateApp {
       const yearId = yearIdType.selections().dim(0).asList()[0]; // only 1 year can be selected
       const yearName = this.timeIds.names[this.timeIds.ids.indexOf(yearId)];
       const year = createPropertyValue(PropertyType.NUMERICAL, {
-        id: yearIdType.id,
+        id: `${yearIdType.id} ${TAG_VALUE_SEPARATOR} ${yearId}`,
         text: yearName,
         payload: {
           numVal: yearName
