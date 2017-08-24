@@ -354,7 +354,7 @@ class GapMinder extends views.AView implements IVisStateApp {
     });
   }
 
-  getCurrVisState():IPropertyValue[] {
+  getCurrVisState(): Promise<IPropertyValue[]> {
     const attrs:IPropertyValue[] = [
       createPropertyValue(PropertyType.CATEGORICAL, this.attrs.x.label),
       createPropertyValue(PropertyType.CATEGORICAL, this.attrs.x.scale),
@@ -397,7 +397,7 @@ class GapMinder extends views.AView implements IVisStateApp {
       attrs.push(year, ...selections);
     }
 
-    return attrs;
+    return Promise.resolve(attrs);
   }
 
   /* ----------------------------------------- */
