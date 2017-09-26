@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "phovea_d3": {
+      "from": "github:phovea/phovea_d3#develop",
+      "dependencies": {
+        "phovea_core": {
+          "from": "github:phovea/phovea_core#thinkh/provenance_retrieval"
+        }
+      }
+    },
+    "phovea_ui": {
+      "from": "github:phovea/phovea_ui#develop",
+      "dependencies": {
+        "phovea_core": {
+          "from": "github:phovea/phovea_core#thinkh/provenance_retrieval"
+        }
+      }
+    },
+    "phovea_vis": {
+      "from": "github:phovea/phovea_vis#develop",
+      "dependencies": {
+        "phovea_core": {
+          "from": "github:phovea/phovea_core#thinkh/provenance_retrieval"
+        }
+      }
+    }
+  }
+}
