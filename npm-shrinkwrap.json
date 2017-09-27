@@ -42,6 +42,14 @@
       "dependencies": {
         "phovea_core": {
           "from": "github:phovea/phovea_core#thinkh/provenance_retrieval"
+        },
+        "phovea_d3": {
+          "from": "github:phovea/phovea_d3#develop",
+          "dependencies": {
+            "phovea_core": {
+              "from": "github:phovea/phovea_core#thinkh/provenance_retrieval"
+            }
+          }
         }
       }
     }
