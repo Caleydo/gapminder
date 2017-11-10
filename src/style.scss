@@ -250,4 +250,11 @@ body {
       }
     }
   }
+
+  // shift number a bit down, due to different font-family
+  .provenance-retrieval-panel .seq-length > span {
+    top: 2px;
+  }
 }
+
+
