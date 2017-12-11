@@ -16,6 +16,7 @@ import * as C from 'phovea_core/src/index';
 import * as template from 'phovea_clue/src/template';
 import * as cmode from 'phovea_clue/src/mode';
 import * as gapminder from './gapminder';
+import {ClueSidePanelEvents} from 'phovea_clue/src/template';
 
 //scoping let --> function level scope in js vs java global, local
 const helper = document.querySelector('div.gapminder');
@@ -56,6 +57,10 @@ elems.graph.then((graph) => {
     app.setInteractive(newMode.exploration >= 0.8);
     //for the animations to end
     setTimeout(updateBounds, 300);
+  });
+
+  elems.on(ClueSidePanelEvents.TOGGLE, () => {
+    updateBounds();
   });
 
   window.addEventListener('resize', updateBounds);
