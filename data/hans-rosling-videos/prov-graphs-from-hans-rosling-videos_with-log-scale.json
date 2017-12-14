@@ -6882,7 +6882,7 @@
 					"category": "selection",
 					"timestamp": 1493888777249,
 					"operation": "update",
-					"name": "Selected United States (2 Countries)",
+					"name": "Selected Vietnam (2 Countries)",
 					"user": "anonymous"
 				},
 				"f_id": "select",
@@ -6899,7 +6899,7 @@
 		},
 		{
 			"attrs": {
-				"name": "Selected United States (2 Countries)",
+				"name": "Selected Vietnam (2 Countries)",
 				"description": "",
 				"visState": "[{\"type\":1,\"id\":\"Children per woman\"},{\"type\":1,\"id\":\"log\"},{\"type\":1,\"id\":\"Life Expectancy\"},{\"type\":1,\"id\":\"linear\"},{\"type\":1,\"id\":\"Population\"},{\"type\":1,\"id\":\"sqrt\"},{\"type\":0,\"id\":\"outlying\",\"text\":\"outlying = 0.02\",\"payload\":{\"numVal\":0.024558383155015573}},{\"type\":0,\"id\":\"skewed\",\"text\":\"skewed = 0.02\",\"payload\":{\"numVal\":0.016817483430954683}},{\"type\":0,\"id\":\"clumpy\",\"text\":\"clumpy = 0.87\",\"payload\":{\"numVal\":0.8736987555498963}},{\"type\":0,\"id\":\"sparse\",\"text\":\"sparse = 0.96\",\"payload\":{\"numVal\":0.9627757221905717}},{\"type\":0,\"id\":\"striated\",\"text\":\"striated = 0.8\",\"payload\":{\"numVal\":0.7998815434390723}},{\"type\":0,\"id\":\"convex\",\"text\":\"convex = 0.8\",\"payload\":{\"numVal\":0.8009414260492529}},{\"type\":0,\"id\":\"skinny\",\"text\":\"skinny = 0.67\",\"payload\":{\"numVal\":0.6740384633544756}},{\"type\":0,\"id\":\"stringy\",\"text\":\"stringy = 0.42\",\"payload\":{\"numVal\":0.42467708342695754}},{\"type\":0,\"id\":\"monotonic\",\"text\":\"monotonic = 0.66\",\"payload\":{\"numVal\":0.6573948677875667}},{\"type\":0,\"id\":\"Year = 164\",\"text\":\"1964\",\"payload\":{\"numVal\":\"1964\"}},{\"type\":2,\"id\":\"164\",\"text\":\"United States\"},{\"type\":2,\"id\":\"169\",\"text\":\"Vietnam\"}]"
 			},
