@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM nginx:stable-alpine
 
 MAINTAINER Samuel Gratzl <samuel.gratzl@datavisyn.io>
 
