@@ -66,11 +66,11 @@
     "tslib": "1.5.0"
   },
   "dependencies": {
-    "phovea_core": "^2.0.0",
-    "phovea_vis": "^2.0.0",
-    "phovea_d3": "^2.0.0",
-    "phovea_ui": "^2.0.0",
-    "phovea_clue": "^2.0.0"
+    "phovea_core": "~2.0.0",
+    "phovea_vis": "~2.0.0",
+    "phovea_d3": "~2.0.0",
+    "phovea_ui": "~2.0.0",
+    "phovea_clue": "~2.0.0"
   },
   "name": "gapminder",
   "description": "",
