@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/phovea
     docker:
-      - image: circleci/node:12-browsers
+      - image: circleci/node:12.13-buster-browsers
     steps:
       - checkout
       - run:
@@ -35,6 +35,7 @@ jobs:
           command: npm run dist
       - store_artifacts:
           path: dist
+          destination: dist
 workflows:
   version: 2
 #  build-nightly:
