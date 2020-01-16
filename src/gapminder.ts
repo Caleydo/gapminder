@@ -655,7 +655,7 @@ class GapMinder extends views.AView {
   private onYearSelect(event:any, type:string, act:ranges.Range) {
     const id = act.first;
     if (id !== null && this.timeIds) {
-      let $slider : any = this.$node.select('svg.timeline .slider');
+      let $slider: any = this.$node.select('svg.timeline .slider');
       const selectedTimePoint = this.timeIds.ts[this.timeIds.ids.indexOf(id)];
       const x = this.timelinescale(selectedTimePoint);
 
@@ -691,7 +691,7 @@ class GapMinder extends views.AView {
       //hack from computeScale
       const x0 = 80;
       const y0 = this.dim[1] - 25;
-      let l : any = this.$node.select('polyline.hover_line');
+      let l: any = this.$node.select('polyline.hover_line');
       if (animate) {
         l = l.interrupt().transition()
         .duration(this.animationDuration());
@@ -706,7 +706,7 @@ class GapMinder extends views.AView {
   private updateSelectionLines(ids:number[], animate = false) {
     const $lines = this.$node.select('g.select_lines').selectAll('polyline').data(ids, String);
     $lines.enter().append('polyline').attr('class', 'select_line');
-    let l : any = $lines;
+    let l: any = $lines;
     if (animate) {
       l = l.interrupt().transition()
         .duration(this.animationDuration());

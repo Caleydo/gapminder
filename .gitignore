@@ -8,3 +8,5 @@ node_modules/
 *.map
 *.css
 *.log
+/.cache-loader
+package-lock.json
