@@ -48,7 +48,9 @@
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
     "predist": "npm run build && npm run docs",
-    "docker": "docker build -t gapminder -f deploy/Dockerfile ."
+    "dist": "mkdirp dist && cd build && tar cvzf ../dist/gapminder.tar.gz *",
+    "docker": "docker build -t gapminder -f deploy/Dockerfile .",
+    "predocker": "npm run build"
   },
   "devDependencies": {
     "@types/jest": "23.3.13",
