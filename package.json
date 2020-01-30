@@ -88,7 +88,7 @@
     "ts-loader": "4.0.1"
   },
   "dependencies": {
-    "phovea_vis": "github:phovea/phovea_vis#develop",
-    "phovea_clue": "github:phovea/phovea_clue#develop"
+    "phovea_vis": "github:phovea/phovea_vis#stoiber/testing_with_jest",
+    "phovea_clue": "github:phovea/phovea_clue#stoiber/testing_with_jest"
   }
 }
