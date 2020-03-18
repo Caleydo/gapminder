@@ -1,7 +1,7 @@
 {
   "name": "gapminder",
   "description": "",
-  "version": "3.0.0",
+  "version": "3.0.1-SNAPSHOT",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
@@ -87,7 +87,7 @@
     "ts-loader": "4.0.1"
   },
   "dependencies": {
-    "phovea_vis": "^4.0.0",
-    "phovea_clue": "^5.0.0"
+    "phovea_vis": "github:phovea/phovea_vis#develop",
+    "phovea_clue": "github:phovea/phovea_clue#develop"
   }
 }
