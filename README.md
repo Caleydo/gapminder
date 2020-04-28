@@ -47,7 +47,7 @@ This repository is part of **[Phovea](http://phovea.caleydo.org/)**, a platform 
 [phovea-url]: https://phovea.caleydo.org
 [npm-image]: https://badge.fury.io/js/gapminder.svg
 [npm-url]: https://npmjs.org/package/gapminder
-[travis-image]: https://travis-ci.org/caleydo/gapminder.svg?branch=master
-[travis-url]: https://travis-ci.org/caleydo/gapminder
+[circleci-image]: https://circleci.com/gh/Caleydo/gapminder.svg?style=shield
+[circleci-url]: https://circleci.com/gh/Caleydo/gapminder
 [daviddm-image]: https://david-dm.org/caleydo/gapminder/status.svg
 [daviddm-url]: https://david-dm.org/caleydo/gapminder
