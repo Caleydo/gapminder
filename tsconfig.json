@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "module": "es6",
-    "target": "es5",
+    "module": "ES2020",
+    "target": "ES2019",
     "importHelpers": true,
     "sourceMap": true,
     "moduleResolution": "node",
@@ -14,7 +14,6 @@
       "es2016.array.include",
       "es2017.object"
     ],
-    "baseUrl": "../",
     "noImplicitAny": false,
     "skipLibCheck": true,
     "esModuleInterop": false,
