@@ -6,28 +6,28 @@
 
 //register all extensions in the registry following the given pattern
 module.exports = function(registry) {
-  //registry.push('extension-type', 'extension-id', function() { return System.import('./src/extension_impl'); }, {});
+  //registry.push('extension-type', 'extension-id', function() { return import('./src/extension_impl'); }, {});
   // generator-phovea:begin
-  registry.push('view', 'gapminder', function() { return System.import('./src/gapminder'); }, {
+  registry.push('view', 'gapminder', function() { return import('./src/gapminder'); }, {
   'location': 'gapminder'
  });
 
-  registry.push('actionFactory', 'gapminder', function() { return System.import('./src/gapminder'); }, {
+  registry.push('actionFactory', 'gapminder', function() { return import('./src/gapminder'); }, {
   'factory': 'createCmd',
   'creates': '(setGapMinderAttribute|setGapMinderAttributeScale|toggleGapMinderTrails)'
  });
 
-  registry.push('actionCompressor', 'gapminder-setGapMinderAttribute', function() { return System.import('./src/gapminder'); }, {
+  registry.push('actionCompressor', 'gapminder-setGapMinderAttribute', function() { return import('./src/gapminder'); }, {
   'factory': 'compressSetAttribute',
   'matches': 'setGapMinderAttribute'
  });
 
-  registry.push('actionCompressor', 'gapminder-setGapMinderAttribute', function() { return System.import('./src/gapminder'); }, {
+  registry.push('actionCompressor', 'gapminder-setGapMinderAttribute', function() { return import('./src/gapminder'); }, {
   'factory': 'compressToggleGapMinderTrails',
   'matches': 'toggleGapMinderTrails'
  });
 
-  registry.push('actionCompressor', 'gapminder-setGapMinderAttributeScale', function() { return System.import('./src/gapminder'); }, {
+  registry.push('actionCompressor', 'gapminder-setGapMinderAttributeScale', function() { return import('./src/gapminder'); }, {
   'factory': 'compressSetAttributeScale',
   'matches': 'setGapMinderAttributeScale'
  });
