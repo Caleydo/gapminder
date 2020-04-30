@@ -2,17 +2,17 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-import * as C from 'phovea_core/src/index';
-import * as datas from 'phovea_core/src/data';
-import * as datatypes from 'phovea_core/src/datatype';
-import * as matrix from 'phovea_core/src/matrix';
-import * as stratification from 'phovea_core/src/stratification';
-import * as prov from 'phovea_core/src/provenance';
-import * as idtypes from 'phovea_core/src/idtype';
-import * as views from 'phovea_core/src/layout_view';
-import * as ranges from 'phovea_core/src/range';
-import {Rect} from 'phovea_core/src/geom';
-import tooltipBind from 'phovea_d3/src/tooltip';
+import * as C from 'phovea_core/dist/index';
+import * as datas from 'phovea_core/dist/data';
+import * as datatypes from 'phovea_core/dist/datatype';
+import * as matrix from 'phovea_core/dist/matrix';
+import * as stratification from 'phovea_core/dist/stratification';
+import * as prov from 'phovea_core/dist/provenance';
+import * as idtypes from 'phovea_core/dist/idtype';
+import * as views from 'phovea_core/dist/layout_view';
+import * as ranges from 'phovea_core/dist/range';
+import {Rect} from 'phovea_core/dist/geom';
+import tooltipBind from 'phovea_d3/dist/tooltip';
 import * as d3 from 'd3';
 
 const filteredSelectionType = 'filtered';

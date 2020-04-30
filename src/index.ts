@@ -12,11 +12,11 @@ import 'phovea_ui/src/_font-awesome';
 import './style.scss';
 
 
-import * as C from 'phovea_core/src/index';
-import * as template from 'phovea_clue/src/template';
-import * as cmode from 'phovea_clue/src/mode';
+import * as C from 'phovea_core/dist/index';
+import * as template from 'phovea_clue/dist/template';
+import * as cmode from 'phovea_clue/dist/mode';
 import * as gapminder from './gapminder';
-import {initI18n} from 'phovea_core/src/i18n';
+import {initI18n} from 'phovea_core/dist/i18n';
 
 //scoping let --> function level scope in js vs java global, local
 const helper = document.querySelector('div.gapminder');
