@@ -76,6 +76,7 @@
     "node-sass": "^4.13.1",
     "null-loader": "^3.0.0",
     "raw-loader": "^4.0.0",
+    "resolve-url-loader": "^3.1.1",
     "rimraf": "^3.0.0",
     "sass-loader": "^8.0.2",
     "style-loader": "^0.23.1",
@@ -95,5 +96,10 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "@types/marked": "^0.7.2",
+    "jquery": "^3.4.1",
+    "marked": "^0.7.0",
+    "phovea_clue": "^5.0.1-SNAPSHOT",
+    "phovea_vis": "^4.0.1-SNAPSHOT"
   }
 }
