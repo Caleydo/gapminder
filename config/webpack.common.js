@@ -122,6 +122,16 @@ const config = {
         }
       },
       { test: /\.(ttf|eot)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader' },
+      {
+        test: require.resolve('jquery'),
+        use: [{
+            loader: 'expose-loader',
+            options: 'jQuery'
+        },{
+            loader: 'expose-loader',
+            options: '$'
+        }]
+      }
       // { test: /bootstrap-sass\/assets\/javascripts\//, loader: 'imports?jQuery=jquery' },
     ],
   },
