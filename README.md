@@ -1,6 +1,6 @@
 gapminder 
 =====================
-[![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![Build Status][circleci-image]][circleci-url]
+[![Phovea][phovea-image]][phovea-url] [![Build Status][circleci-image]][circleci-url]
  
  
 [Gapminder](https://www.gapminder.org/) port for Phovea using the Caleydo CLUE framework for provenance tracking and story telling.
@@ -49,8 +49,6 @@ This repository is part of **[Phovea](http://phovea.caleydo.org/)**, a platform 
 
 [phovea-image]: https://img.shields.io/badge/Phovea-Application-1BA64E.svg
 [phovea-url]: https://phovea.caleydo.org
-[npm-image]: https://badge.fury.io/js/gapminder.svg
-[npm-url]: https://npmjs.org/package/gapminder
 [circleci-image]: https://circleci.com/gh/Caleydo/gapminder.svg?style=shield
 [circleci-url]: https://circleci.com/gh/Caleydo/gapminder
 
