@@ -1,3 +1,3 @@
-import { GapMinderApp } from './GapMinderApp';
+import { GapMinderApp } from './initialize/GapMinderApp';
 const app = new GapMinderApp();
 //# sourceMappingURL=initialize.js.map

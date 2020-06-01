@@ -5,7 +5,7 @@
 import 'file-loader?name=index.html!extract-loader!html-loader!../index.html';
 import 'file-loader?name=404.html!../404.html';
 import 'file-loader?name=robots.txt!../robots.txt';
-import 'bootstrap-sass/assets/stylesheets/_bootstrap.scss';
+import 'phovea_ui/dist/webpack/_bootstrap';
 import 'phovea_ui/dist/webpack/_font-awesome';
 import '../scss/main.scss';
 import { CLUEWrapper, ModeWrapper } from 'phovea_clue';
@@ -40,7 +40,7 @@ export class GapMinderApp {
                 //d3.select(elems.header.options).append('label').html(`<input type="checkbox">Show Trails`).select('input').on('change', function () {
                 //    app.showTrails(this.checked);
                 //  });
-                elems.on('modeChanged', function (event, newMode) {
+                EventHandler.getInstance().on('modeChanged', function (event, newMode) {
                     app.setInteractive(newMode.exploration >= 0.8);
                     //for the animations to end
                     setTimeout(updateBounds, 300);

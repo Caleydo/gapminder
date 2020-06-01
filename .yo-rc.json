@@ -74,7 +74,7 @@
     },
     "app": "gapminder",
     "entries": {
-      "app": "./src/index.ts"
+      "app": "./gapminder/dist/initialize.js"
     },
     "libraryAliases": {
       "d3": "d3/d3"

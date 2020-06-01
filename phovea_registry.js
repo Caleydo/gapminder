@@ -4,7 +4,7 @@
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
 
-import {register} from 'phovea_core/dist/plugin';
+import {PluginRegistry} from 'phovea_core';
 
 /**
  * build a registry by registering all phovea modules
@@ -16,4 +16,4 @@ import 'phovea_vis/phovea_registry.js';
 import 'phovea_ui/phovea_registry.js';
 import 'phovea_clue/phovea_registry.js';
 //self
-register('gapminder',require('./phovea.js'));
+PluginRegistry.getInstance().register('gapminder',require('./phovea.js'));

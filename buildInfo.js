@@ -34,7 +34,7 @@ function gitHead(cwd) {
 }
 
 function resolveModules() {
-  const reg = fs.readFileSync('../phovea_registry.js').toString();
+  const reg = fs.readFileSync('./phovea_registry.js').toString();
   const regex = /^import '(.*)\/phovea_registry.js'/gm;
   const modules = [];
   let r;

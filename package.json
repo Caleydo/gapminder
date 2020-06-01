@@ -102,7 +102,9 @@
     "jquery": "^3.4.1",
     "marked": "^0.7.0",
     "phovea_vis": "github:phovea/phovea_vis#vstoiber/refactoring",
-    "phovea_clue": "github:phovea/phovea_ui#vstoiber/refactoring",
-    "phovea_core": "github:phovea/phovea_core#asteiner/refactoring"
+    "phovea_clue": "file:../phovea_clue",
+    "phovea_core": "github:phovea/phovea_core#asteiner/refactoring",
+    "phovea_d3": "github:phovea/phovea_d3#vstoiber/refactoring",
+    "phovea_ui": "github:phovea/phovea_ui#vstoiber/refactoring"
   }
 }
