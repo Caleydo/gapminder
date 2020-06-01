@@ -44,7 +44,7 @@ function injectRegistry(entry) {
 const config = {
   entry: injectRegistry(entries),
   resolve: {
-    extensions: ['.ts', '.tsx', '.js'],
+    extensions: ['.js'],
   },
   devServer: {
     contentBase: resolve(__dirname, './../bundles/'),

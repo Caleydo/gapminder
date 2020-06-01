@@ -30,49 +30,6 @@ const config = {
     libraryTarget: 'umd',
     umdNamedDefine: false
   },
-  optimization: {
-    splitChunks: {
-      automaticNameDelimiter: '~',
-      maxInitialRequests: Infinity,
-      minSize: 0,
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]((?!(phovea_.*|tdp_.*)).*)[\\/]/,
-          chunks: 'all',
-          name(module) {
-            const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
-            return `vendor.${packageName.replace('@', '')}`;
-          },
-        },
-        phovea: {
-          test: /[\\/]node_modules[\\/]((phovea_.*).*)[\\/]/,
-          chunks: 'all',
-          name(module) {
-            const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
-            return `phovea.${packageName.replace('@', '')}`;
-          },
-        },
-        tdp: {
-          test: /[\\/]node_modules[\\/]((tdp_.*).*)[\\/]/,
-          chunks: 'all',
-          name(module) {
-            const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
-            return `tdp.${packageName.replace('@', '')}`;
-          },
-        },
-      }
-    },
-    // minimizer: [
-    //   (compiler) => {
-    //     const TerserPlugin = require('terser-webpack-plugin');
-    //     new TerserPlugin({
-    //         cache: true,
-    //         parallel: true,
-    //         sourceMap: true
-    //     }).apply(compiler);
-    //   }
-    // ],
-  },
   module: {
     rules: [
       {
@@ -102,9 +59,8 @@ const config = {
       filename: 'index.html',
       title: libName,
       template: 'index.template.ejs',
+      path:  path.resolve(__dirname, './../' + libName),
       inject: true,
-      chunksSortMode: 'manual',
-      chunks: ['vendor', 'phovea', 'app'],
       minify: {
         removeComments: true,
         collapseWhitespace: true

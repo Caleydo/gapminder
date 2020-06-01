@@ -17,12 +17,12 @@
     "url": "https://github.com/caleydo/gapminder.git"
   },
   "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "src",
-    "index.js",
-    "phovea.js",
     "phovea_registry.js",
-    "build"
+    "dist"
   ],
   "engines": {
     "npm": ">= 6.12",
@@ -39,9 +39,11 @@
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "posttest": "npm run lint",
-    "build:dev": "webpack --mode development --config config/webpack.dev.js",
-    "build": "webpack --mode production --config config/webpack.prod.js",
-    "bundle-report": "webpack-bundle-analyzer --port 4200 bundles/stats.json",
+    "build:dev": "tsc",
+    "build": "npm run clean && npm run compile && npm run copy-assets && npm run copy-styles",
+    "copy-assets": "if [ -d src/assets ]; then cp -rv src/assets/ dist/assets/; fi",
+    "copy-styles": "cd src && find . -name '*.scss' -exec cp --parents '{}' ./../dist/ ';'",
+    "copy-app-assets": "cd src && cp -prv *.{txt,html} ./../dist/",
     "start:dev": "webpack-dev-server --inline --config config/webpack.dev.js",
     "start": "webpack-dev-server --config config/webpack.prod.js",
     "start:hot": "webpack-dev-server --inline --hot",
@@ -99,7 +101,8 @@
     "@types/marked": "^0.7.2",
     "jquery": "^3.4.1",
     "marked": "^0.7.0",
-    "phovea_clue": "^5.0.1-SNAPSHOT",
-    "phovea_vis": "^4.0.1-SNAPSHOT"
+    "phovea_vis": "github:phovea/phovea_vis#vstoiber/refactoring",
+    "phovea_clue": "github:phovea/phovea_ui#vstoiber/refactoring",
+    "phovea_core": "github:phovea/phovea_core#asteiner/refactoring"
   }
 }

@@ -144,12 +144,13 @@ function resolveScreenshot() {
 }
 
 function metaData(pkg) {
+  console.log(pkg);
   pkg = pkg || require(`./package.json`);
   return {
     name: pkg.name,
     displayName: pkg.displayName,
     version: pkg.version,
-    repository: pkg.repository.url,
+    repository: pkg.repository,
     homepage: pkg.homepage,
     description: pkg.description,
     screenshot: resolveScreenshot()
