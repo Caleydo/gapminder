@@ -42,8 +42,8 @@ export class GapMinderApp {
       elems.graph.then((graph) => {
         const app = GapMinder.create(<Element>elems.$main.node(), graph);
 
-        EventHandler.getInstance().on('wait', elems.header.wait.bind(elems.header));
-        EventHandler.getInstance().on('ready', elems.header.ready.bind(elems.header));
+        app.on('wait', elems.header.wait.bind(elems.header));
+        app.on('ready', elems.header.ready.bind(elems.header));
 
         function updateBounds() {
           const bounds = BaseUtils.bounds(document.querySelector('main'));
@@ -54,7 +54,7 @@ export class GapMinderApp {
         //    app.showTrails(this.checked);
         //  });
 
-        EventHandler.getInstance().on('modeChanged', function (event, newMode) {
+        elems.on('modeChanged', function (event, newMode) {
           app.setInteractive(newMode.exploration >= 0.8);
           //for the animations to end
           setTimeout(updateBounds, 300);

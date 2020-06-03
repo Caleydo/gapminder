@@ -2,7 +2,7 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 import * as d3 from 'd3';
-import { DataCache, EventHandler, ObjectRefUtils, ActionMetaData, Range, Rect, AView, ArrayUtils, SelectionUtils, SelectOperation, ActionUtils } from 'phovea_core';
+import { DataCache, ObjectRefUtils, ActionMetaData, Range, Rect, AView, ArrayUtils, SelectionUtils, SelectOperation, ActionUtils } from 'phovea_core';
 import { ToolTip } from 'phovea_d3';
 class Attribute {
     constructor(scale = 'linear') {
@@ -707,7 +707,7 @@ export class GapMinder extends AView {
             this.color = m;
             return (this.color ? this.color.idRange() : Promise.resolve(null)).then((arr) => {
                 this.colorRange = arr;
-                EventHandler.getInstance().fire('ready');
+                this.fire('ready');
                 this.update();
                 return old === null ? this.noneRef : this.graph.findObject(old);
             });
@@ -716,7 +716,7 @@ export class GapMinder extends AView {
             const matrix = m;
             const att = this.attrs[attr];
             att.data = matrix;
-            EventHandler.getInstance().fire('wait');
+            this.fire('wait');
             if (this.refData === matrix && matrix != null) {
                 return Promise.all([matrix.data(), matrix.rows(), matrix.rowIds(), matrix.cols(), matrix.colIds()]).then((args) => {
                     att.arr = args[0];
@@ -724,7 +724,7 @@ export class GapMinder extends AView {
                     this.items = this.createItems(args[1], args[2], matrix.rowtype);
                     //prepare time ids
                     this.timeIds = this.createTimeIds(args[3], args[4], matrix.coltype);
-                    EventHandler.getInstance().fire('ready');
+                    this.fire('ready');
                     this.update();
                     return old === null ? this.noneRef : this.graph.findObject(old);
                 });
@@ -732,7 +732,7 @@ export class GapMinder extends AView {
             else {
                 return (matrix ? matrix.data() : Promise.resolve(null)).then((arr) => {
                     this.attrs[attr].arr = arr;
-                    EventHandler.getInstance().fire('ready');
+                    this.fire('ready');
                     this.update();
                     return old === null ? this.noneRef : this.graph.findObject(old);
                 });

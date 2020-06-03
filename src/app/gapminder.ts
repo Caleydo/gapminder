@@ -862,7 +862,7 @@ export class GapMinder extends AView {
 
       return (this.color ? this.color.idRange() : Promise.resolve(null)).then((arr) => {
         this.colorRange = arr;
-        EventHandler.getInstance().fire('ready');
+        this.fire('ready');
 
         this.update();
 
@@ -873,7 +873,7 @@ export class GapMinder extends AView {
       const att = this.attrs[attr];
       att.data = matrix;
 
-      EventHandler.getInstance().fire('wait');
+      this.fire('wait');
       if (this.refData === matrix && matrix != null) {
         return Promise.all<any>([matrix.data(), matrix.rows(), matrix.rowIds(), matrix.cols(), matrix.colIds()]).then((args) => {
           att.arr = args[0];
@@ -884,7 +884,7 @@ export class GapMinder extends AView {
           //prepare time ids
           this.timeIds = this.createTimeIds(<string[]>args[3], <Range>args[4], matrix.coltype);
 
-          EventHandler.getInstance().fire('ready');
+          this.fire('ready');
 
           this.update();
 
@@ -893,7 +893,7 @@ export class GapMinder extends AView {
       } else {
         return (matrix ? matrix.data(): Promise.resolve(null)).then((arr) => {
           this.attrs[attr].arr = arr;
-          EventHandler.getInstance().fire('ready');
+          this.fire('ready');
 
           this.update();
 
