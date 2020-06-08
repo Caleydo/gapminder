@@ -26,7 +26,7 @@ class Attribute {
         return this.data.desc.formatter || ',d';
     }
 }
-class GapMinderCmds {
+export class GapMinderCmds {
     static setAttributeImpl(inputs, parameter, graph, within) {
         const gapminder = inputs[0].value, name = parameter.name;
         return inputs[1].v.then((data) => {

@@ -1,7 +1,7 @@
 /**
  * Created by Samuel Gratzl on 15.12.2014.
  */
-import { IObjectRef, IDataType, INumericalMatrix, Range, IDType, Rect, AView, IStratification, ProvenanceGraph } from 'phovea_core';
+import { ActionNode, IObjectRef, IDataType, INumericalMatrix, Range, IDType, Rect, AView, IStratification, ProvenanceGraph } from 'phovea_core';
 declare class Attribute {
     scale: string;
     data: INumericalMatrix;
@@ -15,6 +15,29 @@ declare class Attribute {
 interface IItem {
     id: number;
     name: string;
+}
+export declare class GapMinderCmds {
+    private static setAttributeImpl;
+    private static setAttributeScaleImpl;
+    private static toggleGapMinderTrailsImpl;
+    /**
+     * compresses the given path by removing redundant set gap minder attribute calls
+     * @param path
+     * @returns {ActionNode[]}
+     */
+    static compressSetAttribute(path: ActionNode[]): ActionNode[];
+    /**
+     * compresses the given path by removing redundant set gap minder attribute scale calls
+     * @param path
+     * @returns { ActionNode[]}
+     */
+    static compressSetAttributeScale(path: ActionNode[]): ActionNode[];
+    static compressToggleGapMinderTrails(path: ActionNode[]): ActionNode[];
+    static createCmd(id: any): typeof GapMinderCmds.toggleGapMinderTrailsImpl | typeof GapMinderCmds.setAttributeImpl;
+    static capitalize(s: string): string;
+    static createToggleTrails($mainRef: IObjectRef<GapMinder>, show: boolean): import("phovea_core").IAction;
+    static setAttribute(name: string, $mainRef: IObjectRef<GapMinder>, data: IObjectRef<IDataType>): import("phovea_core").IAction;
+    static setAttributeScale(name: string, $mainRef: IObjectRef<GapMinder>, scale: string): import("phovea_core").IAction;
 }
 export declare class GapMinder extends AView {
     private elem;

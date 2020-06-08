@@ -47,7 +47,7 @@ interface IItem {
 }
 
 
-class GapMinderCmds {
+export class GapMinderCmds {
 
   private static setAttributeImpl(inputs, parameter, graph, within) {
     const gapminder:GapMinder = inputs[0].value,
