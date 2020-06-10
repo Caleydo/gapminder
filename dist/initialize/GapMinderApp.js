@@ -2,7 +2,6 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 // Determine the order of css files manually
-import 'file-loader?name=index.html!extract-loader!html-loader!../index.html';
 import 'file-loader?name=404.html!../404.html';
 import 'file-loader?name=robots.txt!../robots.txt';
 import 'phovea_ui/dist/webpack/_bootstrap';
