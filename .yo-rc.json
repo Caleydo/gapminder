@@ -6,11 +6,15 @@
     "githubAccount": "caleydo",
     "modules": [
       "phovea_core",
-      "phovea_d3",
-      "phovea_vis",
-      "phovea_ui",
       "phovea_clue"
     ],
+    "registry": {
+      "exclude": [
+        "ordino",
+        "snpology",
+        "dTiles"
+      ]
+    },
     "extensions": [
       {
         "type": "view",
