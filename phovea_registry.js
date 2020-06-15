@@ -5,6 +5,7 @@
  **************************************************************************** */
 
 import {PluginRegistry} from 'phovea_core';
+import reg from './dist/phovea';
 
 /**
  * build a registry by registering all phovea modules
@@ -16,4 +17,4 @@ import 'phovea_vis/phovea_registry.js';
 import 'phovea_ui/phovea_registry.js';
 import 'phovea_clue/phovea_registry.js';
 //self
-PluginRegistry.getInstance().register('gapminder',require('./phovea.js'));
+PluginRegistry.getInstance().register('gapminder',reg);
