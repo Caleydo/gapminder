@@ -15,6 +15,15 @@
         "dTiles"
       ]
     },
+    "vendors": {
+      "others": "phovea_.*|tdp_.*",
+      "phovea": "phovea_.*",
+      "tdp": "tdp_.*",
+      "dv": "datavisyn.*|ordino.*|dTiles.*|festival.*"
+    },
+    "filesToLoad": {
+      "file-loader": "404|search|index|robots"
+    },
     "extensions": [
       {
         "type": "view",
@@ -81,7 +90,10 @@
       "app": "./gapminder/dist/initialize.js"
     },
     "libraryAliases": {
-      "d3": "d3/d3"
+      "d3": "d3/d3",
+      "phovea_clue": "phovea_clue",
+      "phovea_core": "phovea_core",
+      "phovea_security_store_generated": "phovea_security_store_generated"
     },
     "libraryExternals": [
       "d3",
