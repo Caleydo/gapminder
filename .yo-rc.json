@@ -90,17 +90,9 @@
       "app": "./gapminder/dist/initialize.js"
     },
     "libraryAliases": {
-      "d3": "node_modules/d3/d3.js",
-      "phovea_clue": "phovea_clue",
-      "phovea_core": "phovea_core",
-      "phovea_security_store_generated": "phovea_security_store_generated"
+      "d3": "d3/d3.js"
     },
-    "libraryExternals": [
-      "d3",
-      "jquery",
-      "font-awesome",
-      "marked"
-    ],
+    "libraryExternals": [],
     "ignores": [],
     "today": "Tue, 08 Nov 2016 09:41:26 GMT",
     "clientOnly": false,
