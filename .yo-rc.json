@@ -16,13 +16,13 @@
       ]
     },
     "vendors": {
-      "others": "phovea_.*|tdp_.*",
-      "phovea": "phovea_.*",
-      "tdp": "tdp_.*",
-      "dv": "datavisyn.*|ordino.*|dTiles.*|festival.*"
+      "others": "phovea.*|tdp_.*|tdp-.*|datavisyn.*",
+      "phovea": "phovea.*",
+      "tdp": "tdp_.|tdp-.*",
+      "dv": "datavisyn.*"
     },
     "filesToLoad": {
-      "file-loader": "404|search|index|robots"
+      "file-loader": "404|robots"
     },
     "extensions": [
       {
@@ -87,7 +87,12 @@
     },
     "app": "gapminder",
     "entries": {
-      "app": "./gapminder/dist/initialize.js"
+      "app": {
+        "js": "dist/initialize.js",
+        "template": "dist/index.template.ejs",
+        "html": "index.html",
+        "chunkName": "app"
+      }
     },
     "libraryAliases": {
       "d3": "d3/d3.js"
