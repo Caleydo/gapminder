@@ -6,11 +6,24 @@
     "githubAccount": "caleydo",
     "modules": [
       "phovea_core",
-      "phovea_d3",
-      "phovea_vis",
-      "phovea_ui",
       "phovea_clue"
     ],
+    "registry": {
+      "exclude": [
+        "ordino",
+        "snpology",
+        "dTiles"
+      ]
+    },
+    "vendors": {
+      "others": "phovea.*|tdp_.*|tdp-.*|datavisyn.*",
+      "phovea": "phovea.*",
+      "tdp": "tdp_.|tdp-.*",
+      "dv": "datavisyn.*"
+    },
+    "filesToLoad": {
+      "file-loader": "404|robots"
+    },
     "extensions": [
       {
         "type": "view",
@@ -74,17 +87,17 @@
     },
     "app": "gapminder",
     "entries": {
-      "app": "./src/index.ts"
+      "app": {
+        "js": "dist/initialize.js",
+        "template": "dist/index.template.ejs",
+        "html": "index.html",
+        "chunkName": "app"
+      }
     },
     "libraryAliases": {
-      "d3": "d3/d3"
+      "d3": "d3/d3.js"
     },
-    "libraryExternals": [
-      "d3",
-      "jquery",
-      "font-awesome",
-      "marked"
-    ],
+    "libraryExternals": [],
     "ignores": [],
     "today": "Tue, 08 Nov 2016 09:41:26 GMT",
     "clientOnly": false,

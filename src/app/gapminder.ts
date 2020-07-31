@@ -2,153 +2,13 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 
-import * as C from 'phovea_core/src/index';
-import * as datas from 'phovea_core/src/data';
-import * as datatypes from 'phovea_core/src/datatype';
-import * as matrix from 'phovea_core/src/matrix';
-import * as stratification from 'phovea_core/src/stratification';
-import * as prov from 'phovea_core/src/provenance';
-import * as idtypes from 'phovea_core/src/idtype';
-import * as views from 'phovea_core/src/layout_view';
-import * as ranges from 'phovea_core/src/range';
-import {Rect} from 'phovea_core/src/geom';
-import tooltipBind from 'phovea_d3/src/tooltip';
 import * as d3 from 'd3';
+import {ActionNode, IObjectRef, IDataType, DataCache, EventHandler, ObjectRefUtils, ActionMetaData, INumericalMatrix, Range, IDType, Rect, AView, IStratification, CompositeRange1D, ProvenanceGraph, ArrayUtils, SelectionUtils, SelectOperation, ActionUtils} from 'phovea_core';
+import {ToolTip} from 'phovea_d3';
 
-const filteredSelectionType = 'filtered';
-
-function setAttributeImpl(inputs, parameter, graph, within) {
-  const gapminder:GapMinder = inputs[0].value,
-    name = parameter.name;
-
-  return inputs[1].v.then((data) => {
-    if (data === '') {
-      data = null;
-    }
-    return gapminder.setAttributeImpl(name, data).then((old) => {
-      return {
-        inverse: setAttribute(name, inputs[0], old),
-        consumed: within
-      };
-    });
-  });
-}
-function setAttributeScaleImpl(inputs, parameter, graph, within) {
-  const gapminder:GapMinder = inputs[0].value,
-    name = parameter.name;
-
-  const old = gapminder.setAttributeScaleImpl(name, parameter.scale);
-  return {
-    inverse: setAttributeScale(name, inputs[0], old),
-    consumed: within
-  };
-}
-
-function toggleGapMinderTrailsImpl(inputs, parameter) {
-  const gapminder:GapMinder = inputs[0].value,
-    show = parameter.show;
-
-  gapminder.showTrailsImpl(show);
-  return {
-    inverse: createToggleTrails(inputs[0], !show)
-  };
-}
-
-
-
-/**
- * compresses the given path by removing redundant set gap minder attribute calls
- * @param path
- * @returns {prov.ActionNode[]}
- */
-export function compressSetAttribute(path:prov.ActionNode[]) {
-  const lastByAttribute:any = {};
-  path.forEach((p) => {
-    if (p.f_id === 'setGapMinderAttribute') {
-      const para = p.parameter.name;
-      lastByAttribute[para] = p;
-    }
-  });
-  return path.filter((p) => {
-    if (p.f_id !== 'setGapMinderAttribute') {
-      return true;
-    }
-    const para = p.parameter.name;
-    //last one remains
-    return lastByAttribute[para] === p;
-  });
-}
-
-/**
- * compresses the given path by removing redundant set gap minder attribute scale calls
- * @param path
- * @returns {prov.ActionNode[]}
- */
-export function compressSetAttributeScale(path:prov.ActionNode[]) {
-  const lastByAttribute:any = {};
-  path.forEach((p) => {
-    if (p.f_id === 'setGapMinderAttributeScale') {
-      const para = p.parameter.name;
-      lastByAttribute[para] = p;
-    }
-  });
-  return path.filter((p) => {
-    if (p.f_id !== 'setGapMinderAttributeScale') {
-      return true;
-    }
-    const para = p.parameter.name;
-    //last one remains
-    return lastByAttribute[para] === p;
-  });
-}
-
-export function compressToggleGapMinderTrails(path:prov.ActionNode[]) {
-  const l = path.filter((p) => p.f_id === 'toggleGapMinderTrails');
-
-  const good = l.length %2 === 0 ? null : l[l.length-1];
-  //remove all except the last if uneven number of changes
-  return path.filter((p) => p.f_id !== 'toggleGapMinderTrails' || p === good);
-}
-
-
-// externally called to recall implementation for prov graph
-// rebuild based on the --> createCmd --> maps name to a function
-export function createCmd(id) {
-  switch (id) {
-    case 'setGapMinderAttribute' :
-      return setAttributeImpl;
-    case 'setGapMinderAttributeScale':
-      return setAttributeScaleImpl;
-    case 'toggleGapMinderTrails':
-      return toggleGapMinderTrailsImpl;
-  }
-  return null;
-}
-
-function capitalize(s: string) {
-  return s.split(' ').map((d) => d[0].toUpperCase()+d.slice(1)).join(' ');
-}
-
-export function createToggleTrails($mainRef:prov.IObjectRef<GapMinder>, show: boolean) {
-  return prov.action(prov.meta((show? 'Show' : 'Hide') + ' trails', prov.cat.layout, prov.op.update), 'toggleGapMinderTrails', toggleGapMinderTrailsImpl, [$mainRef], {
-    show
-  });
-}
-
-export function setAttribute(name:string, $mainRef:prov.IObjectRef<GapMinder>, data:prov.IObjectRef<datatypes.IDataType>) {
-  return prov.action(prov.meta(capitalize(name) + '=' + (data ? data.name : '<none>'), prov.cat.data, prov.op.update), 'setGapMinderAttribute', setAttributeImpl, [$mainRef, data], {
-    name
-  });
-}
-export function setAttributeScale(name:string, $mainRef:prov.IObjectRef<GapMinder>, scale:string) {
-  return prov.action(prov.meta('scale('+capitalize(name) + ')=' + capitalize(scale), prov.cat.visual, prov.op.update), 'setGapMinderAttributeScale', setAttributeScaleImpl, [$mainRef], {
-    scale,
-    name
-  });
-}
 
 class Attribute {
-  data:matrix.INumericalMatrix = null;
+  data: INumericalMatrix = null;
 
   arr:number[][] = null;
 
@@ -186,35 +46,148 @@ interface IItem {
   name: string;
 }
 
-function createTimeIds(names:string[], ids:ranges.Range, idtype:idtypes.IDType) {
-  const ts = names.map((d) => parseInt(d, 10));
-  const idsAsList = ids.dim(0).asList();
-  idtype.fillMapCache(idsAsList, names);
-  return {
-    idtype,
-    ids: idsAsList,
-    names,
-    ts,
-    minmax: d3.extent(ts)
-  };
-}
 
-function createItems(names:string[], ids:ranges.Range, idtype:idtypes.IDType):IItem[] {
-  const idAsList = ids.dim(0).asList();
-  idtype.fillMapCache(idAsList, names);
-  return idAsList.map((id, i) => {
+export class GapMinderCmds {
+
+  private static setAttributeImpl(inputs, parameter, graph, within) {
+    const gapminder:GapMinder = inputs[0].value,
+      name = parameter.name;
+
+    return inputs[1].v.then((data) => {
+      if (data === '') {
+        data = null;
+      }
+      return gapminder.setAttributeImpl(name, data).then((old) => {
+        return {
+          inverse: GapMinderCmds.setAttribute(name, inputs[0], old),
+          consumed: within
+        };
+      });
+    });
+  }
+
+  private static setAttributeScaleImpl(inputs, parameter, graph, within) {
+    const gapminder:GapMinder = inputs[0].value,
+      name = parameter.name;
+
+    const old = gapminder.setAttributeScaleImpl(name, parameter.scale);
     return {
-      id,
-      name: names[i]
+      inverse: GapMinderCmds.setAttributeScale(name, inputs[0], old),
+      consumed: within
     };
-  });
+  }
+
+  private static toggleGapMinderTrailsImpl(inputs, parameter) {
+    const gapminder:GapMinder = inputs[0].value,
+      show = parameter.show;
+
+    gapminder.showTrailsImpl(show);
+    return {
+      inverse: GapMinderCmds.createToggleTrails(inputs[0], !show)
+    };
+  }
+
+
+
+  /**
+   * compresses the given path by removing redundant set gap minder attribute calls
+   * @param path
+   * @returns {ActionNode[]}
+   */
+  static compressSetAttribute(path: ActionNode[]) {
+    const lastByAttribute:any = {};
+    path.forEach((p) => {
+      if (p.f_id === 'setGapMinderAttribute') {
+        const para = p.parameter.name;
+        lastByAttribute[para] = p;
+      }
+    });
+    return path.filter((p) => {
+      if (p.f_id !== 'setGapMinderAttribute') {
+        return true;
+      }
+      const para = p.parameter.name;
+      //last one remains
+      return lastByAttribute[para] === p;
+    });
+  }
+
+  /**
+   * compresses the given path by removing redundant set gap minder attribute scale calls
+   * @param path
+   * @returns { ActionNode[]}
+   */
+  static compressSetAttributeScale(path: ActionNode[]) {
+    const lastByAttribute:any = {};
+    path.forEach((p) => {
+      if (p.f_id === 'setGapMinderAttributeScale') {
+        const para = p.parameter.name;
+        lastByAttribute[para] = p;
+      }
+    });
+    return path.filter((p) => {
+      if (p.f_id !== 'setGapMinderAttributeScale') {
+        return true;
+      }
+      const para = p.parameter.name;
+      //last one remains
+      return lastByAttribute[para] === p;
+    });
+  }
+
+  static compressToggleGapMinderTrails(path:ActionNode[]) {
+    const l = path.filter((p) => p.f_id === 'toggleGapMinderTrails');
+
+    const good = l.length %2 === 0 ? null : l[l.length-1];
+    //remove all except the last if uneven number of changes
+    return path.filter((p) => p.f_id !== 'toggleGapMinderTrails' || p === good);
+  }
+
+
+  // externally called to recall implementation for prov graph
+  // rebuild based on the --> createCmd --> maps name to a function
+  static createCmd(id) {
+    switch (id) {
+      case 'setGapMinderAttribute' :
+        return GapMinderCmds.setAttributeImpl;
+      case 'setGapMinderAttributeScale':
+        return GapMinderCmds.setAttributeScaleImpl;
+      case 'toggleGapMinderTrails':
+        return GapMinderCmds.toggleGapMinderTrailsImpl;
+    }
+    return null;
+  }
+
+  static capitalize(s: string) {
+    return s.split(' ').map((d) => d[0].toUpperCase()+d.slice(1)).join(' ');
+  }
+
+  public static createToggleTrails($mainRef:IObjectRef<GapMinder>, show: boolean) {
+    return ActionUtils.action(ActionMetaData.actionMeta((show? 'Show' : 'Hide') + ' trails', ObjectRefUtils.category.layout, ObjectRefUtils.operation.update), 'toggleGapMinderTrails', GapMinderCmds.toggleGapMinderTrailsImpl, [$mainRef], {
+      show
+    });
+  }
+
+  public static setAttribute(name:string, $mainRef:IObjectRef<GapMinder>, data:IObjectRef<IDataType>) {
+    return ActionUtils.action(ActionMetaData.actionMeta(GapMinderCmds.capitalize(name) + '=' + (data ? data.name : '<none>'), ObjectRefUtils.category.data, ObjectRefUtils.operation.update), 'setGapMinderAttribute', GapMinderCmds.setAttributeImpl, [$mainRef, data], {
+      name
+    });
+  }
+  static setAttributeScale(name:string, $mainRef:IObjectRef<GapMinder>, scale:string) {
+    return ActionUtils.action(ActionMetaData.actionMeta('scale('+GapMinderCmds.capitalize(name) + ')=' + GapMinderCmds.capitalize(scale), ObjectRefUtils.category.visual, ObjectRefUtils.operation.update), 'setGapMinderAttributeScale', GapMinderCmds.setAttributeScaleImpl, [$mainRef], {
+      scale,
+      name
+    });
+  }
 }
 
-class GapMinder extends views.AView {
+export class GapMinder extends AView {
+
+  private static readonly filteredSelectionType = 'filtered';
 
   private dim:[number, number] = [100, 100];
-  ref:prov.IObjectRef<GapMinder>;
-  noneRef:prov.IObjectRef<any>;
+  ref:IObjectRef<GapMinder>;
+  noneRef:IObjectRef<any>;
 
   attrs = {
     x: new Attribute(),
@@ -226,8 +199,8 @@ class GapMinder extends views.AView {
 
   private items:IItem[] = [];
 
-  private color:stratification.IStratification = null;
-  private colorRange:ranges.CompositeRange1D = null;
+  private color:IStratification = null;
+  private colorRange:CompositeRange1D = null;
 
   private $node:d3.Selection<GapMinder>;
   private xaxis = d3.svg.axis().orient('bottom');
@@ -243,10 +216,10 @@ class GapMinder extends views.AView {
 
   private interactive = true;
 
-  private totooltip = tooltipBind(this.createTooltip.bind(this), 0);
+  private totooltip = ToolTip.bind(this.createTooltip.bind(this), 0);
 
   // for colorScale domain is continent groups mapped to the range which is colorPalette
-  constructor(private elem:Element, private graph:prov.ProvenanceGraph) {
+  constructor(private elem:Element, private graph:ProvenanceGraph) {
     super();
     this.$node = d3.select(elem).datum(this);
     this.ref = graph.findOrAddObject(this, 'GapMinder', 'visual');
@@ -265,7 +238,7 @@ class GapMinder extends views.AView {
   }
 
   /* ------------------ REF DATA ---------------------- */
-  private get refData():matrix.INumericalMatrix {
+  private get refData():INumericalMatrix {
     if (this.attrs.x.valid) {
       return this.attrs.x.data;
     }
@@ -291,8 +264,8 @@ class GapMinder extends views.AView {
     const that = this;
 
     //find all gapminder datasets
-    datas.list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {
-      const matrices = <matrix.INumericalMatrix[]>list.filter((d) => d.desc.type === 'matrix');
+    DataCache.getInstance().list((d) => /.*gapminder.*/.test(d.desc.fqname)).then((list) => {
+      const matrices = <INumericalMatrix[]>list.filter((d) => d.desc.type === 'matrix');
       ['x', 'y','size'].forEach((attr) => {
         const $options = d3.select('select.attr-' + attr).selectAll('option').data(matrices);
         $options.enter().append('option');
@@ -307,7 +280,7 @@ class GapMinder extends views.AView {
         });
       });
 
-      const stratifications = <stratification.IStratification[]>list.filter((d) => d.desc.type === 'stratification');
+      const stratifications = <IStratification[]>list.filter((d) => d.desc.type === 'stratification');
       {
         const $options = d3.select('select.attr-color').selectAll('option').data(stratifications);
         $options.enter().append('option');
@@ -321,11 +294,11 @@ class GapMinder extends views.AView {
       //select default datasets
       if (this.graph.states.length === 1) { //first one
 
-        this.setXAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderGdp') || matrices[0]);
-        this.setYAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderLifeExpectancy') || matrices[0]);
-        this.setSizeAttribute(C.search(matrices, (d) => d.desc.id === 'gapminderPopulation') || matrices[0]);
+        this.setXAttribute(ArrayUtils.search(matrices, (d) => d.desc.id === 'gapminderGdp') || matrices[0]);
+        this.setYAttribute(ArrayUtils.search(matrices, (d) => d.desc.id === 'gapminderLifeExpectancy') || matrices[0]);
+        this.setSizeAttribute(ArrayUtils.search(matrices, (d) => d.desc.id === 'gapminderPopulation') || matrices[0]);
 
-        this.setColor(C.search(stratifications, (d) => d.desc.id === 'gapminderContinent') || stratifications[0]);
+        this.setColor(ArrayUtils.search(stratifications, (d) => d.desc.id === 'gapminderContinent') || stratifications[0]);
       }
     });
 
@@ -386,7 +359,7 @@ class GapMinder extends views.AView {
     const cData = this.colorRange;
 
     const rowSelection = this.refData.rowtype.selections();
-    const rowFilter = this.refData.rowtype.selections(filteredSelectionType);
+    const rowFilter = this.refData.rowtype.selections(GapMinder.filteredSelectionType);
 
     const selectecdTimeIndex = this.timeIds.ids.indexOf(selectedTimeId);
 
@@ -400,7 +373,7 @@ class GapMinder extends views.AView {
         y: yData && selectecdTimeIndex >= 0 ? yData[i][selectecdTimeIndex] : 0,
         size: sData && selectecdTimeIndex >= 0 ? sData[i][selectecdTimeIndex] : 0,
         //not the id ... local range
-        color: cData ? C.search(cData.groups, (g) => g.contains(item.id)).name : null
+        color: cData ? ArrayUtils.search(cData.groups, (g) => g.contains(item.id)).name : null
       };
     });
   }
@@ -441,13 +414,13 @@ class GapMinder extends views.AView {
         }
         const isActive = d3.select(this).select('i').classed('fa-circle');
         d3.select(this).select('i').classed('fa-circle-o', isActive).classed('fa-circle', !isActive);
-        that.color.idtype.select(filteredSelectionType,ranges.list(d), isActive ? idtypes.SelectOperation.ADD : idtypes.SelectOperation.REMOVE);
+        that.color.idtype.select(GapMinder.filteredSelectionType,Range.list(d), isActive ? SelectOperation.ADD : SelectOperation.REMOVE);
       });
     $legendsEnter.append('i').attr('class', 'fa fa-circle');
     $legendsEnter.append('span');
 
     if (this.color != null) {
-      const filtered = this.color.idtype.selections(filteredSelectionType).dim(0);
+      const filtered = this.color.idtype.selections(GapMinder.filteredSelectionType).dim(0);
       $legends.select('i')
         .style('color', (d) => d.color)
         .classed('fa-circle', (d) => !filtered.contains(d.first))
@@ -464,7 +437,7 @@ class GapMinder extends views.AView {
     const refData = this.refData;
     if (refData) {
       const type = refData.coltype;
-      const hovered = type.selections(idtypes.hoverSelectionType).first;
+      const hovered = type.selections(SelectionUtils.hoverSelectionType).first;
       if (hovered != null) {
         return hovered;
       }
@@ -557,10 +530,10 @@ class GapMinder extends views.AView {
           if (!this.interactive) {
             return;
           }
-          this.refData.rowtype.select([<number>d.id], idtypes.toSelectOperation(<MouseEvent>d3.event));
+          this.refData.rowtype.select([<number>d.id], SelectionUtils.toSelectOperation(<MouseEvent>d3.event));
         })
-        .on('mouseenter.select', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.ADD))
-        .on('mouseleave.select', (d) => this.refData.rowtype.select(idtypes.hoverSelectionType, [d.id], idtypes.SelectOperation.REMOVE))
+        .on('mouseenter.select', (d) => this.refData.rowtype.select(SelectionUtils.hoverSelectionType, [d.id], SelectOperation.ADD))
+        .on('mouseleave.select', (d) => this.refData.rowtype.select(SelectionUtils.hoverSelectionType, [d.id], SelectOperation.REMOVE))
         .call(this.totooltip)
         .attr('data-anchor', (d) => d.id)
         .attr('data-uid',(d) =>d.id + (this.showUseTrails && d.selected ? '@'+selectedTimePoint : ''));
@@ -644,7 +617,7 @@ class GapMinder extends views.AView {
     if (!this.interactive) {
       return;
     }
-    this.graph.push(createToggleTrails(this.ref, show));
+    this.graph.push(GapMinderCmds.createToggleTrails(this.ref, show));
   }
 
   showTrailsImpl(show: boolean) {
@@ -652,14 +625,14 @@ class GapMinder extends views.AView {
     this.updateChart();
   }
 
-  private onYearSelect(event:any, type:string, act:ranges.Range) {
+  private onYearSelect(event:any, type:string, act:Range) {
     const id = act.first;
     if (id !== null && this.timeIds) {
       let $slider: any = this.$node.select('svg.timeline .slider');
       const selectedTimePoint = this.timeIds.ts[this.timeIds.ids.indexOf(id)];
       const x = this.timelinescale(selectedTimePoint);
 
-      if (type === idtypes.defaultSelectionType) { //animate just for selections
+      if (type === SelectionUtils.defaultSelectionType) { //animate just for selections
         $slider = $slider.transition().duration(this.animationDuration());
       }
       $slider.attr('transform', 'translate(' + x + ',14)');
@@ -667,15 +640,15 @@ class GapMinder extends views.AView {
     }
   }
 
-  private onItemSelect(event:any, type:string, act:ranges.Range) {
+  private onItemSelect(event:any, type:string, act:Range) {
     const ids = act.dim(0).asList();
     this.$node.select('svg.chart g.marks').selectAll('.mark').classed('phovea-select-' + type, (d) => ids.indexOf(d.id) >= 0);
 
-    if (type === idtypes.hoverSelectionType) {
+    if (type === SelectionUtils.hoverSelectionType) {
       this.updateHoverLine(ids);
-    } else if (type === filteredSelectionType) {
+    } else if (type === GapMinder.filteredSelectionType) {
       this.updateLegend();
-    } else if (type === idtypes.defaultSelectionType) {
+    } else if (type === SelectionUtils.defaultSelectionType) {
       this.updateSelectionLines(ids);
     }
   }
@@ -727,7 +700,7 @@ class GapMinder extends views.AView {
   private updateSelectionTools() {
     const r = this.refData;
     if (r) {
-      this.updateHoverLine(r.rowtype.selections(idtypes.hoverSelectionType).dim(0).asList(), true);
+      this.updateHoverLine(r.rowtype.selections(SelectionUtils.hoverSelectionType).dim(0).asList(), true);
       this.updateSelectionLines(r.rowtype.selections().dim(0).asList(), true);
     }
   }
@@ -790,7 +763,7 @@ class GapMinder extends views.AView {
       const xPos = (<any>d3.event).x;
       const year = d3.round(this.timelinescale.invert(xPos), 0);
       const j = this.timeIds.ts.indexOf(year);
-      this.timeIds.idtype.select(idtypes.hoverSelectionType, [this.timeIds.ids[j]]);
+      this.timeIds.idtype.select(SelectionUtils.hoverSelectionType, [this.timeIds.ids[j]]);
     };
 
     /* ---------------------------------------------------- */
@@ -804,8 +777,8 @@ class GapMinder extends views.AView {
         .on('drag', dragged)
         .on('dragend', () => {
           //select the last entry
-          const s = this.timeIds.idtype.selections(idtypes.hoverSelectionType);
-          this.timeIds.idtype.select(idtypes.hoverSelectionType, ranges.none());
+          const s = this.timeIds.idtype.selections(SelectionUtils.hoverSelectionType);
+          this.timeIds.idtype.select(SelectionUtils.hoverSelectionType, Range.none());
           this.timeIds.idtype.select(s.clone());
         }));
     }
@@ -853,24 +826,24 @@ class GapMinder extends views.AView {
   }
 
 
-  setXAttribute(m:matrix.INumericalMatrix) {
+  setXAttribute(m:INumericalMatrix) {
     // cleanData(m);
     return this.setAttribute('x', m);
   }
 
-  setYAttribute(m:matrix.INumericalMatrix) {
+  setYAttribute(m:INumericalMatrix) {
     return this.setAttribute('y', m);
   }
 
-  setSizeAttribute(m:matrix.INumericalMatrix) {
+  setSizeAttribute(m:INumericalMatrix) {
     return this.setAttribute('size', m);
   }
 
-  setColor(m:stratification.IStratification) {
+  setColor(m:IStratification) {
     return this.setAttribute('color', m);
   }
 
-  setColorImpl(attr:string, m:stratification.IStratification) {
+  setColorImpl(attr:string, m:IStratification) {
     const old = this.color;
     this.color = m;
 
@@ -879,13 +852,13 @@ class GapMinder extends views.AView {
     return old === null ? this.noneRef : this.graph.findObject(old);
   }
 
-  setAttributeImpl(attr:string, m:datatypes.IDataType) {
+  setAttributeImpl(attr:string, m: IDataType) {
     if (m == null) {
       m = null;
     }
     const old = attr === 'color' ? this.color : this.attrs[attr].data;
     if (attr === 'color') {
-      this.color = <stratification.IStratification>m;
+      this.color = <IStratification>m;
 
       return (this.color ? this.color.idRange() : Promise.resolve(null)).then((arr) => {
         this.colorRange = arr;
@@ -896,7 +869,7 @@ class GapMinder extends views.AView {
         return old === null ? this.noneRef : this.graph.findObject(old);
       });
     } else {
-      const matrix = <matrix.INumericalMatrix>m;
+      const matrix = <INumericalMatrix>m;
       const att = this.attrs[attr];
       att.data = matrix;
 
@@ -906,10 +879,10 @@ class GapMinder extends views.AView {
           att.arr = args[0];
 
           //prepare the items
-          this.items = createItems(<string[]>args[1], <ranges.Range>args[2], matrix.rowtype);
+          this.items = this.createItems(<string[]>args[1], <Range>args[2], matrix.rowtype);
 
           //prepare time ids
-          this.timeIds = createTimeIds(<string[]>args[3], <ranges.Range>args[4], matrix.coltype);
+          this.timeIds = this.createTimeIds(<string[]>args[3], <Range>args[4], matrix.coltype);
 
           this.fire('ready');
 
@@ -940,15 +913,39 @@ class GapMinder extends views.AView {
   }
 
   setAttributeScale(attr:string, scale:string) {
-    return this.graph.push(setAttributeScale(attr, this.ref, scale));
+    return this.graph.push(GapMinderCmds.setAttributeScale(attr, this.ref, scale));
   }
 
-  setAttribute(attr:string, m:datatypes.IDataType) {
+  setAttribute(attr:string, m:IDataType) {
     const mref = this.graph.findOrAddObject(m, m.desc.name, 'data');
-    return this.graph.push(setAttribute(attr, this.ref, mref));
+    return this.graph.push(GapMinderCmds.setAttribute(attr, this.ref, mref));
   }
-}
 
-export function create(parent:Element, provGraph:prov.ProvenanceGraph) {
-  return new GapMinder(parent, provGraph);
+  createTimeIds(names:string[], ids:Range, idtype:IDType) {
+    const ts = names.map((d) => parseInt(d, 10));
+    const idsAsList = ids.dim(0).asList();
+    idtype.fillMapCache(idsAsList, names);
+    return {
+      idtype,
+      ids: idsAsList,
+      names,
+      ts,
+      minmax: d3.extent(ts)
+    };
+  }
+
+  createItems(names:string[], ids:Range, idtype:IDType):IItem[] {
+    const idAsList = ids.dim(0).asList();
+    idtype.fillMapCache(idAsList, names);
+    return idAsList.map((id, i) => {
+      return {
+        id,
+        name: names[i]
+      };
+    });
+  }
+
+  static create(parent:Element, provGraph:ProvenanceGraph) {
+    return new GapMinder(parent, provGraph);
+  }
 }
