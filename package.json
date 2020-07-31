@@ -1,7 +1,7 @@
 {
   "name": "gapminder",
   "description": "",
-  "version": "4.0.0",
+  "version": "4.0.1-SNAPSHOT",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
@@ -71,10 +71,10 @@
   "dependencies": {
     "jquery": "~3.5.1",
     "marked": "^0.7.0",
-    "phovea_clue": "^6.0.0",
-    "phovea_core": "^5.0.0",
-    "phovea_d3": "^5.0.0",
-    "phovea_ui": "^5.0.0",
-    "phovea_vis": "^5.0.0"
+    "phovea_clue": "github:phovea/phovea_clue#develop",
+    "phovea_core": "github:phovea/phovea_core#develop",
+    "phovea_d3": "github:phovea/phovea_d3#develop",
+    "phovea_ui": "github:phovea/phovea_ui#develop",
+    "phovea_vis": "github:phovea/phovea_vis#develop"
   }
 }
