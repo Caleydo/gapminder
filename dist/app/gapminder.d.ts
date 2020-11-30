@@ -9,7 +9,7 @@ declare class Attribute {
     constructor(scale?: string);
     get label(): string;
     get valid(): boolean;
-    get format(): any;
+    get format(): (n: number) => string;
     to_format(): any;
 }
 interface IItem {
@@ -107,7 +107,7 @@ export declare class GapMinder extends AView {
         ids: number[];
         names: string[];
         ts: number[];
-        minmax: any;
+        minmax: [number, number];
     };
     createItems(names: string[], ids: Range, idtype: IDType): IItem[];
     static create(parent: Element, provGraph: ProvenanceGraph): GapMinder;
