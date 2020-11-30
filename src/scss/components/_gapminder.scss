@@ -1,0 +1,63 @@
+main {
+  position: relative;
+
+  svg.size_legend {
+    circle {
+      fill: #cecece;
+    }
+  }
+
+
+  div.gapminder_i {
+    display: block;
+    position: absolute;
+    width: 40em;
+    z-index: 2;
+    left: 200px;
+
+    div.yaxis {
+      -webkit-transform: rotate(-90deg) translateX(-60vh);
+      -webkit-transform-origin: 0% 0%;
+      transform: rotate(-90deg) translateX(-60vh);
+      transform-origin: 0% 0%;
+    }
+  }
+
+  div.xaxis_outer {
+       text-align: center;
+      position: absolute;
+      bottom: 50px;
+      left: 50px;
+      right: 0;
+
+    > div {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  div.chart {
+    margin-left: 190px;
+    position: absolute;
+    //top: 0;
+    //left: 0;
+
+  }
+
+
+  svg.pop_slider{
+    position:absolute;
+  }
+
+  svg.timeline {
+    fill:grey;
+    align-items: flex-start;
+    position: absolute;
+    left: 200px;
+    bottom: 5px;
+  }
+
+  .over {
+    font-weight: bold;
+  }
+}
