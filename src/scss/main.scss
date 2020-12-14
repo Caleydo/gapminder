@@ -1,8 +1,5 @@
 @import './abstracts/variables';
 
-// use original CLUE styles as foundation
-@import '~phovea_clue/dist/scss/main.scss';
-
 @import './base/base';
 @import './components/chart';
 @import './components/legends';
