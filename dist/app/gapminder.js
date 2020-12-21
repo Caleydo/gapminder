@@ -327,17 +327,17 @@ export class GapMinder extends AView {
                 return;
             }
             const isActive = d3.select(this).select('i').classed('fa-circle');
-            d3.select(this).select('i').classed('fa-circle-o', isActive).classed('fa-circle', !isActive);
+            d3.select(this).select('i').classed('far', isActive).classed('fa-circle', !isActive);
             that.color.idtype.select(GapMinder.filteredSelectionType, Range.list(d), isActive ? SelectOperation.ADD : SelectOperation.REMOVE);
         });
-        $legendsEnter.append('i').attr('class', 'fa fa-circle');
+        $legendsEnter.append('i').attr('class', 'fas fa-circle');
         $legendsEnter.append('span');
         if (this.color != null) {
             const filtered = this.color.idtype.selections(GapMinder.filteredSelectionType).dim(0);
             $legends.select('i')
                 .style('color', (d) => d.color)
                 .classed('fa-circle', (d) => !filtered.contains(d.first))
-                .classed('fa-circle-o', (d) => {
+                .classed('far', (d) => {
                 return filtered.contains(d.first);
             });
         }
