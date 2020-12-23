@@ -71,7 +71,7 @@
   "dependencies": {
     "jquery": "~3.5.1",
     "marked": "^0.7.0",
-    "phovea_clue": "github:phovea/phovea_clue#dmoitzi/refactor_stylesheets_organiation_and_imports",
-    "phovea_vis": "github:phovea/phovea_vis#dmoitzi/refactor_stylesheets_organiation_and_imports"
+    "phovea_clue": "github:phovea/phovea_clue#fontawesome-v5",
+    "phovea_vis": "github:phovea/phovea_vis#fontawesome-v5"
   }
 }
