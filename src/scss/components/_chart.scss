@@ -1,0 +1,48 @@
+svg.chart {
+  rect.clearer {
+    fill: transparent;
+  }
+  polyline.hover_line {
+    fill: none;
+    stroke: $hover-color;
+    stroke-width: 1px;
+  }
+  polyline.select_line {
+    fill: none;
+    stroke: $select-color;
+    stroke-width: 1px;
+  }
+
+  text.act_year {
+    font-size: 150pt;
+    font-weight: bold;
+    fill: #f2f2f2;
+    text-anchor: start;
+  }
+  .mark {
+    stroke: none;
+    opacity:0.5;
+
+    &.phovea-select-selected {
+      //svg variant
+      stroke: $select-color;
+      stroke-width: 2px;
+      opacity: 1;
+    }
+    &.phovea-select-hovered {
+      //svg variant
+      opacity: 1;
+      stroke: $hover-color;
+      stroke-width: 2px;
+    }
+
+    &.phovea-select-filtered {
+      opacity: 0.1;
+    }
+  }
+
+  select .yaxis, .xaxis {
+    background-color: #a2a3a3;
+  }
+
+}
