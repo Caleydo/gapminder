@@ -55,7 +55,7 @@
     "docker": "docker build -t gapminder -f deploy/Dockerfile ."
   },
   "devDependencies": {
-    "@types/marked": "^0.7.4",
+    "@types/marked": "^1.2.1",
     "@types/jest": "~26.0.20",
     "identity-obj-proxy": "~3.0.0",
     "jest": "~26.6.3",
@@ -70,7 +70,7 @@
   },
   "dependencies": {
     "jquery": "~3.5.1",
-    "marked": "^0.7.0",
+    "marked": "^1.2.7",
     "phovea_clue": "github:phovea/phovea_clue#vstoiber/update_dependencies",
     "phovea_vis": "github:phovea/phovea_vis#vstoiber/update_dependencies"
   }
