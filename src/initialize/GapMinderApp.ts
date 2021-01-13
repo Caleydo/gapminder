@@ -4,7 +4,6 @@
 
 // Determine the order of css files manually
 
-import '../404.html';
 import '../robots.txt';
 
 import {CLUEWrapper, ModeWrapper} from 'phovea_clue';

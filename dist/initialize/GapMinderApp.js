@@ -2,7 +2,6 @@
  * Created by Samuel Gratzl on 15.12.2014.
  */
 // Determine the order of css files manually
-import '../404.html';
 import '../robots.txt';
 import { CLUEWrapper, ModeWrapper } from 'phovea_clue';
 import { GapMinder } from '../app/gapminder';
