@@ -1,8 +1,6 @@
 /**
  * Created by Samuel Gratzl on 15.12.2014.
  */
-// Determine the order of css files manually
-import '../robots.txt';
 import { CLUEWrapper, ModeWrapper } from 'phovea_clue';
 import { GapMinder } from '../app/gapminder';
 import { I18nextManager, BaseUtils } from 'phovea_core';
