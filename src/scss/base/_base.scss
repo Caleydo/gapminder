@@ -1,0 +1,41 @@
+body, html {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+
+  background-color: #fafafa;
+
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+// tooltip styling
+.tooltip{}
+
+/* mouse over mark and ref lines*/
+.active {
+  stroke: black;
+  stroke-width: 5px;
+  line {
+    stroke: magenta;
+    stroke-width: 3px;
+  }
+}
+
+svg {
+  vector-effect: non-scaling-stroke;
+  shape-rendering: geometricPrecision;
+}
+
+svg.chart .xaxis, svg.chart .yaxis, svg.timeline {
+  path, line {
+    stroke-width: 1;
+    stroke: black;
+    fill: none;
+  }
+
+}
+
+div.xaxis_outer {
+
+}

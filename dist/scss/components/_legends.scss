@@ -1,0 +1,41 @@
+
+div.legends {
+  margin: 2px 2px 0 0;
+  position: absolute;
+  left: 42px;
+  top: 0;
+  bottom: 0;
+  display: inline;
+  //background-color: green;
+  width: 140px;
+
+  padding-top: 30px;
+  padding-left: 4px;
+
+  span.title {
+    font-weight: bold;
+    position: absolute;
+    left: -40px;
+  }
+
+  > div > * {
+    display: block;
+  }
+  select {
+    width: 100%;
+  }
+  div.color_legend {
+    i {
+      margin-right: 3px;
+      padding: 3px;
+      opacity: 0.5;
+    }
+  }
+  div.population_scaler {
+    margin-top: 1em;
+
+    svg {
+      margin-top: 5px;
+    }
+  }
+}
