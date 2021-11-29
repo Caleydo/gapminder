@@ -1,4 +1,4 @@
-gapminder 
+DEPRECATED: gapminder 
 =====================
 [![Phovea][phovea-image]][phovea-url] [![Build Status][circleci-image]][circleci-url]
  
@@ -13,6 +13,9 @@ Further resources:
 * Examples using CLUE: [StratomeX](http://vistories.org/v/stratomex) and [Gapminder](http://vistories.org/v/gapminder)
 
 A [demonstration](https://gapminder.caleydoapp.org) is available in the caleydoapp.org.
+
+### DEPRECATION Information
+Please note that this project has been archived and is no longer being maintained. There is an active development under https://github.com/datavisyn/tdp_core and we will also contribute our future changes to it.
 
 Installation
 ------------
