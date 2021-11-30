@@ -72,6 +72,6 @@
     "jquery": "~3.5.1",
     "marked": "^1.2.7",
     "phovea_clue": "^9.0.0",
-    "phovea_vis": "^6.1.0"
+    "phovea_vis": "^7.0.0"
   }
 }
